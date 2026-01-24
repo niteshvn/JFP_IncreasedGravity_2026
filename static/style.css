@@ -1,0 +1,217 @@
+/*
+ * Global Styles for Jugend forscht 2026 Physics Dashboard
+ * ========================================================
+ * This file provides consistent styling across all pages.
+ * The light theme is enforced via .streamlit/config.toml
+ */
+
+/* =============================================================================
+   ROOT VARIABLES - Color Palette
+   ============================================================================= */
+
+:root {
+    --color-primary: #1E40AF;
+    --color-primary-light: #3B82F6;
+    --color-secondary: #0F766E;
+    --color-accent: #B45309;
+    --color-success: #059669;
+    --color-warning: #D97706;
+    --color-error: #DC2626;
+
+    --color-text-dark: #1F2937;
+    --color-text-muted: #6B7280;
+    --color-text-light: #9CA3AF;
+
+    --color-bg-white: #FFFFFF;
+    --color-bg-light: #F8FAFC;
+    --color-bg-gray: #F1F5F9;
+    --color-border: #E2E8F0;
+}
+
+/* =============================================================================
+   MAIN CONTENT AREA
+   ============================================================================= */
+
+.main .block-container {
+    padding-top: 1rem;
+    padding-bottom: 2rem;
+    max-width: 1400px;
+}
+
+/* =============================================================================
+   TYPOGRAPHY
+   ============================================================================= */
+
+h1, h2, h3, h4, h5, h6 {
+    color: var(--color-primary) !important;
+    font-weight: 600;
+}
+
+p, span, div, li {
+    color: var(--color-text-dark);
+}
+
+small, .caption {
+    color: var(--color-text-muted);
+}
+
+/* =============================================================================
+   METRICS
+   ============================================================================= */
+
+[data-testid="stMetric"] {
+    background-color: var(--color-bg-light);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--color-border);
+}
+
+[data-testid="stMetric"] label {
+    color: var(--color-text-dark) !important;
+    font-weight: 600;
+}
+
+[data-testid="stMetric"] [data-testid="stMetricValue"] {
+    color: var(--color-primary) !important;
+    font-size: 1.5rem !important;
+}
+
+[data-testid="stMetric"] [data-testid="stMetricDelta"] {
+    color: var(--color-text-muted) !important;
+}
+
+/* =============================================================================
+   SIDEBAR
+   ============================================================================= */
+
+[data-testid="stSidebar"] {
+    background-color: var(--color-bg-gray);
+}
+
+[data-testid="stSidebar"] h1,
+[data-testid="stSidebar"] h2,
+[data-testid="stSidebar"] h3 {
+    color: var(--color-primary) !important;
+}
+
+[data-testid="stSidebar"] p,
+[data-testid="stSidebar"] span,
+[data-testid="stSidebar"] div,
+[data-testid="stSidebar"] label {
+    color: var(--color-text-dark) !important;
+}
+
+/* =============================================================================
+   TABS
+   ============================================================================= */
+
+.stTabs [data-baseweb="tab-list"] {
+    gap: 4px;
+    background-color: var(--color-bg-gray);
+    padding: 4px;
+    border-radius: 8px;
+}
+
+.stTabs [data-baseweb="tab"] {
+    padding: 8px 16px;
+    color: var(--color-text-dark) !important;
+    background-color: transparent;
+}
+
+.stTabs [aria-selected="true"] {
+    background-color: #60A5FA !important;
+    color: white !important;
+    border-radius: 6px;
+}
+
+/* =============================================================================
+   EXPANDERS
+   ============================================================================= */
+
+.streamlit-expanderHeader {
+    color: var(--color-primary) !important;
+    font-weight: 600;
+}
+
+.streamlit-expanderContent {
+    color: var(--color-text-dark);
+}
+
+/* =============================================================================
+   IMAGES
+   ============================================================================= */
+
+.stImage > div > div > p {
+    color: var(--color-text-muted) !important;
+    font-style: italic;
+    text-align: center;
+}
+
+/* =============================================================================
+   ALERTS / INFO BOXES
+   ============================================================================= */
+
+.stAlert > div {
+    color: var(--color-text-dark) !important;
+}
+
+/* =============================================================================
+   LATEX / EQUATIONS
+   ============================================================================= */
+
+.katex {
+    color: var(--color-text-dark) !important;
+}
+
+/* =============================================================================
+   CODE BLOCKS
+   ============================================================================= */
+
+.stCodeBlock {
+    background-color: var(--color-bg-light) !important;
+}
+
+/* =============================================================================
+   DIVIDERS
+   ============================================================================= */
+
+hr {
+    border-color: var(--color-border);
+    margin: 2rem 0;
+}
+
+/* =============================================================================
+   RADIO BUTTONS / SELECTIONS
+   ============================================================================= */
+
+.stRadio label {
+    color: var(--color-text-dark) !important;
+}
+
+.stRadio [data-testid="stMarkdownContainer"] p {
+    color: var(--color-text-dark) !important;
+}
+
+/* =============================================================================
+   SELECT BOXES
+   ============================================================================= */
+
+.stSelectbox label {
+    color: var(--color-text-dark) !important;
+}
+
+/* =============================================================================
+   MARKDOWN TEXT
+   ============================================================================= */
+
+.stMarkdown {
+    color: var(--color-text-dark);
+}
+
+.stMarkdown a {
+    color: var(--color-primary);
+}
+
+.stMarkdown a:hover {
+    color: var(--color-primary-light);
+}

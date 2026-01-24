@@ -1,0 +1,197 @@
+{
+    "description": "Physical constants for Jugend forscht 2026 - Gravity and Quantum Forces Project",
+    "description_de": "Physikalische Konstanten fuer Jugend forscht 2026 - Gravitation und Quantenkraefte Projekt",
+    
+    "fundamental_constants": {
+        "hbar": {
+            "value": 1.054571817e-34,
+            "unit": "J·s",
+            "name": "Reduced Planck constant",
+            "name_de": "Reduzierte Planck-Konstante",
+            "symbol": "ℏ"
+        },
+        "G": {
+            "value": 6.67430e-11,
+            "unit": "m³·kg⁻¹·s⁻²",
+            "name": "Gravitational constant",
+            "name_de": "Gravitationskonstante",
+            "symbol": "G"
+        },
+        "c": {
+            "value": 299792458,
+            "unit": "m/s",
+            "name": "Speed of light",
+            "name_de": "Lichtgeschwindigkeit",
+            "symbol": "c"
+        },
+        "m_p": {
+            "value": 1.67262192369e-27,
+            "unit": "kg",
+            "name": "Proton mass",
+            "name_de": "Protonenmasse",
+            "symbol": "m_p"
+        },
+        "m_e": {
+            "value": 9.1093837015e-31,
+            "unit": "kg",
+            "name": "Electron mass",
+            "name_de": "Elektronenmasse",
+            "symbol": "m_e"
+        },
+        "e": {
+            "value": 1.602176634e-19,
+            "unit": "C",
+            "name": "Elementary charge",
+            "name_de": "Elementarladung",
+            "symbol": "e"
+        },
+        "k_e": {
+            "value": 8.9875517923e9,
+            "unit": "N·m²·C⁻²",
+            "name": "Coulomb constant",
+            "name_de": "Coulomb-Konstante",
+            "symbol": "k_e"
+        },
+        "epsilon_0": {
+            "value": 8.8541878128e-12,
+            "unit": "F/m",
+            "name": "Vacuum permittivity",
+            "name_de": "Elektrische Feldkonstante",
+            "symbol": "ε₀"
+        },
+        "k_B": {
+            "value": 1.380649e-23,
+            "unit": "J/K",
+            "name": "Boltzmann constant",
+            "name_de": "Boltzmann-Konstante",
+            "symbol": "k_B"
+        }
+    },
+
+    "atmospheric_constants": {
+        "c_p_air": {
+            "value": 1005,
+            "unit": "J/(kg·K)",
+            "name": "Specific heat of air at constant pressure",
+            "name_de": "Spezifische Wärmekapazität der Luft bei konstantem Druck",
+            "symbol": "c_p"
+        },
+        "mu_air": {
+            "value": 4.81e-26,
+            "unit": "kg",
+            "name": "Mean molecular mass of air",
+            "name_de": "Mittlere Molekularmasse der Luft",
+            "symbol": "μ"
+        },
+        "T_surface_earth": {
+            "value": 288,
+            "unit": "K",
+            "name": "Average Earth surface temperature",
+            "name_de": "Mittlere Erdoberflächentemperatur",
+            "symbol": "T_s"
+        },
+        "T_core_earth": {
+            "value": 5778,
+            "unit": "K",
+            "name": "Earth core temperature",
+            "name_de": "Erdkerntemperatur",
+            "symbol": "T_c"
+        }
+    },
+    
+    "derived_constants": {
+        "alpha": {
+            "value": 0.0072973525693,
+            "formula": "e² / (4πε₀ℏc)",
+            "name": "Fine-structure constant",
+            "name_de": "Feinstrukturkonstante",
+            "symbol": "α",
+            "note": "Approximately 1/137"
+        },
+        "a_0": {
+            "value": 5.29177210903e-11,
+            "unit": "m",
+            "formula": "4πε₀ℏ² / (m_e·e²)",
+            "name": "Bohr radius",
+            "name_de": "Bohrscher Radius",
+            "symbol": "a₀"
+        },
+        "alpha_G": {
+            "value": 5.9e-39,
+            "formula": "(G·m_p²) / (ℏ·c)",
+            "name": "Gravitational coupling constant",
+            "name_de": "Gravitationskopplungskonstante",
+            "symbol": "α_G",
+            "note": "Ratio of gravitational to electromagnetic force strength"
+        }
+    },
+    
+    "scaling_factors": {
+        "hbar_scale": {
+            "value": 1.0,
+            "description": "Scaling factor for ℏ (1.0 = standard universe)",
+            "description_de": "Skalierungsfaktor fuer ℏ (1.0 = Standarduniversum)"
+        },
+        "G_scale": {
+            "value": 1.0,
+            "description": "Scaling factor for G (1.0 = standard universe)",
+            "description_de": "Skalierungsfaktor fuer G (1.0 = Standarduniversum)"
+        }
+    },
+    
+    "astronomical_data": {
+        "M_sun": {
+            "value": 1.989e30,
+            "unit": "kg",
+            "name": "Solar mass",
+            "name_de": "Sonnenmasse",
+            "symbol": "M☉"
+        },
+        "R_sun": {
+            "value": 6.9634e8,
+            "unit": "m",
+            "name": "Solar radius",
+            "name_de": "Sonnenradius",
+            "symbol": "R☉"
+        },
+        "M_earth": {
+            "value": 5.972e24,
+            "unit": "kg",
+            "name": "Earth mass",
+            "name_de": "Erdmasse",
+            "symbol": "M⊕"
+        },
+        "R_earth": {
+            "value": 6.371e6,
+            "unit": "m",
+            "name": "Earth radius",
+            "name_de": "Erdradius",
+            "symbol": "R⊕"
+        },
+        "chandrasekhar_limit": {
+            "value": 1.4,
+            "unit": "M☉",
+            "name": "Chandrasekhar limit",
+            "name_de": "Chandrasekhar-Grenze",
+            "note": "Maximum mass of a stable white dwarf"
+        }
+    },
+    
+    "white_dwarf_typical": {
+        "mass": {
+            "value": 0.6,
+            "unit": "M☉",
+            "name": "Typical white dwarf mass"
+        },
+        "radius": {
+            "value": 0.01,
+            "unit": "R☉",
+            "name": "Typical white dwarf radius"
+        },
+        "density": {
+            "value": 1e9,
+            "unit": "kg/m³",
+            "name": "Typical white dwarf density"
+        }
+    }
+}

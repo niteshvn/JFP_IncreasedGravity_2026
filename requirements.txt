@@ -1,0 +1,12 @@
+# Jugend forscht 2026 - Physics Visualization Suite
+# Install with: pip install -r requirements.txt
+
+# Core dependencies
+numpy>=1.20.0
+matplotlib>=3.5.0
+
+# Interactive visualizations
+plotly>=5.0.0
+
+# Web dashboard (for competition presentation)
+streamlit>=1.20.0

@@ -1,0 +1,79 @@
+Jugend forscht Physics Visualization Project
+
+### Project Context
+I'm helping my daughter prepare for Jugend forscht 2026 (German youth science competition). The project investigates how increased gravitational force influences the interaction between Pauli's exclusion principle and Coulomb's law in dense stellar matter, particularly white dwarf stars.
+
+### Core Research Question
+"How does increasing gravitational pressure modify the balance between electron degeneracy pressure (Pauli) and Coulomb interactions in dense stellar matter?"
+
+### What I Need Built
+Create a Python visualization suite with the following modules:
+
+#### Module 1: Constants & Configuration
+- Use a `config.json` or `constants.py` for all physical constants (no hardcoding)
+- Include: ℏ (reduced Planck), G (gravitational), c (speed of light), m_p (proton mass), m_e (electron mass), e (elementary charge), α (fine-structure constant)
+- Support scaling factors for ℏ and G to simulate alternative universes
+- Calculate dimensionless gravitational coupling constant: **α_G = (G × m_p²) / (ℏ × c)**
+
+#### Module 2: Force Comparison Visualization
+- Log-scale bar chart comparing gravitational vs Coulomb force (showing the ~10³⁹ ratio)
+- Formula for Coulomb: F = k_e × (q₁ × q₂) / r²
+- Formula for Gravity: F = G × (m₁ × m₂) / r²
+- Show why gravity is negligible at atomic scales but dominant at stellar scales
+
+#### Module 3: White Dwarf Physics
+- **Pressure vs Density curves** showing:
+  - Non-relativistic regime: P_e ∝ ρ^(5/3)
+  - Relativistic regime: P_e ∝ ρ^(4/3)
+- **Mass-Radius relationship**: R ∝ M^(-1/3)
+- Show equilibrium points where pressure curves cross
+- Visualize why M > 1.4 solar masses has no stable solution (Chandrasekhar limit)
+
+#### Module 4: Spacetime Curvature ("The Dent")
+- 3D surface plot showing gravitational potential well
+- Calculate Schwarzschild radius: R_s = 2GM/c²
+- Show compactness parameter (R_s/R) for different stellar objects
+- Compare Earth, white dwarf, neutron star compactness
+
+#### Module 5: Atomic Scale Effects
+- Bohr radius calculation: a₀ ∝ ℏ/m_e (when α is constant)
+- Show how atoms shrink when ℏ decreases
+- Visualize electron energy levels under compression
+
+### Technical Requirements
+- Use Python with matplotlib for 2D plots
+- Use plotly for interactive 3D visualizations
+- All configuration in external files (follow my preference for no hardcoded values)
+- Include clear axis labels in both English and German
+- Generate publication-quality figures suitable for a 15-page competition report
+- Add educational annotations explaining the physics
+
+### Key Formulas to Implement
+```
+Gravitational acceleration: g = G × M / R²
+Hydrostatic equilibrium: dP/dr = -G × (M(r) × ρ(r)) / r²
+Escape velocity: v_esc = √(2 × G × M / R)
+Degeneracy pressure: P ≈ (ℏ² / m_e) × (N_e / V)^(5/3)
+```
+
+### Output Structure
+```
+/physics_simulation/
+├── config/
+│   └── constants.json
+├── modules/
+│   ├── force_comparison.py
+│   ├── white_dwarf.py
+│   ├── spacetime.py
+│   └── atomic_scale.py
+├── visualizations/
+│   └── (generated plots)
+├── main.py
+└── README.md
+```
+
+### Educational Goal
+The visualizations should help an 8th-grade student explain to competition judges why gravity is normally irrelevant at quantum scales, but becomes dominant in extreme astrophysical environments like white dwarfs, ultimately determining the Chandrasekhar limit (~1.4 solar masses).
+
+---
+
