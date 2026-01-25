@@ -213,6 +213,35 @@
             margin-bottom: 20px;
             font-size: 0.95rem;
         }
+        .viz-details .summary-details {
+            background: rgba(0,50,100,0.2);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid #00d4ff;
+            margin-bottom: 20px;
+        }
+        .viz-details .summary-details h4 {
+            font-size: 0.9rem;
+            color: #00d4ff;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .viz-details .summary-details p {
+            color: #ccc;
+            line-height: 1.5;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+        .viz-details .summary-details ul {
+            color: #ccc;
+            line-height: 1.5;
+            margin: 8px 0 10px 20px;
+            font-size: 0.9rem;
+        }
+        .viz-details .summary-details li {
+            margin-bottom: 5px;
+        }
         .viz-details .formulas {
             background: rgba(0,0,0,0.3);
             padding: 15px;
@@ -556,7 +585,17 @@
                     </div>
                     <div class="viz-details">
                         <h3 data-en="Time Dilation Summary" data-de="Zeitdilatation Zusammenfassung">Time Dilation Summary</h3>
-                        <p class="description" data-en="Comprehensive overview of gravitational time dilation across different astronomical objects. From Earth (negligible effect) to neutron stars (30% slower) to black holes (infinite at the event horizon). This effect is crucial for GPS accuracy." data-de="Umfassender Ueberblick ueber die Gravitationszeitdilatation bei verschiedenen astronomischen Objekten. Von der Erde (vernachlaessigbarer Effekt) bis zu Neutronensternen (30% langsamer) bis zu Schwarzen Loechern (unendlich am Ereignishorizont).">Overview of time dilation from Earth to black holes.</p>
+                        <p class="description" data-en="Comprehensive overview of gravitational time dilation across different astronomical objects. Proper time (tau) on a massive object runs slower than coordinate time (t) for a distant observer." data-de="Umfassender Ueberblick ueber die Gravitationszeitdilatation bei verschiedenen astronomischen Objekten. Eigenzeit (tau) auf einem massiven Objekt laeuft langsamer als Koordinatenzeit (t) fuer einen entfernten Beobachter.">Comprehensive overview of time dilation.</p>
+                        <div class="summary-details">
+                            <h4 data-en="Key Examples" data-de="Wichtige Beispiele">Key Examples</h4>
+                            <ul>
+                                <li data-en="Earth: ~0.0000007% slower (barely measurable)" data-de="Erde: ~0.0000007% langsamer (kaum messbar)">Earth: ~0.0000007% slower</li>
+                                <li data-en="White Dwarf: ~0.02% slower" data-de="Weisser Zwerg: ~0.02% langsamer">White Dwarf: ~0.02% slower</li>
+                                <li data-en="Neutron Star: ~30% slower (as stated in essay)" data-de="Neutronenstern: ~30% langsamer (wie im Essay)">Neutron Star: ~30% slower</li>
+                                <li data-en="Black Hole: Time stops at event horizon" data-de="Schwarzes Loch: Zeit steht am Ereignishorizont still">Black Hole: Time stops at event horizon</li>
+                            </ul>
+                            <p data-en="Physical meaning: The stronger gravity (larger G or more compact object), the slower time passes." data-de="Physikalische Bedeutung: Je staerker die Gravitation, desto langsamer vergeht die Zeit.">The stronger gravity, the slower time passes.</p>
+                        </div>
                         <div class="formulas">
                             <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
                             <div class="formula" id="formula-time-summary"></div>
@@ -733,7 +772,13 @@
                     </div>
                     <div class="viz-details">
                         <h3 data-en="Heisenberg Summary" data-de="Heisenberg Zusammenfassung">Heisenberg Summary</h3>
-                        <p class="description" data-en="Complete overview of how the Heisenberg uncertainty principle connects to degeneracy pressure: uncertainty → momentum → velocity → kinetic energy → pressure. This quantum effect supports compact stars against gravitational collapse." data-de="Vollstaendiger Ueberblick, wie das Heisenbergsche Unschaerfeprinzip mit dem Entartungsdruck zusammenhaengt: Unschaerfe → Impuls → Geschwindigkeit → kinetische Energie → Druck. Dieser Quanteneffekt stuetzt kompakte Sterne gegen den Gravitationskollaps.">Complete overview of uncertainty to pressure connection.</p>
+                        <p class="description" data-en="Complete overview of how the Heisenberg uncertainty principle connects to degeneracy pressure. This quantum effect supports compact stars against gravitational collapse." data-de="Vollstaendiger Ueberblick, wie das Heisenbergsche Unschaerfeprinzip mit dem Entartungsdruck zusammenhaengt. Dieser Quanteneffekt stuetzt kompakte Sterne gegen den Gravitationskollaps.">Complete overview of uncertainty to pressure connection.</p>
+                        <div class="summary-details">
+                            <h4 data-en="The Causal Chain" data-de="Die Kausalkette">The Causal Chain</h4>
+                            <p data-en="Δx·Δp ≥ ℏ/2 → Confinement (small Δx) → Large Δp uncertainty → Particles must have high momentum → High velocity ('restlessness') → Kinetic energy → Pressure" data-de="Δx·Δp ≥ ℏ/2 → Einschraenkung (kleines Δx) → Grosse Δp-Unschaerfe → Teilchen muessen hohen Impuls haben → Hohe Geschwindigkeit ('Unruhe') → Kinetische Energie → Druck">Δx·Δp ≥ ℏ/2 → Confinement → Momentum → Velocity → Energy → Pressure</p>
+                            <h4 data-en="Key Insight" data-de="Wichtige Erkenntnis">Key Insight</h4>
+                            <p data-en="Degeneracy pressure scales as ℏ² and inversely with confinement length⁵. Smaller confinement = higher pressure. This quantum 'restlessness' is what prevents white dwarfs and neutron stars from collapsing!" data-de="Entartungsdruck skaliert mit ℏ² und invers mit Einschraenkungslaenge⁵. Kleinere Einschraenkung = hoeherer Druck. Diese Quanten-'Unruhe' verhindert den Kollaps von Weissen Zwergen und Neutronensternen!">Degeneracy pressure scales as ℏ² - prevents stellar collapse!</p>
+                        </div>
                         <div class="formulas">
                             <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
                             <div class="formula" id="formula-heisenberg-sum"></div>
@@ -998,7 +1043,20 @@
                     </div>
                     <div class="viz-details">
                         <h3 data-en="Neutron Star Summary" data-de="Neutronenstern Zusammenfassung">Neutron Star Summary</h3>
-                        <p class="description" data-en="Complete overview of neutron star physics: TOV limit, density profile, time dilation, and the connection to the uncertainty principle. Neutron degeneracy pressure supports these extreme objects at the edge of becoming black holes." data-de="Vollstaendiger Ueberblick ueber Neutronensternphysik: TOV-Grenze, Dichteprofil, Zeitdilatation und die Verbindung zum Unschaerfeprinzip. Neutronenentartungsdruck stuetzt diese extremen Objekte an der Grenze zu Schwarzen Loechern.">Complete overview of neutron star physics and TOV limit.</p>
+                        <p class="description" data-en="Complete overview of neutron star physics. Neutron degeneracy pressure supports these extreme objects at the edge of becoming black holes." data-de="Vollstaendiger Ueberblick ueber Neutronensternphysik. Neutronenentartungsdruck stuetzt diese extreme Objekte an der Grenze zu Schwarzen Loechern.">Complete overview of neutron star physics.</p>
+                        <div class="summary-details">
+                            <h4 data-en="Neutron Star Facts (1.4 M☉)" data-de="Neutronenstern-Fakten (1.4 M☉)">Neutron Star Facts (1.4 M☉)</h4>
+                            <ul>
+                                <li data-en="Mass: 1.4 Solar masses = 2.8×10³⁰ kg" data-de="Masse: 1.4 Sonnenmassen = 2.8×10³⁰ kg">Mass: 1.4 M☉ = 2.8×10³⁰ kg</li>
+                                <li data-en="Radius: ~12 km (size of a city!)" data-de="Radius: ~12 km (Groesse einer Stadt!)">Radius: ~12 km (city-sized)</li>
+                                <li data-en="Density: ~10¹⁷ kg/m³ (1 teaspoon = 1 billion tons)" data-de="Dichte: ~10¹⁷ kg/m³ (1 Teeloeffel = 1 Milliarde Tonnen)">Density: ~10¹⁷ kg/m³</li>
+                                <li data-en="Surface gravity: ~10¹² m/s² (10¹¹ × Earth g)" data-de="Oberflächengravitation: ~10¹² m/s² (10¹¹ × Erd-g)">Surface gravity: ~10¹¹ × Earth g</li>
+                                <li data-en="Escape velocity: ~100,000 km/s (33% speed of light)" data-de="Fluchtgeschwindigkeit: ~100,000 km/s (33% Lichtgeschwindigkeit)">Escape velocity: ~33% c</li>
+                                <li data-en="Time dilation: ~0.77 (time passes 23% slower)" data-de="Zeitdilatation: ~0.77 (Zeit vergeht 23% langsamer)">Time dilation: time ~23% slower</li>
+                            </ul>
+                            <h4 data-en="Mass Limits" data-de="Massengrenzen">Mass Limits</h4>
+                            <p data-en="Chandrasekhar Limit: 1.4 M☉ (White Dwarf) | TOV Limit: ~2.2 M☉ (Neutron Star)" data-de="Chandrasekhar-Grenze: 1.4 M☉ (Weisser Zwerg) | TOV-Grenze: ~2.2 M☉ (Neutronenstern)">Ch. Limit: 1.4 M☉ | TOV: ~2.2 M☉</p>
+                        </div>
                         <div class="formulas">
                             <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
                             <div class="formula" id="formula-ns-summary"></div>
@@ -1047,7 +1105,19 @@
                     </div>
                     <div class="viz-details">
                         <h3 data-en="Essay Hypothesis Summary" data-de="Essay-Hypothese Zusammenfassung">Essay Hypothesis Summary</h3>
-                        <p class="description" data-en="Summary of the essay's exploration: By scaling G or ℏ, we can shift the balance between gravitational and quantum forces. When G×10³⁶ or ℏ×10⁻¹⁸, gravity dominates at atomic scales, fundamentally changing the nature of matter and stellar structure." data-de="Zusammenfassung der Essay-Erforschung: Durch Skalierung von G oder ℏ koennen wir das Gleichgewicht zwischen Gravitations- und Quantenkraeften verschieben. Bei G×10³⁶ oder ℏ×10⁻¹⁸ dominiert Gravitation auf atomarer Skala und veraendert fundamental die Natur von Materie und Sternstruktur.">Summary: How changing G or ℏ shifts the gravity-quantum balance.</p>
+                        <p class="description" data-en="Summary of the essay's exploration: How changing G or ℏ shifts the fundamental balance between gravitational and quantum forces." data-de="Zusammenfassung der Essay-Erforschung: Wie Aenderungen von G oder ℏ das fundamentale Gleichgewicht zwischen Gravitations- und Quantenkraeften verschieben.">How changing G or ℏ shifts the gravity-quantum balance.</p>
+                        <div class="summary-details">
+                            <h4 data-en="Core Insight" data-de="Kernerkenntnis">Core Insight</h4>
+                            <p data-en="For stability: P_Pauli must balance P_gravity. Since P_gravity ∝ G and P_Pauli ∝ ℏ², maintaining balance requires: ℏ² ∝ G, or equivalently ℏ ∝ √G" data-de="Fuer Stabilitaet: P_Pauli muss P_gravity ausgleichen. Da P_gravity ∝ G und P_Pauli ∝ ℏ², erfordert das Gleichgewicht: ℏ² ∝ G, oder aequivalent ℏ ∝ √G">For stability: ℏ² ∝ G, meaning ℏ ∝ √G</p>
+                            <h4 data-en="Key Scaling Relations" data-de="Wichtige Skalierungsbeziehungen">Key Scaling Relations</h4>
+                            <ul>
+                                <li data-en="If G increases 10³⁶ times → ℏ must increase 10¹⁸ times for same balance" data-de="Wenn G um 10³⁶ steigt → ℏ muss um 10¹⁸ steigen fuer gleiches Gleichgewicht">G × 10³⁶ → ℏ must × 10¹⁸</li>
+                                <li data-en="Without ℏ compensation: matter collapses at much larger scales" data-de="Ohne ℏ-Kompensation: Materie kollabiert bei viel groesseren Skalen">Without ℏ compensation: early collapse</li>
+                                <li data-en="The ratio G/ℏ² determines the 'atomic-scale gravity' strength" data-de="Das Verhaeltnis G/ℏ² bestimmt die 'atomare Gravitationsstaerke'">G/ℏ² sets atomic gravity strength</li>
+                            </ul>
+                            <h4 data-en="Implications" data-de="Implikationen">Implications</h4>
+                            <p data-en="In our universe, G/ℏ² is tiny (gravity negligible at atomic scale). In alternative universes with different constants, gravity could dominate at small scales, dramatically changing chemistry and stellar physics." data-de="In unserem Universum ist G/ℏ² winzig (Gravitation vernachlaessigbar auf atomarer Skala). In alternativen Universen mit anderen Konstanten koennte Gravitation bei kleinen Skalen dominieren.">G/ℏ² determines gravity's role at atomic scales.</p>
+                        </div>
                         <div class="formulas">
                             <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
                             <div class="formula" id="formula-hypothesis"></div>

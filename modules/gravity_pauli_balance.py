@@ -271,7 +271,7 @@ def plot_earth_structural_effects(
         ax1.set_ylabel('Earth radius / standard radius', fontsize=11)
         ax1.set_title('1. Earth Radius vs. Gravity Strength', fontsize=12, fontweight='bold')
 
-    ax1.legend(fontsize=9, loc='upper right')
+    ax1.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=3)
     ax1.grid(True, alpha=0.3)
 
     # Plot 2: Pressure components vs G
@@ -305,7 +305,7 @@ def plot_earth_structural_effects(
         ax2.set_ylabel('Pressure (Pa)', fontsize=11)
         ax2.set_title('2. Pressure Components in Earth\'s Core', fontsize=12, fontweight='bold')
 
-    ax2.legend(fontsize=9, loc='upper left')
+    ax2.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=3)
     ax2.grid(True, alpha=0.3, which='both')
 
     # Plot 3: Effect of ℏ scaling on degeneracy pressure
@@ -350,7 +350,7 @@ def plot_earth_structural_effects(
         ax3.set_ylabel('Pressure (Pa)', fontsize=11)
         ax3.set_title(f'3. Degeneracy Pressure vs. ℏ (G × {G_fixed:.0e})', fontsize=12, fontweight='bold')
 
-    ax3.legend(fontsize=9, loc='lower right')
+    ax3.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=3)
     ax3.grid(True, alpha=0.3, which='both')
 
     # Plot 4: Stability map in G-ℏ space
@@ -383,10 +383,11 @@ def plot_earth_structural_effects(
         ax4.set_ylabel('log₁₀(ℏ/ℏ₀)', fontsize=11)
         ax4.set_title('4. Earth Stability Map in G-ℏ Space\n(Blue = stable, Red = collapse)', fontsize=12, fontweight='bold')
 
-    ax4.legend(fontsize=9, loc='upper left')
+    ax4.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=2)
     ax4.grid(True, alpha=0.3)
 
     plt.tight_layout()
+    plt.subplots_adjust(bottom=0.12)
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)
@@ -425,8 +426,8 @@ def plot_gravity_vs_pauli(
     if constants is None:
         constants = get_constants()
 
-    fig = plt.figure(figsize=(16, 14))
-    gs = fig.add_gridspec(3, 2, hspace=0.4, wspace=0.3)
+    fig = plt.figure(figsize=(14, 12))
+    gs = fig.add_gridspec(2, 2, hspace=0.35, wspace=0.3)
 
     # Plot 1: Pressure vs density comparison
     ax1 = fig.add_subplot(gs[0, 0])
@@ -472,7 +473,7 @@ def plot_gravity_vs_pauli(
         ax1.set_ylabel('Pressure P (Pa)', fontsize=11)
         ax1.set_title('1. Gravitational Pressure vs. Pauli Pressure', fontsize=12, fontweight='bold')
 
-    ax1.legend(fontsize=8, loc='upper left')
+    ax1.legend(fontsize=8, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=3)
     ax1.grid(True, alpha=0.3, which='both')
 
     # Plot 2: Pressure ratio vs mass
@@ -514,7 +515,7 @@ def plot_gravity_vs_pauli(
         ax2.set_ylabel('P_gravity / P_Pauli', fontsize=11)
         ax2.set_title('2. Pressure Ratio vs. Mass (at WD density)', fontsize=12, fontweight='bold')
 
-    ax2.legend(fontsize=9, loc='upper left')
+    ax2.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=2)
     ax2.grid(True, alpha=0.3, which='both')
 
     # Plot 3: Effect of G scaling on balance
@@ -553,7 +554,7 @@ def plot_gravity_vs_pauli(
         ax3.set_ylabel('P_gravity / P_Pauli', fontsize=11)
         ax3.set_title('3. Pressure Ratio vs. G Scaling', fontsize=12, fontweight='bold')
 
-    ax3.legend(fontsize=9, loc='upper left')
+    ax3.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=3)
     ax3.grid(True, alpha=0.3, which='both')
 
     # Plot 4: ℏ scaling to restore balance
@@ -595,63 +596,8 @@ def plot_gravity_vs_pauli(
         ax4.set_ylabel('P_gravity / P_Pauli', fontsize=11)
         ax4.set_title(f'4. Balance at G × 10³⁶', fontsize=12, fontweight='bold')
 
-    ax4.legend(fontsize=9, loc='upper right')
+    ax4.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=3)
     ax4.grid(True, alpha=0.3, which='both')
-
-    # Plot 5: Summary text
-    ax5 = fig.add_subplot(gs[2, :])
-    ax5.axis('off')
-
-    if language == 'de':
-        summary_text = """
-        GRAVITATION vs. PAULI-AUSSCHLUSSPRINZIP - Hypothesenvalidierung
-        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-        ESSAY-HYPOTHESE:
-        "Wie verändert zunehmender Gravitationsdruck das Gleichgewicht zwischen
-         Elektronen-Entartungsdruck (Pauli) und Coulomb-Wechselwirkungen?"
-
-        ERGEBNISSE:
-        1. P_grav ∝ G × M² / R⁴   (steigt mit G)
-        2. P_Pauli ∝ ℏ² × ρ^(5/3)  (steigt mit ℏ²)
-
-        BEI G × 10³⁶ (Essay-Szenario):
-        • Ohne ℏ-Anpassung: P_grav >> P_Pauli → Alle Objekte kollabieren
-        • Mit ℏ × 10¹⁸: P_Pauli skaliert mit ℏ² = 10³⁶ → Gleichgewicht wiederhergestellt
-
-        SCHLUSSFOLGERUNG:
-        ✓ Erhöhte Gravitation allein führt zum Kollaps normaler Materie
-        ✓ Skalierung von ℏ (wie im Essay vorgeschlagen) kann das Gleichgewicht wiederherstellen
-        ✓ Das Pauli-Prinzip (P_Pauli ∝ ℏ²) ist entscheidend für die Stabilität kompakter Objekte
-        """
-    else:
-        summary_text = """
-        GRAVITY vs. PAULI EXCLUSION PRINCIPLE - Hypothesis Validation
-        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-        ESSAY HYPOTHESIS:
-        "How does increasing gravitational pressure modify the balance between
-         electron degeneracy pressure (Pauli) and Coulomb interactions?"
-
-        RESULTS:
-        1. P_gravity ∝ G × M² / R⁴   (increases with G)
-        2. P_Pauli ∝ ℏ² × ρ^(5/3)    (increases with ℏ²)
-
-        AT G × 10³⁶ (Essay scenario):
-        • Without ℏ adjustment: P_grav >> P_Pauli → All objects collapse
-        • With ℏ × 10¹⁸: P_Pauli scales as ℏ² = 10³⁶ → Balance restored
-
-        CONCLUSION:
-        ✓ Increased gravity alone leads to collapse of normal matter
-        ✓ Scaling ℏ (as suggested in essay) can restore equilibrium
-        ✓ The Pauli principle (P_Pauli ∝ ℏ²) is critical for stability of compact objects
-        """
-
-    ax5.text(0.5, 0.5, summary_text, transform=ax5.transAxes, fontsize=11,
-             verticalalignment='center', horizontalalignment='center',
-             fontfamily='monospace',
-             bbox=dict(boxstyle='round', facecolor='white', alpha=0.9,
-                      edgecolor=COLORS['primary_blue'], linewidth=2))
 
     # Overall title
     if language == 'de':
@@ -662,6 +608,7 @@ def plot_gravity_vs_pauli(
                     fontsize=16, fontweight='bold', y=0.98)
 
     plt.tight_layout()
+    plt.subplots_adjust(bottom=0.12, top=0.93)
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)
@@ -738,133 +685,106 @@ def plot_hypothesis_summary(
 
     ax1.grid(True, alpha=0.3, which='both')
 
-    # Plot 2: Scaling relationships
+    # Plot 2: Pressure scaling with G
     ax2 = axes[0, 1]
 
-    # Show key scaling relationships
-    scalings = [
-        ('P_gravity', '∝ G', COLORS['scaled']),
-        ('P_Pauli', '∝ ℏ²', COLORS['quantum']),
-        ('Bohr radius a₀', '∝ ℏ²', COLORS['primary_blue']),
-        ('Chandrasekhar M', '∝ (ℏc/G)^{3/2}', COLORS['primary_amber']),
-    ]
+    G_scales = np.logspace(0, 40, 100)
 
-    y_pos = np.arange(len(scalings))
-    ax2.barh(y_pos, [1, 1, 1, 1], color=[s[2] for s in scalings], alpha=0.7, edgecolor='black')
+    # Gravitational pressure ∝ G
+    P_grav_scaling = G_scales
 
-    for i, (name, scaling, _) in enumerate(scalings):
-        ax2.text(0.5, i, f'{name}  {scaling}', ha='center', va='center', fontsize=12, fontweight='bold')
+    # Degeneracy pressure ∝ ℏ² (constant ℏ)
+    P_deg_scaling = np.ones_like(G_scales)
 
-    ax2.set_yticks([])
-    ax2.set_xticks([])
+    ax2.loglog(G_scales, P_grav_scaling, '-', color=COLORS['scaled'], linewidth=2.5,
+               label='P_gravity (∝ G)' if language == 'en' else 'P_Gravitation (∝ G)')
+    ax2.loglog(G_scales, P_deg_scaling, '--', color=COLORS['quantum'], linewidth=2.5,
+               label='P_Pauli (constant ℏ)' if language == 'en' else 'P_Pauli (konstant ℏ)')
+
+    # Mark where gravity exceeds Pauli
+    ax2.axvline(x=1, color=COLORS['standard'], linestyle=':', alpha=0.7, label='Standard G')
+    ax2.axvline(x=1e36, color='red', linestyle='--', alpha=0.7, label='G × 10³⁶')
+    ax2.axhline(y=1e36, color=COLORS['primary_amber'], linestyle=':', alpha=0.5)
 
     if language == 'de':
-        ax2.set_title('2. Schlüssel-Skalierungsbeziehungen', fontsize=12, fontweight='bold')
+        ax2.set_xlabel('G-Skalierung', fontsize=11)
+        ax2.set_ylabel('Relative Druckskalierung', fontsize=11)
+        ax2.set_title('2. Druckskalierung mit G (ℏ konstant)', fontsize=12, fontweight='bold')
     else:
-        ax2.set_title('2. Key Scaling Relationships', fontsize=12, fontweight='bold')
+        ax2.set_xlabel('G scaling', fontsize=11)
+        ax2.set_ylabel('Relative pressure scaling', fontsize=11)
+        ax2.set_title('2. Pressure Scaling with G (ℏ constant)', fontsize=12, fontweight='bold')
 
-    # Plot 3: Before and after G scaling conceptual
+    ax2.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=2)
+    ax2.grid(True, alpha=0.3, which='both')
+
+    # Plot 3: Stability ratio vs G for different ℏ scalings
     ax3 = axes[1, 0]
 
-    # Conceptual diagram
-    ax3.set_xlim(0, 10)
-    ax3.set_ylim(0, 10)
-    ax3.axis('off')
+    hbar_scalings = [1, 1e9, 1e18]
+    labels_en = ['Standard ℏ', 'ℏ × 10⁹', 'ℏ × 10¹⁸']
+    labels_de = ['Standard ℏ', 'ℏ × 10⁹', 'ℏ × 10¹⁸']
+    colors_hbar = [COLORS['primary_blue'], COLORS['primary_amber'], COLORS['quantum']]
 
-    # Standard universe
-    ax3.add_patch(Circle((2.5, 7), 1.5, facecolor=COLORS['primary_blue'], edgecolor='black', linewidth=2))
-    ax3.text(2.5, 7, 'Normal\nMatter', ha='center', va='center', fontsize=10, fontweight='bold')
-    ax3.text(2.5, 9.2, 'Standard Universe' if language == 'en' else 'Standarduniversum',
-            ha='center', fontsize=11, fontweight='bold')
+    for hbar_s, label_en, label_de, color in zip(hbar_scalings, labels_en, labels_de, colors_hbar):
+        # P_grav / P_Pauli ∝ G / ℏ²
+        ratio = G_scales / (hbar_s ** 2)
+        label = label_de if language == 'de' else label_en
+        ax3.loglog(G_scales, ratio, '-', color=color, linewidth=2, label=label)
 
-    # G × 10^36 without ℏ scaling
-    ax3.add_patch(Circle((5, 3), 0.3, facecolor='red', edgecolor='black', linewidth=2))
-    ax3.text(5, 3, '●', ha='center', va='center', fontsize=20, color='black')
-    ax3.text(5, 1.5, 'G × 10³⁶\n(no ℏ change)', ha='center', fontsize=10)
-    ax3.text(5, 0.5, 'COLLAPSE!' if language == 'en' else 'KOLLAPS!',
-            ha='center', fontsize=11, fontweight='bold', color='red')
-
-    # G × 10^36 with ℏ × 10^18
-    ax3.add_patch(Circle((7.5, 7), 1.5, facecolor=COLORS['quantum'], edgecolor='black', linewidth=2))
-    ax3.text(7.5, 7, 'Stable\n(Pauli)', ha='center', va='center', fontsize=10, fontweight='bold')
-    ax3.text(7.5, 9.2, 'G × 10³⁶, ℏ × 10¹⁸', ha='center', fontsize=11, fontweight='bold')
-
-    # Arrows
-    ax3.annotate('', xy=(4, 4), xytext=(3.5, 5.5),
-                arrowprops=dict(arrowstyle='->', color='red', lw=2))
-    ax3.annotate('', xy=(6.5, 6), xytext=(3.5, 6.5),
-                arrowprops=dict(arrowstyle='->', color='green', lw=2))
+    ax3.axhline(y=1, color='red', linestyle='--', linewidth=2, alpha=0.8,
+               label='Collapse threshold' if language == 'en' else 'Kollapsgrenze')
+    ax3.axvline(x=1e36, color='gray', linestyle=':', alpha=0.5, label='G × 10³⁶')
 
     if language == 'de':
-        ax3.set_title('3. Konzeptionelle Darstellung', fontsize=12, fontweight='bold', y=1.05)
+        ax3.set_xlabel('G-Skalierung', fontsize=11)
+        ax3.set_ylabel('P_grav / P_Pauli', fontsize=11)
+        ax3.set_title('3. Stabilitätsverhältnis vs G', fontsize=12, fontweight='bold')
     else:
-        ax3.set_title('3. Conceptual Illustration', fontsize=12, fontweight='bold', y=1.05)
+        ax3.set_xlabel('G scaling', fontsize=11)
+        ax3.set_ylabel('P_gravity / P_Pauli', fontsize=11)
+        ax3.set_title('3. Stability Ratio vs G', fontsize=12, fontweight='bold')
 
-    # Plot 4: Conclusion
+    ax3.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=3)
+    ax3.grid(True, alpha=0.3, which='both')
+
+    # Plot 4: Required ℏ scaling for stability at different G
     ax4 = axes[1, 1]
-    ax4.axis('off')
+
+    G_values = np.logspace(0, 40, 50)
+    # For stability: P_grav = P_Pauli → G_scaled = ℏ_scaled²
+    # So ℏ_needed = sqrt(G_scaled)
+    hbar_needed = np.sqrt(G_values)
+
+    ax4.loglog(G_values, hbar_needed, '-', color=COLORS['quantum'], linewidth=2.5,
+               label='Required ℏ for stability' if language == 'en' else 'Erforderliches ℏ für Stabilität')
+
+    # Mark essay scenario
+    ax4.plot(1e36, 1e18, 'o', color=COLORS['primary_amber'], markersize=15,
+             label='Essay (G×10³⁶, ℏ×10¹⁸)' if language == 'en' else 'Essay (G×10³⁶, ℏ×10¹⁸)')
+    ax4.plot(1, 1, 's', color=COLORS['standard'], markersize=12,
+             label='Standard universe' if language == 'en' else 'Standarduniversum')
+
+    # Shade stable and unstable regions
+    ax4.fill_between(G_values, hbar_needed, 1e25, alpha=0.2, color=COLORS['primary_blue'])
+    ax4.fill_between(G_values, 1e-5, hbar_needed, alpha=0.2, color=COLORS['scaled'])
 
     if language == 'de':
-        conclusion = """
-        ZUSAMMENFASSUNG
-        ━━━━━━━━━━━━━━━━
-
-        FORSCHUNGSFRAGE:
-        Wie verändert zunehmender
-        Gravitationsdruck das Gleichgewicht?
-
-        ANTWORT:
-        ✓ Erhöhte Gravitation (G↑)
-          verschiebt Gleichgewicht zur
-          Kompression
-
-        ✓ Pauli-Ausschlussprinzip
-          (über ℏ) liefert Gegendruck
-
-        ✓ Verhältnis P_grav/P_Pauli ∝ G/ℏ²
-          bestimmt Stabilität
-
-        ✓ Koordinierte Skalierung von
-          G und ℏ kann Strukturen
-          erhalten
-        """
+        ax4.set_xlabel('G-Skalierung', fontsize=11)
+        ax4.set_ylabel('Erforderliche ℏ-Skalierung', fontsize=11)
+        ax4.set_title('4. ℏ erforderlich für Gleichgewicht: ℏ ∝ √G', fontsize=12, fontweight='bold')
     else:
-        conclusion = """
-        SUMMARY
-        ━━━━━━━━
+        ax4.set_xlabel('G scaling', fontsize=11)
+        ax4.set_ylabel('Required ℏ scaling', fontsize=11)
+        ax4.set_title('4. ℏ Required for Balance: ℏ ∝ √G', fontsize=12, fontweight='bold')
 
-        RESEARCH QUESTION:
-        How does increasing gravitational
-        pressure modify the balance?
-
-        ANSWER:
-        ✓ Increased gravity (G↑)
-          shifts balance toward
-          compression
-
-        ✓ Pauli exclusion principle
-          (via ℏ) provides counter-pressure
-
-        ✓ Ratio P_grav/P_Pauli ∝ G/ℏ²
-          determines stability
-
-        ✓ Coordinated scaling of
-          G and ℏ can preserve
-          structures
-        """
-
-    ax4.text(0.5, 0.5, conclusion, transform=ax4.transAxes, fontsize=11,
-             verticalalignment='center', horizontalalignment='center',
-             fontfamily='monospace',
-             bbox=dict(boxstyle='round', facecolor='white', alpha=0.9,
-                      edgecolor=COLORS['quantum'], linewidth=2))
-
-    if language == 'de':
-        ax4.set_title('4. Schlussfolgerungen', fontsize=12, fontweight='bold')
-    else:
-        ax4.set_title('4. Conclusions', fontsize=12, fontweight='bold')
+    ax4.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=2)
+    ax4.grid(True, alpha=0.3, which='both')
+    ax4.set_xlim(1, 1e42)
+    ax4.set_ylim(1e-2, 1e25)
 
     plt.tight_layout()
+    plt.subplots_adjust(bottom=0.12)
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)

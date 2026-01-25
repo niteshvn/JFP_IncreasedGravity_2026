@@ -249,7 +249,7 @@ def plot_uncertainty_principle_basic(
         ax1.set_ylabel('Minimum momentum Δp_min (kg·m/s)', fontsize=12)
         ax1.set_title('Heisenberg Uncertainty Relation: Δx·Δp ≥ ℏ/2', fontsize=14, fontweight='bold')
 
-    ax1.legend(fontsize=9, loc='upper right')
+    ax1.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=3)
     ax1.grid(True, alpha=0.3, which='both')
 
     # Plot 2: Phase space visualization
@@ -290,10 +290,11 @@ def plot_uncertainty_principle_basic(
         ax2.set_ylabel('Δp (normalized units)', fontsize=12)
         ax2.set_title('Phase Space Representation', fontsize=14, fontweight='bold')
 
-    ax2.legend(fontsize=9, loc='upper right')
+    ax2.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=2)
     ax2.grid(True, alpha=0.3)
 
     plt.tight_layout()
+    plt.subplots_adjust(bottom=0.18)
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)
@@ -384,7 +385,7 @@ def plot_confinement_velocity(
         ax1.set_ylabel('Velocity v/c', fontsize=12)
         ax1.set_title('"Restlessness" from Confinement: v ∝ ℏ/(m·Δx)', fontsize=14, fontweight='bold')
 
-    ax1.legend(fontsize=9, loc='upper right')
+    ax1.legend(fontsize=8, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=4)
     ax1.grid(True, alpha=0.3, which='both')
     ax1.set_ylim(1e-4, 10)
 
@@ -423,10 +424,11 @@ def plot_confinement_velocity(
         ax2.set_ylabel('Kinetic energy (eV)', fontsize=12)
         ax2.set_title('Zero-point Energy: E ∝ ℏ²/(m·Δx²)', fontsize=14, fontweight='bold')
 
-    ax2.legend(fontsize=9, loc='upper right')
+    ax2.legend(fontsize=8, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=3)
     ax2.grid(True, alpha=0.3, which='both')
 
     plt.tight_layout()
+    plt.subplots_adjust(bottom=0.2)
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)
@@ -504,7 +506,7 @@ def plot_uncertainty_to_pressure(
         ax1.set_ylabel('Electron pressure P (Pa)', fontsize=11)
         ax1.set_title('Electron Degeneracy Pressure', fontsize=13, fontweight='bold')
 
-    ax1.legend(fontsize=9, loc='upper left')
+    ax1.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=2)
     ax1.grid(True, alpha=0.3, which='both')
 
     # Plot 2: Neutron degeneracy pressure
@@ -529,63 +531,42 @@ def plot_uncertainty_to_pressure(
         ax2.set_ylabel('Neutron pressure P (Pa)', fontsize=11)
         ax2.set_title('Neutron Degeneracy Pressure', fontsize=13, fontweight='bold')
 
-    ax2.legend(fontsize=9, loc='upper left')
+    ax2.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=2)
     ax2.grid(True, alpha=0.3, which='both')
 
-    # Plot 3: Conceptual diagram of uncertainty → pressure chain
+    # Plot 3: Confinement energy vs confinement length (data visualization)
     ax3 = axes[1, 0]
-    ax3.set_xlim(0, 10)
-    ax3.set_ylim(0, 10)
-    ax3.axis('off')
 
-    # Draw boxes for each step
-    box_props = dict(boxstyle='round,pad=0.5', facecolor='white', edgecolor=COLORS['primary_blue'],
-                     linewidth=2)
+    # Confinement lengths from atomic to nuclear scales
+    delta_x_range = np.logspace(-15, -10, 100)  # 1 fm to 0.1 nm
 
-    steps_en = [
-        'Confinement\nΔx decreases',
-        'Uncertainty\nΔp ≥ ℏ/(2Δx)',
-        'Momentum\np ~ Δp',
-        'Kinetic Energy\nE = p²/(2m)',
-        'PRESSURE\nP = nE'
-    ]
-    steps_de = [
-        'Einschluss\nΔx nimmt ab',
-        'Unschärfe\nΔp ≥ ℏ/(2Δx)',
-        'Impuls\np ~ Δp',
-        'Kinetische Energie\nE = p²/(2m)',
-        'DRUCK\nP = nE'
-    ]
-    steps = steps_de if language == 'de' else steps_en
+    # Calculate confinement energy for electrons and neutrons
+    E_conf_e = confinement_kinetic_energy(delta_x_range, constants.m_e, constants)
+    E_conf_n = confinement_kinetic_energy(delta_x_range, constants.m_n, constants)
 
-    x_positions = [1, 3, 5, 7, 9]
-    y_pos = 5
+    # Convert to eV
+    ax3.loglog(delta_x_range * 1e15, E_conf_e / constants.e, '-', color=COLORS['primary_blue'],
+               linewidth=2.5, label='Electron' if language == 'en' else 'Elektron')
+    ax3.loglog(delta_x_range * 1e15, E_conf_n / constants.e, '--', color=COLORS['quantum'],
+               linewidth=2.5, label='Neutron')
 
-    colors = [COLORS['primary_blue'], COLORS['quantum'], COLORS['scaled'],
-              COLORS['primary_amber'], COLORS['text_dark']]
-
-    for i, (x, step, color) in enumerate(zip(x_positions, steps, colors)):
-        box = dict(boxstyle='round,pad=0.5', facecolor='white', edgecolor=color, linewidth=2)
-        ax3.text(x, y_pos, step, ha='center', va='center', fontsize=10,
-                bbox=box, fontweight='bold' if i == 4 else 'normal')
-
-        # Add arrows between boxes
-        if i < len(steps) - 1:
-            ax3.annotate('', xy=(x + 0.7, y_pos), xytext=(x + 0.3, y_pos),
-                        arrowprops=dict(arrowstyle='->', color=COLORS['text_dark'], lw=2))
-
-    # Add essay quote
-    if language == 'de':
-        quote = '„Diese Unruhe erzeugt den nach außen gerichteten Druck"'
-    else:
-        quote = '"This restlessness creates the outward-directed pressure"'
-    ax3.text(5, 2, quote, ha='center', va='center', fontsize=11, style='italic',
-            bbox=dict(boxstyle='round', facecolor='white', alpha=0.8))
+    # Mark key scales
+    ax3.axvline(x=constants.a_0 * 1e15, color=COLORS['standard'], linestyle=':', alpha=0.7,
+                label='Atom (a₀)' if language == 'en' else 'Atom (a₀)')
+    ax3.axvline(x=1, color=COLORS['scaled'], linestyle=':', alpha=0.7,
+                label='Nuclear (1 fm)' if language == 'en' else 'Nuklear (1 fm)')
 
     if language == 'de':
-        ax3.set_title('Kausalkette: Unschärfe → Druck', fontsize=13, fontweight='bold', y=0.95)
+        ax3.set_xlabel('Einschlusslänge Δx (fm)', fontsize=11)
+        ax3.set_ylabel('Einschlussenergie (eV)', fontsize=11)
+        ax3.set_title('Einschlussenergie E ∝ 1/Δx²', fontsize=13, fontweight='bold')
     else:
-        ax3.set_title('Causal Chain: Uncertainty → Pressure', fontsize=13, fontweight='bold', y=0.95)
+        ax3.set_xlabel('Confinement length Δx (fm)', fontsize=11)
+        ax3.set_ylabel('Confinement energy (eV)', fontsize=11)
+        ax3.set_title('Confinement Energy E ∝ 1/Δx²', fontsize=13, fontweight='bold')
+
+    ax3.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=4)
+    ax3.grid(True, alpha=0.3, which='both')
 
     # Plot 4: Effect of ℏ on pressure
     ax4 = axes[1, 1]
@@ -617,10 +598,11 @@ def plot_uncertainty_to_pressure(
         ax4.set_ylabel('Degeneracy pressure P (Pa)', fontsize=11)
         ax4.set_title('Effect of ℏ: P ∝ ℏ²', fontsize=13, fontweight='bold')
 
-    ax4.legend(fontsize=9, loc='upper left')
+    ax4.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=3)
     ax4.grid(True, alpha=0.3, which='both')
 
     plt.tight_layout()
+    plt.subplots_adjust(bottom=0.12)
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)
@@ -692,7 +674,7 @@ def plot_uncertainty_hbar_scaling(
         ax1.set_ylabel('Δp_min (kg·m/s)', fontsize=11)
         ax1.set_title('Minimum Momentum Uncertainty: Δp ∝ ℏ', fontsize=13, fontweight='bold')
 
-    ax1.legend(fontsize=9, loc='upper left')
+    ax1.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=2)
     ax1.grid(True, alpha=0.3, which='both')
 
     # Plot 2: Confinement velocity vs ℏ
@@ -713,7 +695,7 @@ def plot_uncertainty_hbar_scaling(
         ax2.set_ylabel('v/c', fontsize=11)
         ax2.set_title('Confinement Velocity: v ∝ ℏ', fontsize=13, fontweight='bold')
 
-    ax2.legend(fontsize=9, loc='upper left')
+    ax2.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=2)
     ax2.grid(True, alpha=0.3, which='both')
 
     # Plot 3: Zero-point energy vs ℏ
@@ -733,7 +715,7 @@ def plot_uncertainty_hbar_scaling(
         ax3.set_ylabel('Zero-point energy (eV)', fontsize=11)
         ax3.set_title('Kinetic Energy: E ∝ ℏ²', fontsize=13, fontweight='bold')
 
-    ax3.legend(fontsize=9, loc='upper left')
+    ax3.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=2)
     ax3.grid(True, alpha=0.3, which='both')
 
     # Plot 4: Degeneracy pressure vs ℏ
@@ -744,11 +726,6 @@ def plot_uncertainty_hbar_scaling(
     ax4.axhline(y=1, color=COLORS['standard'], linestyle=':', alpha=0.5)
     ax4.plot(1, 1, 'o', color=COLORS['standard'], markersize=12, label='Standard ℏ')
 
-    # Mark the essay scaling (G × 10^36 with ℏ scaling to preserve atoms)
-    # When G increases, we need ℏ to increase to maintain Bohr radius: ℏ_new = sqrt(G_new/G_old) × ℏ
-    # For G × 10^36: ℏ would need to scale by 10^18 to keep atoms same size
-    # But the essay discusses different scenarios
-
     if language == 'de':
         ax4.set_xlabel('ℏ-Skalierung', fontsize=11)
         ax4.set_ylabel('P / P_standard', fontsize=11)
@@ -758,16 +735,17 @@ def plot_uncertainty_hbar_scaling(
         ax4.set_ylabel('P / P_standard', fontsize=11)
         ax4.set_title('Degeneracy Pressure: P ∝ ℏ²', fontsize=13, fontweight='bold')
 
-    ax4.legend(fontsize=9, loc='upper left')
+    ax4.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=2)
     ax4.grid(True, alpha=0.3, which='both')
 
     # Add overall title
     if language == 'de':
-        fig.suptitle('Effekt von ℏ auf die Heisenberg-Unschärferelation', fontsize=15, fontweight='bold', y=1.02)
+        fig.suptitle('Effekt von ℏ auf die Heisenberg-Unschärferelation', fontsize=15, fontweight='bold', y=0.98)
     else:
-        fig.suptitle('Effect of ℏ on Heisenberg Uncertainty Relation', fontsize=15, fontweight='bold', y=1.02)
+        fig.suptitle('Effect of ℏ on Heisenberg Uncertainty Relation', fontsize=15, fontweight='bold', y=0.98)
 
     plt.tight_layout()
+    plt.subplots_adjust(bottom=0.12, top=0.93)
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)
@@ -804,10 +782,10 @@ def plot_heisenberg_summary(
     if constants is None:
         constants = get_constants()
 
-    fig = plt.figure(figsize=(16, 14))
+    fig = plt.figure(figsize=(14, 12))
 
-    # Create grid layout
-    gs = fig.add_gridspec(3, 2, hspace=0.4, wspace=0.3)
+    # Create grid layout (2x2 - data visualizations only, no text boxes)
+    gs = fig.add_gridspec(2, 2, hspace=0.35, wspace=0.3)
 
     # Plot 1: Basic uncertainty relation
     ax1 = fig.add_subplot(gs[0, 0])
@@ -836,7 +814,7 @@ def plot_heisenberg_summary(
         ax1.set_ylabel('Δp_min (kg·m/s)', fontsize=10)
         ax1.set_title('1. Uncertainty Relation: Δx·Δp ≥ ℏ/2', fontsize=12, fontweight='bold')
 
-    ax1.legend(fontsize=8, loc='upper right')
+    ax1.legend(fontsize=8, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3)
     ax1.grid(True, alpha=0.3, which='both')
 
     # Plot 2: Confinement velocity
@@ -860,7 +838,7 @@ def plot_heisenberg_summary(
         ax2.set_ylabel('v/c', fontsize=10)
         ax2.set_title('2. Confinement Velocity', fontsize=12, fontweight='bold')
 
-    ax2.legend(fontsize=8, loc='upper right')
+    ax2.legend(fontsize=8, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3)
     ax2.grid(True, alpha=0.3, which='both')
     ax2.set_ylim(1e-4, 10)
 
@@ -887,7 +865,7 @@ def plot_heisenberg_summary(
         ax3.set_ylabel('Degeneracy pressure (Pa)', fontsize=10)
         ax3.set_title('3. Degeneracy Pressure P ∝ ρ^{5/3}', fontsize=12, fontweight='bold')
 
-    ax3.legend(fontsize=8, loc='upper left')
+    ax3.legend(fontsize=8, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=4)
     ax3.grid(True, alpha=0.3, which='both')
 
     # Plot 4: Effect of ℏ
@@ -910,59 +888,8 @@ def plot_heisenberg_summary(
         ax4.set_ylabel('P / P_standard', fontsize=10)
         ax4.set_title('4. Pressure Scaling: P ∝ ℏ²', fontsize=12, fontweight='bold')
 
-    ax4.legend(fontsize=8, loc='upper left')
+    ax4.legend(fontsize=8, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=2)
     ax4.grid(True, alpha=0.3, which='both')
-
-    # Plot 5: Conceptual summary (text box)
-    ax5 = fig.add_subplot(gs[2, :])
-    ax5.axis('off')
-
-    if language == 'de':
-        summary_text = """
-        HEISENBERG-UNSCHÄRFERELATION UND ENTARTUNGSDRUCK
-        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-        KAUSALKETTE:
-        1. Gravitation komprimiert Materie → Δx wird kleiner (Elektronen/Neutronen werden eingesperrt)
-        2. Heisenberg-Unschärfe: Δx·Δp ≥ ℏ/2 → Δp muss zunehmen
-        3. Höherer Impuls → höhere Geschwindigkeit ("Unruhe")
-        4. Höhere kinetische Energie → DRUCK nach außen
-
-        SCHLÜSSELFORMELN:
-        • Unschärferelation:     Δx · Δp ≥ ℏ/2
-        • Nullpunktsenergie:     E ~ ℏ²/(m·Δx²)
-        • Entartungsdruck (NR):  P ∝ ℏ² · ρ^(5/3) / m
-        • Entartungsdruck (UR):  P ∝ ℏc · ρ^(4/3)
-
-        KONSEQUENZ: Diese "Unruhe" erzeugt den nach außen gerichteten Druck,
-        der weiße Zwerge und Neutronensterne gegen den Gravitationskollaps stützt!
-        """
-    else:
-        summary_text = """
-        HEISENBERG UNCERTAINTY RELATION AND DEGENERACY PRESSURE
-        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-        CAUSAL CHAIN:
-        1. Gravity compresses matter → Δx decreases (electrons/neutrons get confined)
-        2. Heisenberg uncertainty: Δx·Δp ≥ ℏ/2 → Δp must increase
-        3. Higher momentum → higher velocity ("restlessness")
-        4. Higher kinetic energy → outward PRESSURE
-
-        KEY FORMULAS:
-        • Uncertainty relation:       Δx · Δp ≥ ℏ/2
-        • Zero-point energy:          E ~ ℏ²/(m·Δx²)
-        • Degeneracy pressure (NR):   P ∝ ℏ² · ρ^(5/3) / m
-        • Degeneracy pressure (UR):   P ∝ ℏc · ρ^(4/3)
-
-        CONSEQUENCE: This "restlessness" creates the outward-directed pressure
-        that supports white dwarfs and neutron stars against gravitational collapse!
-        """
-
-    ax5.text(0.5, 0.5, summary_text, transform=ax5.transAxes, fontsize=11,
-             verticalalignment='center', horizontalalignment='center',
-             fontfamily='monospace',
-             bbox=dict(boxstyle='round', facecolor='white', alpha=0.9,
-                      edgecolor=COLORS['primary_blue'], linewidth=2))
 
     # Overall title
     if language == 'de':
@@ -973,6 +900,7 @@ def plot_heisenberg_summary(
                     fontsize=16, fontweight='bold', y=0.98)
 
     plt.tight_layout()
+    plt.subplots_adjust(bottom=0.12, top=0.93)
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)

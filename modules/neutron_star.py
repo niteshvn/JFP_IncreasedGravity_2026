@@ -816,66 +816,54 @@ def plot_neutron_star_summary(
 
     ax2.grid(True, alpha=0.3, axis='y')
 
-    # === Plot 3: Key numbers ===
-    ax3.axis('off')
-
+    # === Plot 3: Surface properties comparison ===
     ns_typical = calculate_neutron_star(1.4, constants)
 
-    if language == 'de':
-        info_text = f"""
-NEUTRONENSTERN FAKTEN (1.4 M☉)
-═══════════════════════════════════════
+    # Calculate properties for different objects
+    g_earth = 9.8  # m/s²
+    v_esc_earth = 11186  # m/s
+    g_wd = constants.G * 0.6 * constants.M_sun / (8e6)**2  # White dwarf
+    v_esc_wd = np.sqrt(2 * constants.G * 0.6 * constants.M_sun / 8e6)
 
-Masse:           1.4 Sonnenmassen = {ns_typical.mass:.2e} kg
-Radius:          ~{ns_typical.radius_km:.0f} km (Größe einer Stadt!)
-Dichte:          ~{ns_typical.density:.1e} kg/m³
-                 (1 Teelöffel = ~1 Milliarde Tonnen)
+    objects_surf = [
+        ('Earth' if language == 'en' else 'Erde', g_earth, v_esc_earth/1000, COLORS['earth']),
+        ('White Dwarf' if language == 'en' else 'Weißer Zwerg', g_wd, v_esc_wd/1000, COLORS['white_dwarf']),
+        ('Neutron Star' if language == 'en' else 'Neutronenstern', ns_typical.surface_gravity, ns_typical.escape_velocity/1000, COLORS['neutron_star']),
+    ]
 
-Oberflächengravitation: ~{ns_typical.surface_gravity:.1e} m/s²
-                        ({ns_typical.surface_gravity/9.8:.0e}× Erd-g)
+    x = np.arange(len(objects_surf))
+    width = 0.35
 
-Fluchtgeschwindigkeit:  {ns_typical.escape_velocity/1000:.0f} km/s
-                        ({ns_typical.escape_velocity/constants.c*100:.0f}% Lichtgeschwindigkeit)
+    # Surface gravity (normalized to Earth)
+    gravities = [o[1]/g_earth for o in objects_surf]
+    bars1 = ax3.bar(x - width/2, gravities, width, label='Surface gravity (×g)' if language == 'en' else 'Oberflächengravitation (×g)',
+                   color=[o[3] for o in objects_surf], edgecolor='black', alpha=0.7)
 
-Zeitdilatation:         {ns_typical.time_dilation:.2f}
-                        (Zeit vergeht {(1-ns_typical.time_dilation)*100:.0f}% langsamer!)
+    # Escape velocity (km/s) - secondary y-axis
+    ax3_twin = ax3.twinx()
+    escape_vels = [o[2] for o in objects_surf]
+    bars2 = ax3_twin.bar(x + width/2, escape_vels, width, label='Escape velocity (km/s)' if language == 'en' else 'Fluchtgeschwindigkeit (km/s)',
+                        color=[o[3] for o in objects_surf], edgecolor='black', hatch='//', alpha=0.7)
 
-═══════════════════════════════════════
-Chandrasekhar-Grenze:   {M_ch:.2f} M☉ (Weißer Zwerg)
-TOV-Grenze:             {M_tov:.2f} M☉ (Neutronenstern)
-"""
-    else:
-        info_text = f"""
-NEUTRON STAR FACTS (1.4 M☉)
-═══════════════════════════════════════
-
-Mass:            1.4 Solar masses = {ns_typical.mass:.2e} kg
-Radius:          ~{ns_typical.radius_km:.0f} km (size of a city!)
-Density:         ~{ns_typical.density:.1e} kg/m³
-                 (1 teaspoon = ~1 billion tons)
-
-Surface Gravity: ~{ns_typical.surface_gravity:.1e} m/s²
-                 ({ns_typical.surface_gravity/9.8:.0e}× Earth g)
-
-Escape Velocity: {ns_typical.escape_velocity/1000:.0f} km/s
-                 ({ns_typical.escape_velocity/constants.c*100:.0f}% speed of light)
-
-Time Dilation:   {ns_typical.time_dilation:.2f}
-                 (time passes {(1-ns_typical.time_dilation)*100:.0f}% slower!)
-
-═══════════════════════════════════════
-Chandrasekhar Limit: {M_ch:.2f} M☉ (White Dwarf)
-TOV Limit:           {M_tov:.2f} M☉ (Neutron Star)
-"""
-
-    ax3.text(0.05, 0.95, info_text, transform=ax3.transAxes, fontsize=11,
-            verticalalignment='top', fontfamily='monospace',
-            bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.8))
+    ax3.set_yscale('log')
+    ax3_twin.set_yscale('log')
+    ax3.set_xticks(x)
+    ax3.set_xticklabels([o[0] for o in objects_surf])
 
     if language == 'de':
-        ax3.set_title('3. Schlüsselzahlen', fontsize=12, fontweight='bold')
+        ax3.set_ylabel('Oberflächengravitation (×g)', fontsize=11)
+        ax3_twin.set_ylabel('Fluchtgeschwindigkeit (km/s)', fontsize=11)
+        ax3.set_title('3. Oberflächeneigenschaften', fontsize=12, fontweight='bold')
     else:
-        ax3.set_title('3. Key Numbers', fontsize=12, fontweight='bold')
+        ax3.set_ylabel('Surface gravity (×g)', fontsize=11)
+        ax3_twin.set_ylabel('Escape velocity (km/s)', fontsize=11)
+        ax3.set_title('3. Surface Properties', fontsize=12, fontweight='bold')
+
+    # Combined legend at bottom
+    lines1, labels1 = ax3.get_legend_handles_labels()
+    lines2, labels2 = ax3_twin.get_legend_handles_labels()
+    ax3.legend(lines1 + lines2, labels1 + labels2, fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=2)
+    ax3.grid(True, alpha=0.3, axis='y')
 
     # === Plot 4: Compactness comparison ===
     objects_c = [
@@ -911,7 +899,7 @@ TOV Limit:           {M_tov:.2f} M☉ (Neutron Star)
         ax4.set_title('4. Compactness Comparison', fontsize=12, fontweight='bold')
 
     ax4.tick_params(axis='x', rotation=30)
-    ax4.legend(fontsize=9, loc='upper left')
+    ax4.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.18), ncol=1)
     ax4.grid(True, alpha=0.3, axis='y')
 
     # Main title
@@ -920,6 +908,7 @@ TOV Limit:           {M_tov:.2f} M☉ (Neutron Star)
     else:
         fig.suptitle('Neutron Star Physics: Summary', fontsize=16, fontweight='bold', y=1.02)
 
+    plt.subplots_adjust(bottom=0.15)
     plt.tight_layout()
 
     if save:
