@@ -335,6 +335,50 @@
 
             <div class="viz-item">
                 <div class="viz-image">
+                    <img src="visualizations/gravitational_vector_field.png" data-img-base="gravitational_vector_field" alt="Gravitational Vector Field">
+                </div>
+                <div class="viz-details">
+                    <h3 data-en="Gravitational & Tidal Force Fields" data-de="Gravitations- und Gezeitenkraftfelder">Gravitational & Tidal Force Fields</h3>
+                    <p class="description" data-en="Vector field visualization showing gravitational forces pointing toward a central mass, and tidal forces that stretch objects radially while compressing them tangentially. Tidal forces cause spaghettification near black holes." data-de="Vektorfeldvisualisierung, die Gravitationskraefte zeigt, die auf eine zentrale Masse zeigen, sowie Gezeitenkraefte, die Objekte radial dehnen und tangential komprimieren. Gezeitenkraefte verursachen Spaghettifizierung nahe Schwarzen Loechern.">Vector fields showing gravitational attraction and tidal stretching/compression.</p>
+                    <div class="formulas">
+                        <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                        <div class="formula" id="formula-tidal"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="viz-separator"></div>
+
+            <div class="viz-item">
+                <div class="viz-image">
+                    <img src="visualizations/orbital_precession.png" data-img-base="orbital_precession" alt="Orbital Precession">
+                </div>
+                <div class="viz-details">
+                    <h3 data-en="Orbital Precession (Relativistic Effect)" data-de="Bahnpraezession (Relativistischer Effekt)">Orbital Precession (Relativistic Effect)</h3>
+                    <p class="description" data-en="General Relativity predicts that orbits precess (rotate) due to spacetime curvature. Mercury's perihelion advances by 43 arcseconds per century - a key confirmation of Einstein's theory. The animation shows this effect (exaggerated for visibility)." data-de="Die Allgemeine Relativitaetstheorie sagt voraus, dass Bahnen aufgrund der Raumzeitkruemmung praezedieren (rotieren). Merkurs Perihel verschiebt sich um 43 Bogensekunden pro Jahrhundert - eine wichtige Bestaetigung von Einsteins Theorie.">Relativistic orbital precession - a key prediction of General Relativity confirmed by Mercury.</p>
+                    <div class="formulas">
+                        <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                        <div class="formula" id="formula-precession"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="viz-separator"></div>
+
+            <div class="viz-item">
+                <div class="viz-image">
+                    <img src="visualizations/orbital_precession_animation.gif" data-img-base="orbital_precession_animation" alt="Orbital Precession Animation">
+                </div>
+                <div class="viz-details">
+                    <h3 data-en="Precession Animation" data-de="Praezessions-Animation">Precession Animation</h3>
+                    <p class="description" data-en="Animated visualization showing how an orbit precesses over multiple revolutions. In Newtonian gravity, orbits are closed ellipses. In General Relativity, the perihelion (closest approach) advances with each orbit, creating a rosette pattern." data-de="Animierte Visualisierung, die zeigt, wie eine Bahn ueber mehrere Umlaeufe praezediert. In der Newtonschen Gravitation sind Bahnen geschlossene Ellipsen. In der Allgemeinen Relativitaet verschiebt sich das Perihel (naechster Punkt) mit jedem Umlauf.">Watch the orbit precess and form a rosette pattern over time.</p>
+                </div>
+            </div>
+
+            <div class="viz-separator"></div>
+
+            <div class="viz-item">
+                <div class="viz-image">
                     <img src="visualizations/spacetime_summary.png" data-img-base="spacetime_summary" alt="Spacetime Summary">
                 </div>
                 <div class="viz-details">
@@ -678,6 +722,8 @@
                 'formula-schwarzschild': 'R_s = \\frac{2GM}{c^2}',
                 'formula-escape': 'v_{esc} = \\sqrt{\\frac{2GM}{R}}',
                 'formula-compactness': '\\mathcal{C} = \\frac{R_s}{R} = \\frac{2GM}{Rc^2}',
+                'formula-tidal': 'a_{tidal} = \\frac{2GM}{r^3}\\Delta r',
+                'formula-precession': '\\Delta\\phi = \\frac{6\\pi GM}{c^2 a(1-e^2)}',
                 'formula-bohr': 'a_0 = \\frac{4\\pi\\varepsilon_0\\hbar^2}{m_e e^2}',
                 'formula-bohr-scaling': 'a_0 \\propto \\hbar^2',
                 'formula-atom-scale': 'a_0(\\hbar\') = a_0 \\cdot \\left(\\frac{\\hbar\'}{\\hbar}\\right)^2',

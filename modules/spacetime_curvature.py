@@ -733,6 +733,462 @@ def plot_spacetime_summary(
     return fig
 
 
+def plot_gravitational_vector_field(
+    constants: Optional[PhysicalConstants] = None,
+    language: str = 'en',
+    save: bool = True,
+    show: bool = False
+) -> plt.Figure:
+    """
+    Create a vector field visualization of gravitational and tidal forces.
+    Erstellt eine Vektorfeldvisualisierung von Gravitations- und Gezeitenkraeften.
+
+    Shows:
+    - Left: Gravitational force vectors pointing toward central mass
+    - Right: Tidal force vectors (stretching radially, compressing tangentially)
+
+    Args:
+        constants: Physical constants
+        language: 'en' for English, 'de' for German
+        save: Whether to save the plot
+        show: Whether to display the plot
+
+    Returns:
+        matplotlib Figure object
+    """
+    if constants is None:
+        constants = get_constants()
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 7))
+
+    # Create grid for vector field
+    x = np.linspace(-4, 4, 15)
+    y = np.linspace(-4, 4, 15)
+    X, Y = np.meshgrid(x, y)
+
+    # Distance from center
+    R = np.sqrt(X**2 + Y**2)
+    R = np.maximum(R, 0.5)  # Avoid singularity at center
+
+    # ===== LEFT PLOT: Gravitational Force Field =====
+    # F = -GM/r² in radial direction (pointing inward)
+    # Normalized for visualization
+    F_mag = 1 / R**2
+    F_mag = F_mag / F_mag.max()  # Normalize
+
+    # Unit vectors pointing toward center (negative radial direction)
+    Fx = -X / R * F_mag
+    Fy = -Y / R * F_mag
+
+    # Mask center region
+    mask = R < 0.6
+    Fx[mask] = 0
+    Fy[mask] = 0
+
+    # Plot vector field
+    ax1.quiver(X, Y, Fx, Fy, F_mag, cmap='Reds', scale=15, width=0.008,
+               headwidth=4, headlength=5, alpha=0.9)
+
+    # Draw central mass
+    circle = plt.Circle((0, 0), 0.4, color=COLORS['scaled'], zorder=10)
+    ax1.add_patch(circle)
+    ax1.text(0, 0, 'M', ha='center', va='center', fontsize=14, fontweight='bold',
+             color='white', zorder=11)
+
+    # Add concentric circles showing equipotential lines
+    for r in [1, 2, 3]:
+        circle = plt.Circle((0, 0), r, fill=False, color='gray', linestyle='--',
+                           alpha=0.5, linewidth=1)
+        ax1.add_patch(circle)
+
+    ax1.set_xlim(-4.5, 4.5)
+    ax1.set_ylim(-4.5, 4.5)
+    ax1.set_aspect('equal')
+    ax1.set_xlabel('x' if language == 'en' else 'x', fontsize=12)
+    ax1.set_ylabel('y' if language == 'en' else 'y', fontsize=12)
+
+    if language == 'de':
+        ax1.set_title('Gravitationsfeldvektoren\n$\\vec{F} = -\\frac{GM}{r^2}\\hat{r}$',
+                     fontsize=14, fontweight='bold', pad=15)
+    else:
+        ax1.set_title('Gravitational Field Vectors\n$\\vec{F} = -\\frac{GM}{r^2}\\hat{r}$',
+                     fontsize=14, fontweight='bold', pad=15)
+
+    ax1.grid(True, alpha=0.3)
+
+    # ===== RIGHT PLOT: Tidal Force Field =====
+    # Tidal forces stretch objects radially and compress them tangentially
+    # This is the differential of gravity
+
+    # Create a denser grid for tidal forces
+    x2 = np.linspace(-4, 4, 12)
+    y2 = np.linspace(-4, 4, 12)
+    X2, Y2 = np.meshgrid(x2, y2)
+    R2 = np.sqrt(X2**2 + Y2**2)
+    R2 = np.maximum(R2, 0.8)
+
+    # Tidal acceleration components (simplified model)
+    # Radial stretching: +2GM/r³ in radial direction
+    # Tangential compression: -GM/r³ in tangential direction
+    tidal_mag = 1 / R2**3
+    tidal_mag = tidal_mag / tidal_mag.max()
+
+    # Radial unit vectors
+    r_hat_x = X2 / R2
+    r_hat_y = Y2 / R2
+
+    # Tangential unit vectors (perpendicular to radial)
+    t_hat_x = -Y2 / R2
+    t_hat_y = X2 / R2
+
+    # Tidal force: stretches radially (outward from center of object)
+    # We show this as vectors pointing outward along radial direction
+    Tx = r_hat_x * tidal_mag * 2  # Radial stretching (factor of 2)
+    Ty = r_hat_y * tidal_mag * 2
+
+    # Mask center
+    mask2 = R2 < 1.0
+    Tx[mask2] = 0
+    Ty[mask2] = 0
+
+    # Plot tidal vectors (radial stretching - red)
+    ax2.quiver(X2, Y2, Tx, Ty, color=COLORS['scaled'], scale=20, width=0.006,
+               headwidth=4, headlength=4, alpha=0.8, label='Radial stretch' if language == 'en' else 'Radiale Dehnung')
+
+    # Also show tangential compression (blue, pointing inward tangentially)
+    # This is perpendicular to radial, compressing the object
+    Cx = -t_hat_x * tidal_mag * 0.3  # Small tangential compression arrows
+    Cy = -t_hat_y * tidal_mag * 0.3
+    Cx[mask2] = 0
+    Cy[mask2] = 0
+
+    # Draw central mass
+    circle2 = plt.Circle((0, 0), 0.6, color=COLORS['primary_blue'], zorder=10)
+    ax2.add_patch(circle2)
+    ax2.text(0, 0, 'M', ha='center', va='center', fontsize=14, fontweight='bold',
+             color='white', zorder=11)
+
+    # Draw a test object being tidally stretched
+    # Ellipse representing deformation
+    from matplotlib.patches import Ellipse
+    test_obj = Ellipse((2.5, 0), 0.8, 0.4, angle=0, fill=True,
+                       color=COLORS['standard'], alpha=0.7, zorder=5)
+    ax2.add_patch(test_obj)
+
+    # Add arrows showing the stretching on test object
+    ax2.annotate('', xy=(3.1, 0), xytext=(2.9, 0),
+                arrowprops=dict(arrowstyle='->', color='red', lw=2))
+    ax2.annotate('', xy=(1.9, 0), xytext=(2.1, 0),
+                arrowprops=dict(arrowstyle='->', color='red', lw=2))
+    ax2.annotate('', xy=(2.5, 0.1), xytext=(2.5, 0.3),
+                arrowprops=dict(arrowstyle='->', color='blue', lw=2))
+    ax2.annotate('', xy=(2.5, -0.1), xytext=(2.5, -0.3),
+                arrowprops=dict(arrowstyle='->', color='blue', lw=2))
+
+    ax2.set_xlim(-4.5, 4.5)
+    ax2.set_ylim(-4.5, 4.5)
+    ax2.set_aspect('equal')
+    ax2.set_xlabel('x' if language == 'en' else 'x', fontsize=12)
+    ax2.set_ylabel('y' if language == 'en' else 'y', fontsize=12)
+
+    if language == 'de':
+        ax2.set_title('Gezeitenkraefte (Tidal Forces)\nRadiale Dehnung & Tangentiale Kompression',
+                     fontsize=14, fontweight='bold', pad=15)
+    else:
+        ax2.set_title('Tidal Forces\nRadial Stretching & Tangential Compression',
+                     fontsize=14, fontweight='bold', pad=15)
+
+    ax2.grid(True, alpha=0.3)
+
+    # Add legend
+    from matplotlib.lines import Line2D
+    legend_elements = [
+        Line2D([0], [0], color='red', marker='>', linestyle='-', markersize=8,
+               label='Radial stretch' if language == 'en' else 'Radiale Dehnung'),
+        Line2D([0], [0], color='blue', marker='>', linestyle='-', markersize=8,
+               label='Tangential compression' if language == 'en' else 'Tangentiale Kompression')
+    ]
+    ax2.legend(handles=legend_elements, loc='upper right', fontsize=10)
+
+    plt.tight_layout()
+
+    if save:
+        os.makedirs(VIS_DIR, exist_ok=True)
+        filepath = os.path.join(VIS_DIR, 'gravitational_vector_field.png')
+        fig.savefig(filepath, dpi=150, bbox_inches='tight')
+        print(f"Saved: {filepath}")
+
+    if show:
+        plt.show()
+
+    return fig
+
+
+def plot_orbital_precession(
+    constants: Optional[PhysicalConstants] = None,
+    language: str = 'en',
+    save: bool = True,
+    show: bool = False,
+    animate: bool = True
+) -> plt.Figure:
+    """
+    Create visualization of orbital precession due to relativistic effects.
+    Erstellt Visualisierung der Bahnpraezession durch relativistische Effekte.
+
+    Shows how orbits precess (rotate) due to:
+    - General relativistic corrections near massive objects
+    - Mercury's perihelion precession as a famous example
+
+    Args:
+        constants: Physical constants
+        language: 'en' for English, 'de' for German
+        save: Whether to save the plot (and animation)
+        show: Whether to display the plot
+        animate: Whether to create animated GIF
+
+    Returns:
+        matplotlib Figure object
+    """
+    if constants is None:
+        constants = get_constants()
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 7))
+
+    # ===== LEFT PLOT: Static view of precessing orbit =====
+    # Orbital parameters
+    a = 1.0  # Semi-major axis (normalized)
+    e = 0.6  # Eccentricity (exaggerated for visualization)
+
+    # Precession rate (exaggerated for visualization)
+    # Real Mercury: ~43 arcsec/century, here we use much larger for visibility
+    precession_per_orbit = np.pi / 6  # 30 degrees per orbit (exaggerated)
+
+    # Draw multiple orbits showing precession
+    n_orbits = 6
+    colors = plt.cm.viridis(np.linspace(0, 1, n_orbits))
+
+    theta = np.linspace(0, 2*np.pi, 500)
+
+    for i in range(n_orbits):
+        # Precession angle for this orbit
+        omega = i * precession_per_orbit
+
+        # Orbital radius (ellipse in polar coordinates)
+        r = a * (1 - e**2) / (1 + e * np.cos(theta))
+
+        # Convert to Cartesian with precession rotation
+        x = r * np.cos(theta + omega)
+        y = r * np.sin(theta + omega)
+
+        alpha = 0.3 + 0.7 * (i / n_orbits)  # Fade in
+        ax1.plot(x, y, color=colors[i], linewidth=1.5, alpha=alpha)
+
+        # Mark perihelion (closest approach)
+        perihelion_angle = omega
+        r_peri = a * (1 - e)
+        px = r_peri * np.cos(perihelion_angle)
+        py = r_peri * np.sin(perihelion_angle)
+        ax1.plot(px, py, 'o', color=colors[i], markersize=6, alpha=alpha)
+
+    # Draw central mass (Sun)
+    sun = plt.Circle((0, 0), 0.08, color=COLORS['primary_amber'], zorder=10)
+    ax1.add_patch(sun)
+    ax1.text(0, -0.25, 'M' if language == 'en' else 'M', ha='center', fontsize=12, fontweight='bold')
+
+    # Draw arrow showing precession direction
+    arc_theta = np.linspace(0, precession_per_orbit * (n_orbits - 1), 50)
+    arc_r = a * (1 - e) * 1.3
+    arc_x = arc_r * np.cos(arc_theta)
+    arc_y = arc_r * np.sin(arc_theta)
+    ax1.plot(arc_x, arc_y, 'r--', linewidth=2, alpha=0.7)
+    ax1.annotate('', xy=(arc_x[-1], arc_y[-1]), xytext=(arc_x[-5], arc_y[-5]),
+                arrowprops=dict(arrowstyle='->', color='red', lw=2))
+
+    precession_label = 'Precession' if language == 'en' else 'Praezession'
+    ax1.text(arc_r * 0.7, arc_r * 0.9, precession_label, fontsize=11, color='red', fontweight='bold')
+
+    ax1.set_xlim(-2, 2)
+    ax1.set_ylim(-2, 2)
+    ax1.set_aspect('equal')
+    ax1.set_xlabel('x (AU)' if language == 'en' else 'x (AE)', fontsize=12)
+    ax1.set_ylabel('y (AU)' if language == 'en' else 'y (AE)', fontsize=12)
+
+    if language == 'de':
+        ax1.set_title('Perihelpraezession\n(Relativistische Bahnkorrektur)',
+                     fontsize=14, fontweight='bold', pad=15)
+    else:
+        ax1.set_title('Perihelion Precession\n(Relativistic Orbital Correction)',
+                     fontsize=14, fontweight='bold', pad=15)
+
+    ax1.grid(True, alpha=0.3)
+
+    # Add colorbar for orbit number
+    sm = plt.cm.ScalarMappable(cmap='viridis', norm=plt.Normalize(1, n_orbits))
+    sm.set_array([])
+    cbar = plt.colorbar(sm, ax=ax1, shrink=0.6, label='Orbit number' if language == 'en' else 'Umlaufnummer')
+
+    # ===== RIGHT PLOT: Comparison of Newtonian vs GR orbits =====
+    theta2 = np.linspace(0, 4*np.pi, 1000)  # Two full orbits
+
+    # Newtonian orbit (no precession)
+    r_newton = a * (1 - e**2) / (1 + e * np.cos(theta2))
+    x_newton = r_newton * np.cos(theta2)
+    y_newton = r_newton * np.sin(theta2)
+
+    # GR orbit with precession
+    precession_rate = 0.15  # radians per radian of orbital motion
+    omega_gr = precession_rate * theta2
+    r_gr = a * (1 - e**2) / (1 + e * np.cos(theta2))
+    x_gr = r_gr * np.cos(theta2 + omega_gr)
+    y_gr = r_gr * np.sin(theta2 + omega_gr)
+
+    ax2.plot(x_newton, y_newton, 'b-', linewidth=2, alpha=0.7,
+             label='Newtonian (closed)' if language == 'en' else 'Newtonsch (geschlossen)')
+    ax2.plot(x_gr, y_gr, 'r-', linewidth=2, alpha=0.7,
+             label='General Relativity (precessing)' if language == 'en' else 'Allg. Relativitaet (praezedierend)')
+
+    # Draw central mass
+    sun2 = plt.Circle((0, 0), 0.08, color=COLORS['primary_amber'], zorder=10)
+    ax2.add_patch(sun2)
+
+    ax2.set_xlim(-2.5, 2.5)
+    ax2.set_ylim(-2.5, 2.5)
+    ax2.set_aspect('equal')
+    ax2.set_xlabel('x (AU)' if language == 'en' else 'x (AE)', fontsize=12)
+    ax2.set_ylabel('y (AU)' if language == 'en' else 'y (AE)', fontsize=12)
+
+    if language == 'de':
+        ax2.set_title('Newton vs. Allgemeine Relativitaet\n(2 Umlaeufe)',
+                     fontsize=14, fontweight='bold', pad=15)
+    else:
+        ax2.set_title('Newton vs. General Relativity\n(2 orbits)',
+                     fontsize=14, fontweight='bold', pad=15)
+
+    ax2.legend(loc='upper right', fontsize=10)
+    ax2.grid(True, alpha=0.3)
+
+    # Add physics note
+    note_text = ("Mercury's perihelion precesses by 43\"/century\n"
+                "due to spacetime curvature near the Sun" if language == 'en' else
+                "Merkurs Perihel praezediert um 43\"/Jahrhundert\n"
+                "durch Raumzeitkruemmung nahe der Sonne")
+    ax2.text(0.02, 0.02, note_text, transform=ax2.transAxes, fontsize=9,
+            verticalalignment='bottom', bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.8))
+
+    plt.tight_layout()
+
+    if save:
+        os.makedirs(VIS_DIR, exist_ok=True)
+        filepath = os.path.join(VIS_DIR, 'orbital_precession.png')
+        fig.savefig(filepath, dpi=150, bbox_inches='tight')
+        print(f"Saved: {filepath}")
+
+        # Create animated GIF if requested
+        if animate:
+            create_precession_animation(constants, language, VIS_DIR)
+
+    if show:
+        plt.show()
+
+    return fig
+
+
+def create_precession_animation(
+    constants: PhysicalConstants,
+    language: str = 'en',
+    output_dir: str = None
+):
+    """
+    Create an animated GIF of orbital precession.
+    Erstellt ein animiertes GIF der Bahnpraezession.
+    """
+    from matplotlib.animation import FuncAnimation, PillowWriter
+
+    if output_dir is None:
+        output_dir = VIS_DIR
+
+    fig, ax = plt.subplots(figsize=(8, 8))
+
+    # Orbital parameters
+    a = 1.0
+    e = 0.5
+    precession_per_orbit = np.pi / 8  # Exaggerated
+
+    # Initialize
+    theta_full = np.linspace(0, 2*np.pi, 200)
+
+    # Static elements
+    sun = plt.Circle((0, 0), 0.06, color=COLORS['primary_amber'], zorder=10)
+    ax.add_patch(sun)
+
+    # Lines for orbit trail and current position
+    orbit_line, = ax.plot([], [], 'b-', linewidth=1, alpha=0.5)
+    current_orbit, = ax.plot([], [], 'r-', linewidth=2)
+    planet, = ax.plot([], [], 'o', color=COLORS['primary_blue'], markersize=10, zorder=5)
+
+    ax.set_xlim(-2, 2)
+    ax.set_ylim(-2, 2)
+    ax.set_aspect('equal')
+    ax.grid(True, alpha=0.3)
+
+    if language == 'de':
+        ax.set_title('Bahnpraezession Animation', fontsize=14, fontweight='bold')
+    else:
+        ax.set_title('Orbital Precession Animation', fontsize=14, fontweight='bold')
+
+    # Store all previous orbits
+    all_x = []
+    all_y = []
+
+    n_frames = 120  # Total frames
+    n_orbits = 4    # Number of complete orbits
+
+    def init():
+        orbit_line.set_data([], [])
+        current_orbit.set_data([], [])
+        planet.set_data([], [])
+        return orbit_line, current_orbit, planet
+
+    def animate(frame):
+        # Current orbital phase
+        progress = frame / n_frames
+        current_theta = progress * n_orbits * 2 * np.pi
+
+        # Current precession angle
+        omega = progress * n_orbits * precession_per_orbit
+
+        # Current position
+        r = a * (1 - e**2) / (1 + e * np.cos(current_theta))
+        x = r * np.cos(current_theta + omega)
+        y = r * np.sin(current_theta + omega)
+
+        # Current orbit (full ellipse at current precession)
+        r_orbit = a * (1 - e**2) / (1 + e * np.cos(theta_full))
+        x_orbit = r_orbit * np.cos(theta_full + omega)
+        y_orbit = r_orbit * np.sin(theta_full + omega)
+
+        # Trail (previous positions)
+        all_x.append(x)
+        all_y.append(y)
+
+        orbit_line.set_data(all_x, all_y)
+        current_orbit.set_data(x_orbit, y_orbit)
+        planet.set_data([x], [y])
+
+        return orbit_line, current_orbit, planet
+
+    anim = FuncAnimation(fig, animate, init_func=init, frames=n_frames,
+                        interval=50, blit=True)
+
+    # Save as GIF
+    filepath = os.path.join(output_dir, 'orbital_precession_animation.gif')
+    writer = PillowWriter(fps=20)
+    anim.save(filepath, writer=writer)
+    print(f"Saved animation: {filepath}")
+
+    plt.close(fig)
+
+
 def generate_all_spacetime_plots(language: str = 'en', show: bool = False) -> List[plt.Figure]:
     """
     Generate all spacetime curvature visualizations.
@@ -769,6 +1225,14 @@ def generate_all_spacetime_plots(language: str = 'en', show: bool = False) -> Li
     # 5. Summary
     print("5. Comprehensive summary...")
     figures.append(plot_spacetime_summary(language=language, show=show))
+
+    # 6. Gravitational vector field
+    print("6. Gravitational vector field...")
+    figures.append(plot_gravitational_vector_field(language=language, show=show))
+
+    # 7. Orbital precession
+    print("7. Orbital precession (with animation)...")
+    figures.append(plot_orbital_precession(language=language, show=show, animate=True))
 
     print("=" * 50)
     print(f"Generated {len(figures)} visualizations in {VIS_DIR}")
