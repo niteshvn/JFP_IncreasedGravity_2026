@@ -130,9 +130,9 @@
         }
         .interactive-container {
             width: 100%;
-            height: 850px;
+            height: 920px;
             border-radius: 12px;
-            overflow: hidden;
+            overflow: visible;
             background: #fff;
         }
         .interactive-container iframe {
@@ -565,6 +565,7 @@
 
     <script>
         let currentLang = 'en';
+        let currentGraphBase = 'spacetime_3d_interactive.html';  // Track current graph
 
         function setLanguage(lang) {
             currentLang = lang;
@@ -574,6 +575,22 @@
             document.querySelectorAll('[data-en]').forEach(el => {
                 el.textContent = el.getAttribute(`data-${lang}`);
             });
+
+            // Reload current graph in new language
+            reloadCurrentGraph();
+        }
+
+        function getGraphFilename(baseFilename, lang) {
+            // For German, use _de suffix before .html
+            if (lang === 'de') {
+                return baseFilename.replace('.html', '_de.html');
+            }
+            return baseFilename;
+        }
+
+        function reloadCurrentGraph() {
+            const filename = getGraphFilename(currentGraphBase, currentLang);
+            document.getElementById('interactive-frame').src = 'visualizations/' + filename;
         }
 
         function showSection(sectionId) {
@@ -583,7 +600,9 @@
             event.target.classList.add('active');
         }
 
-        function loadInteractive(filename, button) {
+        function loadInteractive(baseFilename, button) {
+            currentGraphBase = baseFilename;  // Store base filename
+            const filename = getGraphFilename(baseFilename, currentLang);
             document.getElementById('interactive-frame').src = 'visualizations/' + filename;
             document.querySelectorAll('.interactive-tab').forEach(t => t.classList.remove('active'));
             button.classList.add('active');
