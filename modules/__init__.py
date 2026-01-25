@@ -49,7 +49,20 @@ from .spacetime_curvature import (
     plot_compactness_comparison,
     plot_escape_velocity,
     plot_spacetime_summary,
-    generate_all_spacetime_plots
+    generate_all_spacetime_plots,
+    # Light bending / gravitational lensing
+    light_deflection_angle,
+    einstein_radius,
+    calculate_light_path,
+    plot_light_bending,
+    create_light_bending_animation,
+    # Penrose-Carter diagrams
+    schwarzschild_to_kruskal,
+    kruskal_to_penrose,
+    calculate_constant_r_curve,
+    calculate_infalling_worldline,
+    plot_penrose_carter_diagram,
+    plot_penrose_comparison,
 )
 
 from .atomic_scale import (
@@ -90,6 +103,7 @@ try:
         plot_atom_scaling_3d_interactive,
         plot_force_ratio_3d_interactive,
         plot_temperature_profile_3d_interactive,
+        plot_light_bending_3d_interactive,
         generate_all_interactive_plots,
         PLOTLY_AVAILABLE
     )
@@ -135,6 +149,19 @@ __all__ = [
     'plot_escape_velocity',
     'plot_spacetime_summary',
     'generate_all_spacetime_plots',
+    # Light bending / gravitational lensing
+    'light_deflection_angle',
+    'einstein_radius',
+    'calculate_light_path',
+    'plot_light_bending',
+    'create_light_bending_animation',
+    # Penrose-Carter diagrams
+    'schwarzschild_to_kruskal',
+    'kruskal_to_penrose',
+    'calculate_constant_r_curve',
+    'calculate_infalling_worldline',
+    'plot_penrose_carter_diagram',
+    'plot_penrose_comparison',
     # Atomic scale
     'AtomicProperties',
     'calculate_atomic_properties',
@@ -167,6 +194,7 @@ __all__ = [
     'plot_atom_scaling_3d_interactive',
     'plot_force_ratio_3d_interactive',
     'plot_temperature_profile_3d_interactive',
+    'plot_light_bending_3d_interactive',
     'generate_all_interactive_plots',
     'PLOTLY_AVAILABLE'
 ]

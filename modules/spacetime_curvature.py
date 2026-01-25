@@ -1234,10 +1234,898 @@ def generate_all_spacetime_plots(language: str = 'en', show: bool = False) -> Li
     print("7. Orbital precession (with animation)...")
     figures.append(plot_orbital_precession(language=language, show=show, animate=True))
 
+    # 8. Light bending (gravitational lensing)
+    print("8. Light bending / gravitational lensing (with animation)...")
+    figures.append(plot_light_bending(language=language, show=show, animate=True))
+
+    # 9. Penrose-Carter diagram (Schwarzschild)
+    print("9. Penrose-Carter diagram (Schwarzschild)...")
+    figures.append(plot_penrose_carter_diagram(language=language, show=show, diagram_type='schwarzschild'))
+
+    # 10. Penrose diagram comparison
+    print("10. Penrose diagram comparison...")
+    figures.append(plot_penrose_comparison(language=language, show=show))
+
     print("=" * 50)
     print(f"Generated {len(figures)} visualizations in {VIS_DIR}")
 
     return figures
+
+
+# =============================================================================
+# LIGHT BENDING (GRAVITATIONAL LENSING)
+# =============================================================================
+
+def light_deflection_angle(b: float, M: float, constants: PhysicalConstants) -> float:
+    """
+    Calculate the deflection angle of light passing near a massive object.
+    Berechnet den Ablenkungswinkel von Licht nahe eines massiven Objekts.
+
+    Formula: alpha = 4GM / (c^2 * b)
+
+    Args:
+        b: Impact parameter (closest approach distance) [m]
+        M: Mass of deflecting object [kg]
+        constants: Physical constants
+
+    Returns:
+        Deflection angle [radians]
+    """
+    # Avoid division by zero
+    if b <= 0:
+        return float('inf')
+
+    alpha = 4 * constants.G * M / (constants.c**2 * b)
+    return alpha
+
+
+def einstein_radius(M: float, D_ls: float, D_l: float, D_s: float,
+                   constants: PhysicalConstants) -> float:
+    """
+    Calculate the Einstein radius for gravitational lensing.
+    Berechnet den Einstein-Radius fuer Gravitationslinseneffekt.
+
+    Formula: theta_E = sqrt(4GM/c^2 * D_ls / (D_l * D_s))
+
+    Args:
+        M: Mass of lens [kg]
+        D_ls: Distance from lens to source [m]
+        D_l: Distance from observer to lens [m]
+        D_s: Distance from observer to source [m]
+        constants: Physical constants
+
+    Returns:
+        Einstein radius [radians]
+    """
+    if D_l <= 0 or D_s <= 0:
+        return 0.0
+
+    R_s = constants.schwarzschild_radius(M)
+    theta_E = np.sqrt(R_s * D_ls / (D_l * D_s))
+    return theta_E
+
+
+def calculate_light_path(x_start: float, y_start: float, direction: float,
+                        M: float, constants: PhysicalConstants,
+                        n_steps: int = 500, dt: float = 0.01) -> Tuple[np.ndarray, np.ndarray]:
+    """
+    Calculate the path of a light ray bending around a massive object.
+    Berechnet den Pfad eines Lichtstrahls, der um ein massives Objekt gebogen wird.
+
+    Uses simple numerical integration of the geodesic equation in weak field limit.
+
+    Args:
+        x_start: Starting x position [Schwarzschild radii]
+        y_start: Starting y position [Schwarzschild radii]
+        direction: Initial direction angle [radians]
+        M: Mass of central object [kg]
+        constants: Physical constants
+        n_steps: Number of integration steps
+        dt: Time step
+
+    Returns:
+        Tuple of (x_array, y_array) positions
+    """
+    R_s = constants.schwarzschild_radius(M)
+
+    # Initialize arrays
+    x = np.zeros(n_steps)
+    y = np.zeros(n_steps)
+
+    # Initial position and velocity
+    x[0] = x_start
+    y[0] = y_start
+    vx = np.cos(direction)
+    vy = np.sin(direction)
+
+    for i in range(1, n_steps):
+        # Current position in Schwarzschild radii
+        r = np.sqrt(x[i-1]**2 + y[i-1]**2)
+
+        # Avoid singularity and stop if inside event horizon
+        if r < 1.5:  # Stop at 1.5 R_s (photon sphere)
+            x[i:] = x[i-1]
+            y[i:] = y[i-1]
+            break
+
+        # Gravitational acceleration (Newtonian approximation for visualization)
+        # a = -GM/r^2 in radial direction
+        # In units of R_s, this simplifies
+        a_mag = 0.5 / (r**2)  # Simplified for visualization
+
+        # Radial unit vector
+        rx = x[i-1] / r
+        ry = y[i-1] / r
+
+        # Acceleration components (toward center)
+        ax = -a_mag * rx
+        ay = -a_mag * ry
+
+        # Update velocity
+        vx += ax * dt
+        vy += ay * dt
+
+        # Normalize velocity (light always travels at c)
+        v_mag = np.sqrt(vx**2 + vy**2)
+        vx /= v_mag
+        vy /= v_mag
+
+        # Update position
+        x[i] = x[i-1] + vx * dt
+        y[i] = y[i-1] + vy * dt
+
+        # Stop if ray escapes
+        if abs(x[i]) > 30 or abs(y[i]) > 30:
+            x[i+1:] = x[i]
+            y[i+1:] = y[i]
+            break
+
+    return x, y
+
+
+def plot_light_bending(
+    constants: Optional[PhysicalConstants] = None,
+    language: str = 'en',
+    save: bool = True,
+    show: bool = False,
+    animate: bool = True
+) -> plt.Figure:
+    """
+    Plot gravitational lensing / light bending visualization.
+    Zeigt Gravitationslinsen- / Lichtbeugungs-Visualisierung.
+
+    Shows:
+    - Left: Multiple light rays bending around a central mass
+    - Right: Einstein ring formation
+
+    Args:
+        constants: Physical constants
+        language: 'en' for English, 'de' for German
+        save: Whether to save the figure
+        show: Whether to display the figure
+        animate: Whether to create animation
+
+    Returns:
+        matplotlib Figure object
+    """
+    if constants is None:
+        constants = get_constants()
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 8))
+
+    # ===== LEFT PLOT: Light rays bending around mass =====
+
+    # Central mass (black hole / star)
+    central_mass = plt.Circle((0, 0), 1.0, color='black', zorder=10)
+    ax1.add_patch(central_mass)
+
+    # Photon sphere at 1.5 R_s
+    photon_sphere = plt.Circle((0, 0), 1.5, facecolor='none',
+                                edgecolor=COLORS['highlight'], linestyle='--',
+                                linewidth=1.5, zorder=5)
+    ax1.add_patch(photon_sphere)
+
+    # Event horizon label
+    ax1.text(0, 0, 'M', ha='center', va='center', fontsize=14,
+             fontweight='bold', color='white', zorder=11)
+
+    # Draw multiple light rays with different impact parameters
+    impact_params = [2.0, 2.5, 3.0, 4.0, 5.0, 7.0, 10.0]
+    colors_rays = plt.cm.Blues(np.linspace(0.4, 0.9, len(impact_params)))
+
+    M = 10 * constants.M_sun  # 10 solar mass black hole
+
+    for b, color in zip(impact_params, colors_rays):
+        # Ray coming from left, passing above center
+        x_path, y_path = calculate_light_path(-25, b, 0, M, constants, n_steps=800, dt=0.08)
+
+        # Only plot non-zero portion
+        mask = (x_path != 0) | (y_path != 0)
+        mask[0] = True
+        ax1.plot(x_path[mask], y_path[mask], color=color, linewidth=1.5, alpha=0.8)
+
+        # Mirror ray below
+        x_path2, y_path2 = calculate_light_path(-25, -b, 0, M, constants, n_steps=800, dt=0.08)
+        mask2 = (x_path2 != 0) | (y_path2 != 0)
+        mask2[0] = True
+        ax1.plot(x_path2[mask2], y_path2[mask2], color=color, linewidth=1.5, alpha=0.8)
+
+    # Draw straight reference line (no bending)
+    ax1.axhline(y=13, color='gray', linestyle=':', alpha=0.5, linewidth=1)
+
+    ax1.set_xlim(-25, 25)
+    ax1.set_ylim(-15, 15)
+    ax1.set_aspect('equal')
+    ax1.set_xlabel('x (Schwarzschild radii)' if language == 'en' else 'x (Schwarzschild-Radien)', fontsize=11)
+    ax1.set_ylabel('y (Schwarzschild radii)' if language == 'en' else 'y (Schwarzschild-Radien)', fontsize=11)
+
+    if language == 'de':
+        ax1.set_title('Lichtablenkung durch Gravitation',
+                     fontsize=14, fontweight='bold', pad=15)
+    else:
+        ax1.set_title('Light Bending by Gravity',
+                     fontsize=14, fontweight='bold', pad=15)
+
+    ax1.grid(True, alpha=0.3)
+
+    # Add legend at bottom
+    from matplotlib.lines import Line2D
+    from matplotlib.patches import Patch
+    legend_elements = [
+        Patch(facecolor='black', edgecolor='black',
+              label='Event Horizon (R_s)' if language == 'en' else 'Ereignishorizont (R_s)'),
+        Line2D([0], [0], color=COLORS['highlight'], linestyle='--',
+               label='Photon Sphere (1.5 R_s)' if language == 'en' else 'Photonensphäre (1,5 R_s)'),
+        Line2D([0], [0], color=COLORS['primary_blue'], linewidth=2,
+               label='Light rays' if language == 'en' else 'Lichtstrahlen'),
+        Line2D([0], [0], color='gray', linestyle=':',
+               label='No gravity (straight)' if language == 'en' else 'Ohne Gravitation (gerade)'),
+    ]
+    ax1.legend(handles=legend_elements, loc='upper right', bbox_to_anchor=(1.0, -0.08),
+               fontsize=9, ncol=2, framealpha=0.7)
+
+    # ===== RIGHT PLOT: Einstein Ring =====
+
+    # Background source (star or galaxy)
+    ax2.plot(0, 0, '*', color=COLORS['highlight'], markersize=20, zorder=15)
+
+    # Lens (foreground mass)
+    lens_circle = plt.Circle((0, 0), 0.3, color='black', zorder=10)
+    ax2.add_patch(lens_circle)
+    ax2.text(0, 0, 'L', ha='center', va='center', fontsize=10,
+             fontweight='bold', color='white', zorder=11)
+
+    # Einstein ring
+    einstein_ring = plt.Circle((0, 0), 2.0, facecolor='none',
+                               edgecolor=COLORS['primary_blue'], linewidth=3,
+                               linestyle='-', zorder=5)
+    ax2.add_patch(einstein_ring)
+
+    # Add glow effect for Einstein ring
+    for r in np.linspace(1.8, 2.2, 5):
+        ring = plt.Circle((0, 0), r, facecolor='none',
+                         edgecolor=COLORS['primary_blue'],
+                         linewidth=1, alpha=0.2, zorder=4)
+        ax2.add_patch(ring)
+
+    # Arrow showing Einstein radius
+    ax2.annotate('', xy=(2.0, 0), xytext=(0.5, 0),
+                arrowprops=dict(arrowstyle='<->', color='red', lw=2))
+    ax2.text(1.25, 0.3, r'$\theta_E$', fontsize=14, color='red', fontweight='bold')
+
+    # Observer position indicator
+    ax2.annotate('', xy=(0, -3.0), xytext=(0, -2.5),
+                arrowprops=dict(arrowstyle='->', color='black', lw=1.5))
+
+    ax2.set_xlim(-4, 4)
+    ax2.set_ylim(-4, 4)
+    ax2.set_aspect('equal')
+    ax2.set_xlabel('x (arcsec)' if language == 'en' else 'x (Bogensekunden)', fontsize=11)
+    ax2.set_ylabel('y (arcsec)' if language == 'en' else 'y (Bogensekunden)', fontsize=11)
+
+    if language == 'de':
+        ax2.set_title('Einstein-Ring (Perfekte Ausrichtung)',
+                     fontsize=14, fontweight='bold', pad=15)
+    else:
+        ax2.set_title('Einstein Ring (Perfect Alignment)',
+                     fontsize=14, fontweight='bold', pad=15)
+
+    ax2.grid(True, alpha=0.3)
+
+    # Add legend at bottom
+    legend_elements2 = [
+        Line2D([0], [0], marker='*', color='w', markerfacecolor=COLORS['highlight'],
+               markersize=12, label='Source' if language == 'en' else 'Quelle'),
+        Patch(facecolor='black', edgecolor='black',
+              label='Lens (L)' if language == 'en' else 'Linse (L)'),
+        Line2D([0], [0], color=COLORS['primary_blue'], linewidth=3,
+               label='Einstein Ring' if language == 'en' else 'Einstein-Ring'),
+        Line2D([0], [0], color='red', linewidth=2,
+               label='Einstein Radius (θ_E)' if language == 'en' else 'Einstein-Radius (θ_E)'),
+    ]
+    ax2.legend(handles=legend_elements2, loc='upper right', bbox_to_anchor=(1.0, -0.08),
+               fontsize=9, ncol=2, framealpha=0.7)
+
+    plt.tight_layout()
+
+    if save:
+        os.makedirs(VIS_DIR, exist_ok=True)
+        suffix = '_de' if language == 'de' else ''
+        filepath = os.path.join(VIS_DIR, f'light_bending{suffix}.png')
+        fig.savefig(filepath, dpi=150, bbox_inches='tight')
+        print(f"Saved: {filepath}")
+
+        if animate:
+            create_light_bending_animation(constants, language, VIS_DIR)
+
+    if show:
+        plt.show()
+
+    return fig
+
+
+def create_light_bending_animation(
+    constants: PhysicalConstants,
+    language: str = 'en',
+    output_dir: str = None
+):
+    """
+    Create an animated GIF of light bending around a massive object.
+    Erstellt ein animiertes GIF der Lichtbeugung um ein massives Objekt.
+    """
+    from matplotlib.animation import FuncAnimation, PillowWriter
+
+    if output_dir is None:
+        output_dir = VIS_DIR
+
+    fig, ax = plt.subplots(figsize=(10, 8))
+
+    # Central mass
+    central_mass = plt.Circle((0, 0), 1.0, color='black', zorder=10)
+    ax.add_patch(central_mass)
+    ax.text(0, 0, 'M', ha='center', va='center', fontsize=14,
+            fontweight='bold', color='white', zorder=11)
+
+    # Photon sphere
+    photon_sphere = plt.Circle((0, 0), 1.5, facecolor='none',
+                               edgecolor=COLORS['highlight'], linestyle='--',
+                               linewidth=1.5, zorder=5)
+    ax.add_patch(photon_sphere)
+
+    ax.set_xlim(-20, 20)
+    ax.set_ylim(-12, 12)
+    ax.set_aspect('equal')
+    ax.grid(True, alpha=0.3)
+
+    if language == 'de':
+        ax.set_title('Lichtablenkung Animation', fontsize=14, fontweight='bold')
+    else:
+        ax.set_title('Light Bending Animation', fontsize=14, fontweight='bold')
+
+    # Pre-calculate all ray paths
+    M = 10 * constants.M_sun
+    impact_params = [2.5, 3.5, 5.0, 7.0]
+    all_paths = []
+
+    for b in impact_params:
+        x_path, y_path = calculate_light_path(-20, b, 0, M, constants, n_steps=600, dt=0.07)
+        all_paths.append((x_path, y_path))
+        x_path2, y_path2 = calculate_light_path(-20, -b, 0, M, constants, n_steps=600, dt=0.07)
+        all_paths.append((x_path2, y_path2))
+
+    # Create line objects
+    lines = []
+    photons = []
+    colors_rays = plt.cm.Blues(np.linspace(0.5, 0.9, len(all_paths)))
+
+    for i, color in enumerate(colors_rays):
+        line, = ax.plot([], [], color=color, linewidth=1.5, alpha=0.6)
+        photon, = ax.plot([], [], 'o', color=color, markersize=6, zorder=6)
+        lines.append(line)
+        photons.append(photon)
+
+    n_frames = 120
+
+    def init():
+        for line in lines:
+            line.set_data([], [])
+        for photon in photons:
+            photon.set_data([], [])
+        return lines + photons
+
+    def animate(frame):
+        progress = frame / n_frames
+
+        for i, (x_path, y_path) in enumerate(all_paths):
+            # Find valid points
+            valid = (x_path != 0) | (y_path != 0)
+            valid[0] = True
+            n_valid = np.sum(valid)
+
+            # Current position along path
+            idx = int(progress * n_valid)
+            idx = min(idx, n_valid - 1)
+
+            # Trail
+            x_valid = x_path[valid][:idx+1]
+            y_valid = y_path[valid][:idx+1]
+            lines[i].set_data(x_valid, y_valid)
+
+            # Photon marker
+            if idx < len(x_valid):
+                photons[i].set_data([x_valid[-1]], [y_valid[-1]])
+
+        return lines + photons
+
+    anim = FuncAnimation(fig, animate, init_func=init, frames=n_frames,
+                        interval=50, blit=True)
+
+    suffix = '_de' if language == 'de' else ''
+    filepath = os.path.join(output_dir, f'light_bending_animation{suffix}.gif')
+    writer = PillowWriter(fps=20)
+    anim.save(filepath, writer=writer)
+    print(f"Saved animation: {filepath}")
+
+    plt.close(fig)
+
+
+# =============================================================================
+# PENROSE-CARTER DIAGRAMS
+# =============================================================================
+
+def schwarzschild_to_kruskal(r: float, t: float, R_s: float) -> Tuple[float, float]:
+    """
+    Transform Schwarzschild coordinates to Kruskal-Szekeres coordinates.
+    Transformiert Schwarzschild-Koordinaten zu Kruskal-Szekeres-Koordinaten.
+
+    For r > R_s (outside event horizon):
+        U = sqrt(r/R_s - 1) * exp(r/(2*R_s)) * cosh(t/(2*R_s))
+        V = sqrt(r/R_s - 1) * exp(r/(2*R_s)) * sinh(t/(2*R_s))
+
+    Args:
+        r: Schwarzschild radial coordinate [R_s units]
+        t: Schwarzschild time coordinate [R_s/c units]
+        R_s: Schwarzschild radius
+
+    Returns:
+        Tuple of (U, V) Kruskal coordinates
+    """
+    if r <= 0:
+        return (0, 0)
+
+    r_norm = r / R_s  # Normalize to Schwarzschild radii
+    t_norm = t / R_s
+
+    if r_norm > 1:  # Outside horizon
+        factor = np.sqrt(r_norm - 1) * np.exp(r_norm / 2)
+        U = factor * np.cosh(t_norm / 2)
+        V = factor * np.sinh(t_norm / 2)
+    elif r_norm < 1:  # Inside horizon
+        factor = np.sqrt(1 - r_norm) * np.exp(r_norm / 2)
+        U = factor * np.sinh(t_norm / 2)
+        V = factor * np.cosh(t_norm / 2)
+    else:  # On horizon
+        U = 0
+        V = 0
+
+    return (U, V)
+
+
+def kruskal_to_penrose(U: float, V: float) -> Tuple[float, float]:
+    """
+    Transform Kruskal coordinates to Penrose diagram coordinates.
+    Transformiert Kruskal-Koordinaten zu Penrose-Diagramm-Koordinaten.
+
+    Compactification:
+        u = U + V,  v = V - U
+        T = arctan(u) + arctan(v)
+        X = arctan(u) - arctan(v)
+
+    Args:
+        U, V: Kruskal-Szekeres coordinates
+
+    Returns:
+        Tuple of (X, T) Penrose coordinates
+    """
+    u = U + V
+    v = V - U
+
+    T = np.arctan(u) + np.arctan(v)
+    X = np.arctan(u) - np.arctan(v)
+
+    return (X, T)
+
+
+def calculate_constant_r_curve(r: float, R_s: float,
+                               t_range: Tuple[float, float] = (-10, 10),
+                               n_points: int = 100) -> Tuple[np.ndarray, np.ndarray]:
+    """
+    Calculate a constant-r curve in Penrose coordinates.
+    Berechnet eine Kurve konstanter r in Penrose-Koordinaten.
+
+    Args:
+        r: Radial coordinate [m]
+        R_s: Schwarzschild radius [m]
+        t_range: Range of Schwarzschild time coordinate
+        n_points: Number of points
+
+    Returns:
+        Tuple of (X, T) arrays in Penrose coordinates
+    """
+    t_values = np.linspace(t_range[0], t_range[1], n_points)
+    X = np.zeros(n_points)
+    T = np.zeros(n_points)
+
+    for i, t in enumerate(t_values):
+        U, V = schwarzschild_to_kruskal(r, t, R_s)
+        X[i], T[i] = kruskal_to_penrose(U, V)
+
+    return X, T
+
+
+def calculate_infalling_worldline(R_s: float, r_start: float,
+                                  n_points: int = 100) -> Tuple[np.ndarray, np.ndarray]:
+    """
+    Calculate worldline of an infalling observer in Penrose coordinates.
+    Berechnet die Weltlinie eines einfallenden Beobachters in Penrose-Koordinaten.
+
+    Args:
+        R_s: Schwarzschild radius
+        r_start: Starting radius [R_s units]
+        n_points: Number of points
+
+    Returns:
+        Tuple of (X, T) arrays in Penrose coordinates
+    """
+    # Simplified: use proper time parameterization for radial infall
+    # For a radially infalling observer from rest at infinity:
+    # dr/dtau = -sqrt(R_s/r) * c
+
+    r_values = np.linspace(r_start * R_s, 0.01 * R_s, n_points)
+    X = np.zeros(n_points)
+    T = np.zeros(n_points)
+
+    # Approximate the worldline using proper time
+    tau = 0
+    for i, r in enumerate(r_values):
+        r_norm = r / R_s
+
+        if r_norm > 1:
+            # Outside horizon - use approximate Schwarzschild time
+            t = tau * 2  # Simplified scaling
+            U, V = schwarzschild_to_kruskal(r, t, R_s)
+            X[i], T[i] = kruskal_to_penrose(U, V)
+        else:
+            # Inside horizon
+            t = tau * 2
+            U, V = schwarzschild_to_kruskal(r, t, R_s)
+            X[i], T[i] = kruskal_to_penrose(U, V)
+
+        tau += 0.1
+
+    return X, T
+
+
+def plot_penrose_carter_diagram(
+    constants: Optional[PhysicalConstants] = None,
+    language: str = 'en',
+    save: bool = True,
+    show: bool = False,
+    diagram_type: str = 'schwarzschild'
+) -> plt.Figure:
+    """
+    Plot a Penrose-Carter conformal diagram.
+    Zeichnet ein Penrose-Carter Konformaldiagramm.
+
+    Args:
+        constants: Physical constants
+        language: 'en' for English, 'de' for German
+        save: Whether to save the figure
+        show: Whether to display the figure
+        diagram_type: 'schwarzschild', 'collapse', or 'flat'
+
+    Returns:
+        matplotlib Figure object
+    """
+    if constants is None:
+        constants = get_constants()
+
+    fig, ax = plt.subplots(figsize=(10, 12))
+
+    # Define the diamond boundary
+    # In Penrose coordinates, null infinities are at 45-degree lines
+
+    if diagram_type == 'flat':
+        # Minkowski spacetime: simple diamond
+        # Future null infinity (J+) and past null infinity (J-)
+        diamond_x = [0, np.pi/2, 0, -np.pi/2, 0]
+        diamond_t = [-np.pi/2, 0, np.pi/2, 0, -np.pi/2]
+        ax.plot(diamond_x, diamond_t, 'k-', linewidth=2)
+
+        # Labels
+        ax.text(0, np.pi/2 + 0.1, 'i+', fontsize=14, ha='center', fontweight='bold')
+        ax.text(0, -np.pi/2 - 0.1, 'i-', fontsize=14, ha='center', va='top', fontweight='bold')
+        ax.text(np.pi/2 + 0.1, 0, 'i0', fontsize=14, va='center', fontweight='bold')
+        ax.text(-np.pi/2 - 0.1, 0, 'i0', fontsize=14, va='center', ha='right', fontweight='bold')
+
+        # J+ and J- labels
+        ax.text(np.pi/4 + 0.15, np.pi/4, 'J+', fontsize=12, rotation=-45)
+        ax.text(-np.pi/4 - 0.15, np.pi/4, 'J+', fontsize=12, rotation=45, ha='right')
+        ax.text(np.pi/4 + 0.15, -np.pi/4, 'J-', fontsize=12, rotation=45)
+        ax.text(-np.pi/4 - 0.15, -np.pi/4, 'J-', fontsize=12, rotation=-45, ha='right')
+
+        # Worldlines
+        for x0 in np.linspace(-0.8, 0.8, 5):
+            t_line = np.linspace(-np.pi/2 + abs(x0), np.pi/2 - abs(x0), 50)
+            x_line = np.ones_like(t_line) * x0
+            ax.plot(x_line, t_line, 'b-', alpha=0.3, linewidth=0.8)
+
+        title = 'Minkowski Spacetime' if language == 'en' else 'Minkowski-Raumzeit'
+
+    else:  # Schwarzschild
+        # Schwarzschild Penrose diagram has 4 regions
+
+        # Draw the diamond boundary (including singularity)
+        # Region I (exterior) and Region II (interior/future)
+
+        # Singularity (wavy line at top)
+        x_sing = np.linspace(-np.pi/2, np.pi/2, 100)
+        t_sing = np.pi/2 * np.ones_like(x_sing)
+        # Add waviness
+        t_sing_wavy = t_sing + 0.05 * np.sin(20 * x_sing)
+        ax.plot(x_sing, t_sing_wavy, color=COLORS['relativistic'], linewidth=3,
+               label='Singularity (r=0)' if language == 'en' else 'Singularität (r=0)')
+
+        # Past singularity (for eternal black hole)
+        t_sing_past = -np.pi/2 * np.ones_like(x_sing)
+        t_sing_past_wavy = t_sing_past + 0.05 * np.sin(20 * x_sing)
+        ax.plot(x_sing, t_sing_past_wavy, color=COLORS['relativistic'], linewidth=3, alpha=0.5)
+
+        # Event horizons (45-degree lines)
+        # Future horizon (from i- to singularity)
+        ax.plot([0, np.pi/2], [-np.pi/2, 0], 'k--', linewidth=2,
+               label='Event Horizon' if language == 'en' else 'Ereignishorizont')
+        ax.plot([0, -np.pi/2], [-np.pi/2, 0], 'k--', linewidth=2)
+
+        # Past horizon
+        ax.plot([0, np.pi/2], [np.pi/2, 0], 'k--', linewidth=2, alpha=0.5)
+        ax.plot([0, -np.pi/2], [np.pi/2, 0], 'k--', linewidth=2, alpha=0.5)
+
+        # Outer boundaries (J+ and J-)
+        ax.plot([np.pi/2, np.pi/2], [0, 0], 'k-', linewidth=2)  # i0
+        ax.plot([-np.pi/2, -np.pi/2], [0, 0], 'k-', linewidth=2)  # i0
+
+        # Right exterior (region I)
+        ax.plot([np.pi/2, np.pi/2], [-np.pi/2, 0], 'k-', linewidth=2)  # J-
+        ax.plot([np.pi/2, np.pi/2], [0, np.pi/2], 'k-', linewidth=2)   # J+
+
+        # Left exterior (region III - "other universe")
+        ax.plot([-np.pi/2, -np.pi/2], [-np.pi/2, 0], 'k-', linewidth=2, alpha=0.5)
+        ax.plot([-np.pi/2, -np.pi/2], [0, np.pi/2], 'k-', linewidth=2, alpha=0.5)
+
+        # Constant r curves
+        R_s = 1.0  # Normalized
+        for r_val in [1.5, 2.0, 3.0, 5.0]:
+            X, T = calculate_constant_r_curve(r_val * R_s, R_s, (-5, 5), 100)
+            # Clip to valid region
+            valid = (abs(X) < np.pi/2) & (abs(T) < np.pi/2)
+            if np.any(valid):
+                ax.plot(X[valid], T[valid], color=COLORS['standard'],
+                       linewidth=1, alpha=0.6)
+
+        # Infalling observer worldline
+        ax.plot([0.8, 0.3, 0], [-0.8, 0, 0.4], color=COLORS['highlight'],
+               linewidth=2, label='Infalling observer' if language == 'en' else 'Einfallender Beobachter')
+        ax.plot(0.8, -0.8, 'o', color=COLORS['highlight'], markersize=8)
+
+        # Region labels
+        ax.text(0.5, -0.3, 'I', fontsize=18, fontweight='bold', ha='center')
+        ax.text(-0.5, -0.3, 'III', fontsize=18, fontweight='bold', ha='center', alpha=0.5)
+        ax.text(0, 0.25, 'II', fontsize=18, fontweight='bold', ha='center')
+        ax.text(0, -0.65, 'IV', fontsize=18, fontweight='bold', ha='center', alpha=0.5)
+
+        # Infinity labels
+        ax.text(0, np.pi/2 + 0.15, 'r = 0', fontsize=11, ha='center', color=COLORS['relativistic'])
+        ax.text(np.pi/2 + 0.1, 0, 'i0', fontsize=14, va='center', fontweight='bold')
+        ax.text(np.pi/2 + 0.1, np.pi/4, 'J+', fontsize=12)
+        ax.text(np.pi/2 + 0.1, -np.pi/4, 'J-', fontsize=12)
+
+        # Light cone example
+        ax.annotate('', xy=(0.6, 0.2), xytext=(0.4, 0),
+                   arrowprops=dict(arrowstyle='->', color='blue', lw=1.5))
+        ax.annotate('', xy=(0.6, -0.2), xytext=(0.4, 0),
+                   arrowprops=dict(arrowstyle='->', color='blue', lw=1.5))
+
+        title = 'Schwarzschild Black Hole' if language == 'en' else 'Schwarzschild Schwarzes Loch'
+
+    ax.set_xlim(-2, 2)
+    ax.set_ylim(-2, 2)
+    ax.set_aspect('equal')
+    ax.set_xlabel('X (compactified space)' if language == 'en' else 'X (kompaktifizierter Raum)', fontsize=11)
+    ax.set_ylabel('T (compactified time)' if language == 'en' else 'T (kompaktifizierte Zeit)', fontsize=11)
+
+    ax.set_title(f'Penrose-Carter Diagram: {title}',
+                fontsize=14, fontweight='bold', pad=15)
+
+    # Legend at bottom
+    from matplotlib.lines import Line2D
+    legend_elements = [
+        Line2D([0], [0], color=COLORS['relativistic'], linewidth=3,
+               label='Singularity (r=0)' if language == 'en' else 'Singularität (r=0)'),
+        Line2D([0], [0], color='black', linestyle='--', linewidth=2,
+               label='Event Horizon' if language == 'en' else 'Ereignishorizont'),
+        Line2D([0], [0], color=COLORS['highlight'], linewidth=2,
+               label='Infalling observer' if language == 'en' else 'Einfallender Beobachter'),
+        Line2D([0], [0], color=COLORS['standard'], linewidth=1,
+               label='Constant r curves' if language == 'en' else 'Konstante r-Kurven'),
+        Line2D([0], [0], color='blue', linewidth=1.5, marker='>',
+               label='Light (45°)' if language == 'en' else 'Licht (45°)'),
+    ]
+    ax.legend(handles=legend_elements, loc='upper center', bbox_to_anchor=(0.5, -0.08),
+              fontsize=9, ncol=3, framealpha=0.7)
+
+    ax.grid(True, alpha=0.3)
+
+    plt.tight_layout()
+
+    if save:
+        os.makedirs(VIS_DIR, exist_ok=True)
+        suffix = '_de' if language == 'de' else ''
+        filepath = os.path.join(VIS_DIR, f'penrose_{diagram_type}{suffix}.png')
+        fig.savefig(filepath, dpi=150, bbox_inches='tight')
+        print(f"Saved: {filepath}")
+
+    if show:
+        plt.show()
+
+    return fig
+
+
+def plot_penrose_comparison(
+    constants: Optional[PhysicalConstants] = None,
+    language: str = 'en',
+    save: bool = True,
+    show: bool = False
+) -> plt.Figure:
+    """
+    Plot comparison of Penrose diagrams for different spacetimes.
+    Zeichnet Vergleich von Penrose-Diagrammen für verschiedene Raumzeiten.
+
+    Shows: Minkowski, Schwarzschild, and Collapsing star
+
+    Args:
+        constants: Physical constants
+        language: 'en' for English, 'de' for German
+        save: Whether to save the figure
+        show: Whether to display the figure
+
+    Returns:
+        matplotlib Figure object
+    """
+    if constants is None:
+        constants = get_constants()
+
+    fig, axes = plt.subplots(1, 3, figsize=(18, 10))
+
+    # Common settings
+    titles = {
+        'en': ['Minkowski (Flat)', 'Schwarzschild (Eternal BH)', 'Stellar Collapse'],
+        'de': ['Minkowski (Flach)', 'Schwarzschild (Ewiges SL)', 'Sternkollaps']
+    }
+
+    for idx, ax in enumerate(axes):
+        ax.set_xlim(-2, 2)
+        ax.set_ylim(-2, 2)
+        ax.set_aspect('equal')
+        ax.grid(True, alpha=0.3)
+        ax.set_xlabel('X', fontsize=11)
+        ax.set_ylabel('T', fontsize=11)
+        ax.set_title(titles[language][idx], fontsize=12, fontweight='bold')
+
+    # ===== MINKOWSKI =====
+    ax = axes[0]
+    # Diamond shape
+    diamond_x = [0, np.pi/2, 0, -np.pi/2, 0]
+    diamond_t = [-np.pi/2, 0, np.pi/2, 0, -np.pi/2]
+    ax.plot(diamond_x, diamond_t, 'k-', linewidth=2)
+
+    # Timelike worldlines
+    for x0 in np.linspace(-0.6, 0.6, 4):
+        t_line = np.linspace(-np.pi/2 + abs(x0) + 0.1, np.pi/2 - abs(x0) - 0.1, 30)
+        ax.plot(np.ones_like(t_line) * x0, t_line, 'b-', alpha=0.4, linewidth=1)
+
+    ax.text(0, np.pi/2 + 0.15, 'i+', fontsize=14, ha='center', fontweight='bold')
+    ax.text(0, -np.pi/2 - 0.15, 'i-', fontsize=14, ha='center', va='top', fontweight='bold')
+    ax.text(np.pi/2 + 0.1, 0, 'i0', fontsize=12, va='center')
+
+    # ===== SCHWARZSCHILD =====
+    ax = axes[1]
+
+    # Singularities
+    x_sing = np.linspace(-np.pi/2, np.pi/2, 50)
+    t_top = np.pi/2 + 0.05 * np.sin(15 * x_sing)
+    t_bot = -np.pi/2 + 0.05 * np.sin(15 * x_sing)
+    ax.plot(x_sing, t_top, color=COLORS['relativistic'], linewidth=3)
+    ax.plot(x_sing, t_bot, color=COLORS['relativistic'], linewidth=3, alpha=0.5)
+
+    # Horizons
+    ax.plot([0, np.pi/2], [-np.pi/2, 0], 'k--', linewidth=2)
+    ax.plot([0, -np.pi/2], [-np.pi/2, 0], 'k--', linewidth=2, alpha=0.5)
+    ax.plot([0, np.pi/2], [np.pi/2, 0], 'k--', linewidth=2)
+    ax.plot([0, -np.pi/2], [np.pi/2, 0], 'k--', linewidth=2, alpha=0.5)
+
+    # Region labels
+    ax.text(0.5, -0.3, 'I', fontsize=16, fontweight='bold')
+    ax.text(-0.5, -0.3, 'III', fontsize=16, fontweight='bold', alpha=0.5)
+    ax.text(0, 0.2, 'II', fontsize=16, fontweight='bold')
+    ax.text(0, -0.6, 'IV', fontsize=16, fontweight='bold', alpha=0.5)
+
+    # ===== STELLAR COLLAPSE =====
+    ax = axes[2]
+
+    # Star surface worldline (before collapse)
+    r_star = 0.4  # Initial radius in Penrose coords
+    t_collapse = 0  # Time of horizon formation
+
+    # Before collapse (matter region)
+    ax.fill_betweenx(np.linspace(-np.pi/2, t_collapse, 20),
+                     -r_star, r_star, color='gray', alpha=0.3)
+
+    # Star surface falling in
+    t_fall = np.linspace(t_collapse, np.pi/2 - 0.1, 30)
+    x_fall = r_star * np.exp(-(t_fall - t_collapse))
+    ax.plot(x_fall, t_fall, color=COLORS['highlight'], linewidth=2)
+    ax.plot(-x_fall, t_fall, color=COLORS['highlight'], linewidth=2)
+
+    # Singularity (only future)
+    x_sing = np.linspace(-np.pi/2, np.pi/2, 50)
+    t_sing = np.pi/2 + 0.05 * np.sin(15 * x_sing)
+    ax.plot(x_sing, t_sing, color=COLORS['relativistic'], linewidth=3)
+
+    # Horizon (only forms after collapse)
+    ax.plot([0, np.pi/2], [t_collapse, np.pi/4 + t_collapse/2], 'k--', linewidth=2)
+
+    # Outer boundary
+    ax.plot([np.pi/2, np.pi/2], [-np.pi/2, np.pi/2], 'k-', linewidth=2)
+
+    ax.text(0, np.pi/2 + 0.15, 'r = 0', fontsize=10, ha='center', color=COLORS['relativistic'])
+    ax.text(0.5, -0.5, 'I', fontsize=16, fontweight='bold')
+    ax.text(0, 0.3, 'II', fontsize=16, fontweight='bold')
+
+    # Common legend at bottom for all three plots
+    from matplotlib.lines import Line2D
+    from matplotlib.patches import Patch
+    legend_elements = [
+        Line2D([0], [0], color='k', linewidth=2,
+               label='Boundary' if language == 'en' else 'Grenze'),
+        Line2D([0], [0], color='k', linestyle='--', linewidth=2,
+               label='Event Horizon' if language == 'en' else 'Ereignishorizont'),
+        Line2D([0], [0], color=COLORS['relativistic'], linewidth=3,
+               label='Singularity' if language == 'en' else 'Singularität'),
+        Line2D([0], [0], color='blue', alpha=0.4, linewidth=1,
+               label='Worldlines' if language == 'en' else 'Weltlinien'),
+        Patch(facecolor='gray', alpha=0.3,
+              label='Collapsing matter' if language == 'en' else 'Kollabierende Materie'),
+        Line2D([0], [0], color=COLORS['highlight'], linewidth=2,
+               label='Star surface' if language == 'en' else 'Sternoberfläche'),
+    ]
+    fig.legend(handles=legend_elements, loc='lower center', bbox_to_anchor=(0.5, -0.02),
+               fontsize=9, ncol=6, framealpha=0.7)
+
+    plt.tight_layout()
+    plt.subplots_adjust(bottom=0.12)  # Make room for legend
+
+    if save:
+        os.makedirs(VIS_DIR, exist_ok=True)
+        suffix = '_de' if language == 'de' else ''
+        filepath = os.path.join(VIS_DIR, f'penrose_comparison{suffix}.png')
+        fig.savefig(filepath, dpi=150, bbox_inches='tight')
+        print(f"Saved: {filepath}")
+
+    if show:
+        plt.show()
+
+    return fig
 
 
 def verify_spacetime_physics():

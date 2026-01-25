@@ -800,6 +800,220 @@ def plot_temperature_profile_3d_interactive(
     return fig
 
 
+def plot_light_bending_3d_interactive(
+    constants: Optional[PhysicalConstants] = None,
+    language: str = 'en',
+    save: bool = True
+) -> 'go.Figure':
+    """
+    Create an interactive 3D visualization of light bending around a massive object.
+    Erstellt eine interaktive 3D-Visualisierung der Lichtbeugung um ein massives Objekt.
+
+    Shows multiple light rays bending around a central mass in 3D space.
+
+    Args:
+        constants: Physical constants
+        language: 'en' for English, 'de' for German
+        save: Whether to save as HTML file
+
+    Returns:
+        Plotly Figure object
+    """
+    check_plotly()
+
+    if constants is None:
+        constants = get_constants()
+
+    fig = go.Figure()
+
+    # Central mass (sphere)
+    # Create a sphere for the black hole / massive object
+    u = np.linspace(0, 2 * np.pi, 30)
+    v = np.linspace(0, np.pi, 20)
+    r_mass = 1.0  # Event horizon radius
+
+    x_sphere = r_mass * np.outer(np.cos(u), np.sin(v))
+    y_sphere = r_mass * np.outer(np.sin(u), np.sin(v))
+    z_sphere = r_mass * np.outer(np.ones(np.size(u)), np.cos(v))
+
+    fig.add_trace(go.Surface(
+        x=x_sphere, y=y_sphere, z=z_sphere,
+        colorscale=[[0, 'black'], [1, 'black']],
+        showscale=False,
+        opacity=1.0,
+        name='Event Horizon' if language == 'en' else 'Ereignishorizont',
+        showlegend=False
+    ))
+
+    # Add legend entry for mass
+    fig.add_trace(go.Scatter3d(
+        x=[None], y=[None], z=[None],
+        mode='markers',
+        marker=dict(size=10, color='black', symbol='circle'),
+        name='Event Horizon (R_s)' if language == 'en' else 'Ereignishorizont (R_s)',
+        showlegend=True
+    ))
+
+    # Photon sphere (transparent sphere at 1.5 R_s)
+    r_photon = 1.5
+    x_photon = r_photon * np.outer(np.cos(u), np.sin(v))
+    y_photon = r_photon * np.outer(np.sin(u), np.sin(v))
+    z_photon = r_photon * np.outer(np.ones(np.size(u)), np.cos(v))
+
+    fig.add_trace(go.Surface(
+        x=x_photon, y=y_photon, z=z_photon,
+        colorscale=[[0, COLORS['highlight']], [1, COLORS['highlight']]],
+        showscale=False,
+        opacity=0.15,
+        name='Photon Sphere' if language == 'en' else 'Photonensphäre',
+        showlegend=False
+    ))
+
+    # Calculate and plot light ray paths in 3D
+    # Different impact parameters and entry angles (phi)
+    impact_params = [2.0, 2.5, 3.0, 4.0, 5.0, 7.0]
+    phi_angles = [0, np.pi/2, np.pi, 3*np.pi/2]  # Entry from different directions
+
+    colors_rays = ['#1f77b4', '#2ca02c', '#9467bd', '#17becf']
+
+    for phi_idx, phi in enumerate(phi_angles):
+        for b in impact_params:
+            # Starting position (far away, coming toward center)
+            n_points = 150
+            x_ray = np.zeros(n_points)
+            y_ray = np.zeros(n_points)
+            z_ray = np.zeros(n_points)
+
+            # Initial conditions
+            # Ray starts at x = -20, with y = b*cos(phi), z = b*sin(phi)
+            x_ray[0] = -20
+            y_ray[0] = b * np.cos(phi)
+            z_ray[0] = b * np.sin(phi)
+
+            # Initial velocity (toward +x direction)
+            vx, vy, vz = 1.0, 0.0, 0.0
+            dt = 0.15
+
+            for i in range(1, n_points):
+                # Current position
+                r = np.sqrt(x_ray[i-1]**2 + y_ray[i-1]**2 + z_ray[i-1]**2)
+
+                if r < 1.2:  # Inside photon sphere - stop
+                    x_ray[i:] = x_ray[i-1]
+                    y_ray[i:] = y_ray[i-1]
+                    z_ray[i:] = z_ray[i-1]
+                    break
+
+                # Gravitational acceleration (simplified)
+                a_mag = 0.5 / (r**2)
+
+                # Radial unit vector
+                rx = x_ray[i-1] / r
+                ry = y_ray[i-1] / r
+                rz = z_ray[i-1] / r
+
+                # Acceleration toward center
+                ax = -a_mag * rx
+                ay = -a_mag * ry
+                az = -a_mag * rz
+
+                # Update velocity
+                vx += ax * dt
+                vy += ay * dt
+                vz += az * dt
+
+                # Normalize (light travels at c)
+                v_mag = np.sqrt(vx**2 + vy**2 + vz**2)
+                vx /= v_mag
+                vy /= v_mag
+                vz /= v_mag
+
+                # Update position
+                x_ray[i] = x_ray[i-1] + vx * dt
+                y_ray[i] = y_ray[i-1] + vy * dt
+                z_ray[i] = z_ray[i-1] + vz * dt
+
+                # Stop if ray escapes
+                if abs(x_ray[i]) > 20 or abs(y_ray[i]) > 20 or abs(z_ray[i]) > 20:
+                    break
+
+            # Plot the ray
+            fig.add_trace(go.Scatter3d(
+                x=x_ray[:i+1], y=y_ray[:i+1], z=z_ray[:i+1],
+                mode='lines',
+                line=dict(color=colors_rays[phi_idx], width=3),
+                opacity=0.7,
+                showlegend=False
+            ))
+
+    # Add legend entries for rays from different directions
+    ray_labels = ['From -X', 'From -Y', 'From +X', 'From +Y'] if language == 'en' else ['Von -X', 'Von -Y', 'Von +X', 'Von +Y']
+    for i, (color, label) in enumerate(zip(colors_rays, ray_labels)):
+        fig.add_trace(go.Scatter3d(
+            x=[None], y=[None], z=[None],
+            mode='lines',
+            line=dict(color=color, width=4),
+            name=f'Light rays ({label})' if language == 'en' else f'Lichtstrahlen ({label})',
+            showlegend=True
+        ))
+
+    # Add straight reference ray (no bending)
+    fig.add_trace(go.Scatter3d(
+        x=np.linspace(-20, 20, 50),
+        y=np.full(50, 12),
+        z=np.zeros(50),
+        mode='lines',
+        line=dict(color='gray', width=2, dash='dash'),
+        opacity=0.5,
+        name='No gravity (straight)' if language == 'en' else 'Ohne Gravitation (gerade)',
+        showlegend=True
+    ))
+
+    # Update layout
+    if language == 'de':
+        title = 'Lichtablenkung durch Gravitation (3D)<br><sup>Drehen Sie die Ansicht mit der Maus</sup>'
+    else:
+        title = 'Light Bending by Gravity (3D)<br><sup>Rotate the view with your mouse</sup>'
+
+    fig.update_layout(
+        title=dict(text=title, x=0.5),
+        scene=dict(
+            xaxis_title='X (Schwarzschild radii)' if language == 'en' else 'X (Schwarzschild-Radien)',
+            yaxis_title='Y (Schwarzschild radii)' if language == 'en' else 'Y (Schwarzschild-Radien)',
+            zaxis_title='Z (Schwarzschild radii)' if language == 'en' else 'Z (Schwarzschild-Radien)',
+            camera=dict(eye=dict(x=1.5, y=1.5, z=1.0)),
+            aspectmode='data',
+            domain=dict(x=[0, 1], y=[0.22, 1])
+        ),
+        height=900,
+        margin=dict(l=0, r=0, t=50, b=10),
+        template='plotly_white',
+        showlegend=True,
+        legend=dict(
+            x=0.5,
+            y=0.15,
+            xanchor='center',
+            yanchor='top',
+            bgcolor='rgba(255,255,255,0.95)',
+            bordercolor='rgba(180,180,180,0.8)',
+            borderwidth=1,
+            font=dict(size=12),
+            orientation='h',
+            entrywidth=0,
+            entrywidthmode='pixels'
+        )
+    )
+
+    if save:
+        os.makedirs(VIS_DIR, exist_ok=True)
+        suffix = '_de' if language == 'de' else ''
+        filepath = os.path.join(VIS_DIR, f'light_bending_3d_interactive{suffix}.html')
+        fig.write_html(filepath, config={'displaylogo': False, 'displayModeBar': True})
+        print(f"Saved: {filepath}")
+
+    return fig
+
+
 def generate_all_interactive_plots(language: str = 'en') -> List['go.Figure']:
     """
     Generate all interactive 3D visualizations.
@@ -832,6 +1046,9 @@ def generate_all_interactive_plots(language: str = 'en') -> List['go.Figure']:
 
     print("5. Temperature profile 3D...")
     figures.append(plot_temperature_profile_3d_interactive(language=language))
+
+    print("6. Light bending 3D...")
+    figures.append(plot_light_bending_3d_interactive(language=language))
 
     print("=" * 50)
     print(f"Generated {len(figures)} interactive visualizations")

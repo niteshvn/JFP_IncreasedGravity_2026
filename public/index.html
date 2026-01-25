@@ -141,6 +141,39 @@
             border: none;
         }
 
+        /* Sub-section tabs within a section */
+        .subsection-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 10px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+        }
+        .subsection-tab {
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 6px;
+            color: #ccc;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.85rem;
+        }
+        .subsection-tab:hover, .subsection-tab.active {
+            background: rgba(0,212,255,0.25);
+            border-color: #00d4ff;
+            color: #fff;
+        }
+        .subsection-content {
+            display: none;
+        }
+        .subsection-content.active {
+            display: block;
+        }
+
         /* Static Visualization Cards - Vertical Layout */
         .viz-item {
             display: flex;
@@ -255,6 +288,7 @@
             <div class="interactive-tabs">
                 <button class="interactive-tab active" onclick="loadInteractive('spacetime_3d_interactive.html', this)" data-en="Mass & Spacetime" data-de="Masse & Raumzeit">Mass & Spacetime</button>
                 <button class="interactive-tab" onclick="loadInteractive('spacetime_comparison_3d_interactive.html', this)" data-en="Stellar Comparison" data-de="Sternvergleich">Stellar Comparison</button>
+                <button class="interactive-tab" onclick="loadInteractive('light_bending_3d_interactive.html', this)" data-en="Light Bending" data-de="Lichtablenkung">Light Bending</button>
                 <button class="interactive-tab" onclick="loadInteractive('atom_scaling_3d_interactive.html', this)" data-en="Quantum Orbitals" data-de="Quantenorbitale">Quantum Orbitals</button>
                 <button class="interactive-tab" onclick="loadInteractive('force_ratio_3d_interactive.html', this)" data-en="EM vs Gravity" data-de="EM vs Gravitation">EM vs Gravity</button>
                 <button class="interactive-tab" onclick="loadInteractive('temperature_profile_3d_interactive.html', this)" data-en="Thermal Gradients" data-de="Temperaturgradienten">Thermal Gradients</button>
@@ -264,136 +298,215 @@
             </div>
         </div>
 
-        <!-- Spacetime Section -->
+        <!-- Spacetime Section with Sub-tabs -->
         <div id="spacetime" class="section">
-            <h2 data-en="Spacetime Curvature" data-de="Raumzeitkruemmung">Spacetime Curvature</h2>
+            <h2 data-en="Gravity & Spacetime" data-de="Gravitation & Raumzeit">Gravity & Spacetime</h2>
 
-            <div class="viz-item">
-                <div class="viz-image">
-                    <img src="visualizations/potential_well_2d.png" data-img-base="potential_well_2d" alt="Potential Well 2D">
+            <div class="subsection-tabs">
+                <button class="subsection-tab active" onclick="showSubsection('spacetime', 'curvature', this)" data-en="Potential & Curvature" data-de="Potential & Kruemmung">Potential & Curvature</button>
+                <button class="subsection-tab" onclick="showSubsection('spacetime', 'orbits', this)" data-en="Orbital Dynamics" data-de="Orbitaldynamik">Orbital Dynamics</button>
+                <button class="subsection-tab" onclick="showSubsection('spacetime', 'lensing', this)" data-en="Gravitational Lensing" data-de="Gravitationslinsen">Gravitational Lensing</button>
+                <button class="subsection-tab" onclick="showSubsection('spacetime', 'penrose', this)" data-en="Penrose Diagrams" data-de="Penrose-Diagramme">Penrose Diagrams</button>
+            </div>
+
+            <!-- Curvature Sub-section -->
+            <div id="spacetime-curvature" class="subsection-content active">
+                <div class="viz-item">
+                    <div class="viz-image">
+                        <img src="visualizations/potential_well_2d.png" data-img-base="potential_well_2d" alt="Potential Well 2D">
+                    </div>
+                    <div class="viz-details">
+                        <h3 data-en="Gravitational Potential Well (2D)" data-de="Gravitationspotentialtopf (2D)">Gravitational Potential Well (2D)</h3>
+                        <p class="description" data-en="The gravitational potential describes how much energy per unit mass is required to move an object from one point to another in a gravitational field. Deeper wells indicate stronger gravitational binding." data-de="Das Gravitationspotential beschreibt, wie viel Energie pro Masseneinheit benoetigt wird, um ein Objekt von einem Punkt zum anderen in einem Gravitationsfeld zu bewegen. Tiefere Toepfe zeigen staerkere gravitative Bindung an.">The gravitational potential describes how much energy per unit mass is required to move an object from one point to another in a gravitational field.</p>
+                        <div class="formulas">
+                            <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-potential"></div>
+                            <div class="formula" id="formula-potential2"></div>
+                        </div>
+                    </div>
                 </div>
-                <div class="viz-details">
-                    <h3 data-en="Gravitational Potential Well (2D)" data-de="Gravitationspotentialtopf (2D)">Gravitational Potential Well (2D)</h3>
-                    <p class="description" data-en="The gravitational potential describes how much energy per unit mass is required to move an object from one point to another in a gravitational field. Deeper wells indicate stronger gravitational binding." data-de="Das Gravitationspotential beschreibt, wie viel Energie pro Masseneinheit benoetigt wird, um ein Objekt von einem Punkt zum anderen in einem Gravitationsfeld zu bewegen. Tiefere Toepfe zeigen staerkere gravitative Bindung an.">The gravitational potential describes how much energy per unit mass is required to move an object from one point to another in a gravitational field.</p>
-                    <div class="formulas">
-                        <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
-                        <div class="formula" id="formula-potential"></div>
-                        <div class="formula" id="formula-potential2"></div>
+
+                <div class="viz-separator"></div>
+
+                <div class="viz-item">
+                    <div class="viz-image">
+                        <img src="visualizations/potential_well_3d.png" data-img-base="potential_well_3d" alt="Potential Well 3D">
+                    </div>
+                    <div class="viz-details">
+                        <h3 data-en="Gravitational Potential Well (3D)" data-de="Gravitationspotentialtopf (3D)">Gravitational Potential Well (3D)</h3>
+                        <p class="description" data-en="A three-dimensional representation of spacetime curvature around a massive object. The 'rubber sheet' analogy shows how mass creates a depression in the fabric of spacetime." data-de="Eine dreidimensionale Darstellung der Raumzeitkruemmung um ein massives Objekt. Die 'Gummituch'-Analogie zeigt, wie Masse eine Vertiefung im Gewebe der Raumzeit erzeugt.">A three-dimensional representation of spacetime curvature around a massive object.</p>
+                        <div class="formulas">
+                            <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-schwarzschild"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="viz-separator"></div>
+
+                <div class="viz-item">
+                    <div class="viz-image">
+                        <img src="visualizations/escape_velocity.png" data-img-base="escape_velocity" alt="Escape Velocity">
+                    </div>
+                    <div class="viz-details">
+                        <h3 data-en="Escape Velocity" data-de="Fluchtgeschwindigkeit">Escape Velocity</h3>
+                        <p class="description" data-en="The minimum velocity needed for an object to escape from the gravitational influence of a massive body. When escape velocity exceeds the speed of light, the object becomes a black hole." data-de="Die Mindestgeschwindigkeit, die ein Objekt benoetigt, um dem Gravitationseinfluss eines massiven Koerpers zu entkommen. Wenn die Fluchtgeschwindigkeit die Lichtgeschwindigkeit uebersteigt, wird das Objekt zu einem Schwarzen Loch.">The minimum velocity needed for an object to escape from gravitational influence.</p>
+                        <div class="formulas">
+                            <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-escape"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="viz-separator"></div>
+
+                <div class="viz-item">
+                    <div class="viz-image">
+                        <img src="visualizations/compactness_comparison.png" data-img-base="compactness_comparison" alt="Compactness Comparison">
+                    </div>
+                    <div class="viz-details">
+                        <h3 data-en="Compactness Comparison" data-de="Kompaktheitsvergleich">Compactness Comparison</h3>
+                        <p class="description" data-en="Compactness measures how close an object is to becoming a black hole. It's the ratio of the Schwarzschild radius to the actual radius. Higher compactness means stronger spacetime curvature." data-de="Kompaktheit misst, wie nah ein Objekt daran ist, ein Schwarzes Loch zu werden. Es ist das Verhaeltnis des Schwarzschild-Radius zum tatsaechlichen Radius.">Compactness measures how close an object is to becoming a black hole.</p>
+                        <div class="formulas">
+                            <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-compactness"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="viz-separator"></div>
+
+                <div class="viz-item">
+                    <div class="viz-image">
+                        <img src="visualizations/gravitational_vector_field.png" data-img-base="gravitational_vector_field" alt="Gravitational Vector Field">
+                    </div>
+                    <div class="viz-details">
+                        <h3 data-en="Gravitational & Tidal Force Fields" data-de="Gravitations- und Gezeitenkraftfelder">Gravitational & Tidal Force Fields</h3>
+                        <p class="description" data-en="Vector field visualization showing gravitational forces pointing toward a central mass, and tidal forces that stretch objects radially while compressing them tangentially. Tidal forces cause spaghettification near black holes." data-de="Vektorfeldvisualisierung, die Gravitationskraefte zeigt, die auf eine zentrale Masse zeigen, sowie Gezeitenkraefte, die Objekte radial dehnen und tangential komprimieren. Gezeitenkraefte verursachen Spaghettifizierung nahe Schwarzen Loechern.">Vector fields showing gravitational attraction and tidal stretching/compression.</p>
+                        <div class="formulas">
+                            <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-tidal"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="viz-separator"></div>
+
+                <div class="viz-item">
+                    <div class="viz-image">
+                        <img src="visualizations/spacetime_summary.png" data-img-base="spacetime_summary" alt="Spacetime Summary">
+                    </div>
+                    <div class="viz-details">
+                        <h3 data-en="Spacetime Physics Summary" data-de="Raumzeitphysik Zusammenfassung">Spacetime Physics Summary</h3>
+                        <p class="description" data-en="A comprehensive overview comparing compactness, escape velocity, and surface gravity across different astronomical objects from Earth to neutron stars. These three quantities determine the strength of relativistic effects." data-de="Ein umfassender Ueberblick, der Kompaktheit, Fluchtgeschwindigkeit und Oberflaechengravitation verschiedener astronomischer Objekte von der Erde bis zu Neutronensternen vergleicht. Diese drei Groessen bestimmen die Staerke relativistischer Effekte.">A comprehensive overview comparing key gravitational properties across astronomical objects.</p>
+                        <div class="formulas">
+                            <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-compactness-sum"></div>
+                            <div class="formula" id="formula-escape-sum"></div>
+                            <div class="formula" id="formula-surface-g"></div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="viz-separator"></div>
-
-            <div class="viz-item">
-                <div class="viz-image">
-                    <img src="visualizations/potential_well_3d.png" data-img-base="potential_well_3d" alt="Potential Well 3D">
+            <!-- Orbits Sub-section -->
+            <div id="spacetime-orbits" class="subsection-content">
+                <div class="viz-item">
+                    <div class="viz-image">
+                        <img src="visualizations/orbital_precession.png" data-img-base="orbital_precession" alt="Orbital Precession">
+                    </div>
+                    <div class="viz-details">
+                        <h3 data-en="Orbital Precession (Relativistic Effect)" data-de="Bahnpraezession (Relativistischer Effekt)">Orbital Precession (Relativistic Effect)</h3>
+                        <p class="description" data-en="General Relativity predicts that orbits precess (rotate) due to spacetime curvature. Mercury's perihelion advances by 43 arcseconds per century - a key confirmation of Einstein's theory. The animation shows this effect (exaggerated for visibility)." data-de="Die Allgemeine Relativitaetstheorie sagt voraus, dass Bahnen aufgrund der Raumzeitkruemmung praezedieren (rotieren). Merkurs Perihel verschiebt sich um 43 Bogensekunden pro Jahrhundert - eine wichtige Bestaetigung von Einsteins Theorie.">Relativistic orbital precession - a key prediction of General Relativity confirmed by Mercury.</p>
+                        <div class="formulas">
+                            <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-precession"></div>
+                        </div>
+                    </div>
                 </div>
-                <div class="viz-details">
-                    <h3 data-en="Gravitational Potential Well (3D)" data-de="Gravitationspotentialtopf (3D)">Gravitational Potential Well (3D)</h3>
-                    <p class="description" data-en="A three-dimensional representation of spacetime curvature around a massive object. The 'rubber sheet' analogy shows how mass creates a depression in the fabric of spacetime." data-de="Eine dreidimensionale Darstellung der Raumzeitkruemmung um ein massives Objekt. Die 'Gummituch'-Analogie zeigt, wie Masse eine Vertiefung im Gewebe der Raumzeit erzeugt.">A three-dimensional representation of spacetime curvature around a massive object.</p>
-                    <div class="formulas">
-                        <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
-                        <div class="formula" id="formula-schwarzschild"></div>
+
+                <div class="viz-separator"></div>
+
+                <div class="viz-item">
+                    <div class="viz-image">
+                        <img src="visualizations/orbital_precession_animation.gif" data-img-base="orbital_precession_animation" alt="Orbital Precession Animation">
+                    </div>
+                    <div class="viz-details">
+                        <h3 data-en="Precession Animation" data-de="Praezessions-Animation">Precession Animation</h3>
+                        <p class="description" data-en="Animated visualization showing how an orbit precesses over multiple revolutions. In Newtonian gravity, orbits are closed ellipses. In General Relativity, the perihelion (closest approach) advances with each orbit, creating a rosette pattern." data-de="Animierte Visualisierung, die zeigt, wie eine Bahn ueber mehrere Umlaeufe praezediert. In der Newtonschen Gravitation sind Bahnen geschlossene Ellipsen. In der Allgemeinen Relativitaet verschiebt sich das Perihel (naechster Punkt) mit jedem Umlauf.">Watch the orbit precess and form a rosette pattern over time.</p>
+                        <div class="formulas">
+                            <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-precession-anim"></div>
+                            <div class="formula" id="formula-kepler"></div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="viz-separator"></div>
-
-            <div class="viz-item">
-                <div class="viz-image">
-                    <img src="visualizations/escape_velocity.png" data-img-base="escape_velocity" alt="Escape Velocity">
+            <!-- Lensing Sub-section -->
+            <div id="spacetime-lensing" class="subsection-content">
+                <div class="viz-item">
+                    <div class="viz-image">
+                        <img src="visualizations/light_bending.png" data-img-base="light_bending" alt="Light Bending">
+                    </div>
+                    <div class="viz-details">
+                        <h3 data-en="Gravitational Lensing (Light Bending)" data-de="Gravitationslinseneffekt (Lichtablenkung)">Gravitational Lensing (Light Bending)</h3>
+                        <p class="description" data-en="Light rays bend when passing near massive objects due to spacetime curvature. The Sun deflects starlight by 1.75 arcseconds - confirmed by Eddington in 1919, proving Einstein's General Relativity. When perfectly aligned, the lensed image forms an Einstein Ring." data-de="Lichtstrahlen werden beim Passieren massereicher Objekte aufgrund der Raumzeitkruemmung abgelenkt. Die Sonne lenkt Sternlicht um 1,75 Bogensekunden ab - 1919 von Eddington bestaetigt als Beweis fuer Einsteins Allgemeine Relativitaetstheorie. Bei perfekter Ausrichtung bildet das gelinste Bild einen Einstein-Ring.">Light bends near massive objects - a key prediction of General Relativity.</p>
+                        <div class="formulas">
+                            <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-light-deflection"></div>
+                            <div class="formula" id="formula-einstein-radius"></div>
+                        </div>
+                    </div>
                 </div>
-                <div class="viz-details">
-                    <h3 data-en="Escape Velocity" data-de="Fluchtgeschwindigkeit">Escape Velocity</h3>
-                    <p class="description" data-en="The minimum velocity needed for an object to escape from the gravitational influence of a massive body. When escape velocity exceeds the speed of light, the object becomes a black hole." data-de="Die Mindestgeschwindigkeit, die ein Objekt benoetigt, um dem Gravitationseinfluss eines massiven Koerpers zu entkommen. Wenn die Fluchtgeschwindigkeit die Lichtgeschwindigkeit uebersteigt, wird das Objekt zu einem Schwarzen Loch.">The minimum velocity needed for an object to escape from gravitational influence.</p>
-                    <div class="formulas">
-                        <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
-                        <div class="formula" id="formula-escape"></div>
+
+                <div class="viz-separator"></div>
+
+                <div class="viz-item">
+                    <div class="viz-image">
+                        <img src="visualizations/light_bending_animation.gif" data-img-base="light_bending_animation" alt="Light Bending Animation">
+                    </div>
+                    <div class="viz-details">
+                        <h3 data-en="Light Bending Animation" data-de="Lichtablenkungs-Animation">Light Bending Animation</h3>
+                        <p class="description" data-en="Animated visualization showing multiple light rays approaching a massive object and bending around it. Different impact parameters (closest approach distances) result in different deflection angles. Rays passing closer to the mass bend more strongly." data-de="Animierte Visualisierung, die mehrere Lichtstrahlen zeigt, die sich einem massiven Objekt naehern und um es herum gebeugt werden. Verschiedene Auftreffparameter (naechste Annaherungsabstaende) fuehren zu unterschiedlichen Ablenkungswinkeln.">Watch light rays bend around a massive object in real time.</p>
+                        <div class="formulas">
+                            <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-deflection-angle"></div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="viz-separator"></div>
-
-            <div class="viz-item">
-                <div class="viz-image">
-                    <img src="visualizations/compactness_comparison.png" data-img-base="compactness_comparison" alt="Compactness Comparison">
-                </div>
-                <div class="viz-details">
-                    <h3 data-en="Compactness Comparison" data-de="Kompaktheitsvergleich">Compactness Comparison</h3>
-                    <p class="description" data-en="Compactness measures how close an object is to becoming a black hole. It's the ratio of the Schwarzschild radius to the actual radius. Higher compactness means stronger spacetime curvature." data-de="Kompaktheit misst, wie nah ein Objekt daran ist, ein Schwarzes Loch zu werden. Es ist das Verhaeltnis des Schwarzschild-Radius zum tatsaechlichen Radius.">Compactness measures how close an object is to becoming a black hole.</p>
-                    <div class="formulas">
-                        <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
-                        <div class="formula" id="formula-compactness"></div>
+            <!-- Penrose Sub-section -->
+            <div id="spacetime-penrose" class="subsection-content">
+                <div class="viz-item">
+                    <div class="viz-image">
+                        <img src="visualizations/penrose_schwarzschild.png" data-img-base="penrose_schwarzschild" alt="Penrose Diagram">
+                    </div>
+                    <div class="viz-details">
+                        <h3 data-en="Penrose-Carter Diagram (Schwarzschild Black Hole)" data-de="Penrose-Carter-Diagramm (Schwarzschild Schwarzes Loch)">Penrose-Carter Diagram (Schwarzschild Black Hole)</h3>
+                        <p class="description" data-en="A conformal diagram that compactifies infinite spacetime to finite size. Light always travels at 45 degrees. Region I is the exterior, Region II is inside the event horizon (inevitable future singularity). The singularity at r=0 is a spacelike boundary - once crossed the horizon, the singularity is in your future, not a place in space." data-de="Ein konformes Diagramm, das unendliche Raumzeit auf endliche Groesse kompaktifiziert. Licht bewegt sich immer auf 45-Grad-Linien. Region I ist aussen, Region II ist innerhalb des Ereignishorizonts (unvermeidliche zukuenftige Singularitaet). Die Singularitaet bei r=0 ist eine raumartige Grenze.">Conformal diagram showing the causal structure of a black hole spacetime.</p>
+                        <div class="formulas">
+                            <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-kruskal"></div>
+                            <div class="formula" id="formula-penrose"></div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="viz-separator"></div>
+                <div class="viz-separator"></div>
 
-            <div class="viz-item">
-                <div class="viz-image">
-                    <img src="visualizations/gravitational_vector_field.png" data-img-base="gravitational_vector_field" alt="Gravitational Vector Field">
-                </div>
-                <div class="viz-details">
-                    <h3 data-en="Gravitational & Tidal Force Fields" data-de="Gravitations- und Gezeitenkraftfelder">Gravitational & Tidal Force Fields</h3>
-                    <p class="description" data-en="Vector field visualization showing gravitational forces pointing toward a central mass, and tidal forces that stretch objects radially while compressing them tangentially. Tidal forces cause spaghettification near black holes." data-de="Vektorfeldvisualisierung, die Gravitationskraefte zeigt, die auf eine zentrale Masse zeigen, sowie Gezeitenkraefte, die Objekte radial dehnen und tangential komprimieren. Gezeitenkraefte verursachen Spaghettifizierung nahe Schwarzen Loechern.">Vector fields showing gravitational attraction and tidal stretching/compression.</p>
-                    <div class="formulas">
-                        <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
-                        <div class="formula" id="formula-tidal"></div>
+                <div class="viz-item">
+                    <div class="viz-image">
+                        <img src="visualizations/penrose_comparison.png" data-img-base="penrose_comparison" alt="Penrose Comparison">
                     </div>
-                </div>
-            </div>
-
-            <div class="viz-separator"></div>
-
-            <div class="viz-item">
-                <div class="viz-image">
-                    <img src="visualizations/orbital_precession.png" data-img-base="orbital_precession" alt="Orbital Precession">
-                </div>
-                <div class="viz-details">
-                    <h3 data-en="Orbital Precession (Relativistic Effect)" data-de="Bahnpraezession (Relativistischer Effekt)">Orbital Precession (Relativistic Effect)</h3>
-                    <p class="description" data-en="General Relativity predicts that orbits precess (rotate) due to spacetime curvature. Mercury's perihelion advances by 43 arcseconds per century - a key confirmation of Einstein's theory. The animation shows this effect (exaggerated for visibility)." data-de="Die Allgemeine Relativitaetstheorie sagt voraus, dass Bahnen aufgrund der Raumzeitkruemmung praezedieren (rotieren). Merkurs Perihel verschiebt sich um 43 Bogensekunden pro Jahrhundert - eine wichtige Bestaetigung von Einsteins Theorie.">Relativistic orbital precession - a key prediction of General Relativity confirmed by Mercury.</p>
-                    <div class="formulas">
-                        <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
-                        <div class="formula" id="formula-precession"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="viz-separator"></div>
-
-            <div class="viz-item">
-                <div class="viz-image">
-                    <img src="visualizations/orbital_precession_animation.gif" data-img-base="orbital_precession_animation" alt="Orbital Precession Animation">
-                </div>
-                <div class="viz-details">
-                    <h3 data-en="Precession Animation" data-de="Praezessions-Animation">Precession Animation</h3>
-                    <p class="description" data-en="Animated visualization showing how an orbit precesses over multiple revolutions. In Newtonian gravity, orbits are closed ellipses. In General Relativity, the perihelion (closest approach) advances with each orbit, creating a rosette pattern." data-de="Animierte Visualisierung, die zeigt, wie eine Bahn ueber mehrere Umlaeufe praezediert. In der Newtonschen Gravitation sind Bahnen geschlossene Ellipsen. In der Allgemeinen Relativitaet verschiebt sich das Perihel (naechster Punkt) mit jedem Umlauf.">Watch the orbit precess and form a rosette pattern over time.</p>
-                    <div class="formulas">
-                        <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
-                        <div class="formula" id="formula-precession-anim"></div>
-                        <div class="formula" id="formula-kepler"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="viz-separator"></div>
-
-            <div class="viz-item">
-                <div class="viz-image">
-                    <img src="visualizations/spacetime_summary.png" data-img-base="spacetime_summary" alt="Spacetime Summary">
-                </div>
-                <div class="viz-details">
-                    <h3 data-en="Spacetime Physics Summary" data-de="Raumzeitphysik Zusammenfassung">Spacetime Physics Summary</h3>
-                    <p class="description" data-en="A comprehensive overview comparing compactness, escape velocity, and surface gravity across different astronomical objects from Earth to neutron stars. These three quantities determine the strength of relativistic effects." data-de="Ein umfassender Ueberblick, der Kompaktheit, Fluchtgeschwindigkeit und Oberflaechengravitation verschiedener astronomischer Objekte von der Erde bis zu Neutronensternen vergleicht. Diese drei Groessen bestimmen die Staerke relativistischer Effekte.">A comprehensive overview comparing key gravitational properties across astronomical objects.</p>
-                    <div class="formulas">
-                        <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
-                        <div class="formula" id="formula-compactness-sum"></div>
-                        <div class="formula" id="formula-escape-sum"></div>
-                        <div class="formula" id="formula-surface-g"></div>
+                    <div class="viz-details">
+                        <h3 data-en="Penrose Diagram Comparison" data-de="Penrose-Diagramm-Vergleich">Penrose Diagram Comparison</h3>
+                        <p class="description" data-en="Comparison of three spacetimes: Minkowski (flat, no horizons), Schwarzschild (eternal black hole with 4 regions), and Stellar Collapse (realistic black hole formed from a collapsing star - no white hole region). These diagrams reveal the causal structure: what events can influence what other events." data-de="Vergleich von drei Raumzeiten: Minkowski (flach, keine Horizonte), Schwarzschild (ewiges Schwarzes Loch mit 4 Regionen), und Sternkollaps (realistisches Schwarzes Loch aus kollabierendem Stern - keine Weisses-Loch-Region). Diese Diagramme zeigen die kausale Struktur: welche Ereignisse welche anderen beeinflussen koennen.">Comparing the causal structure of flat, black hole, and collapsing spacetimes.</p>
+                        <div class="formulas">
+                            <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-null-geodesic"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -746,6 +859,17 @@
             button.classList.add('active');
         }
 
+        function showSubsection(sectionId, subsectionId, button) {
+            // Hide all subsection contents within this section
+            const section = document.getElementById(sectionId);
+            section.querySelectorAll('.subsection-content').forEach(c => c.classList.remove('active'));
+            section.querySelectorAll('.subsection-tab').forEach(t => t.classList.remove('active'));
+
+            // Show the selected subsection
+            document.getElementById(sectionId + '-' + subsectionId).classList.add('active');
+            button.classList.add('active');
+        }
+
         // Render formulas with KaTeX
         document.addEventListener('DOMContentLoaded', function() {
             const formulas = {
@@ -787,7 +911,13 @@
                 'formula-degeneracy-pressure': 'P_{deg} \\propto \\rho^{5/3}',
                 'formula-chandra-sum': 'M_{Ch} \\approx 1.4 M_\\odot',
                 'formula-mr-sum': 'R \\propto M^{-1/3}',
-                'formula-deg-sum': 'P_{deg} = K \\rho^{5/3}'
+                'formula-deg-sum': 'P_{deg} = K \\rho^{5/3}',
+                'formula-light-deflection': '\\alpha = \\frac{4GM}{c^2 b}',
+                'formula-einstein-radius': '\\theta_E = \\sqrt{\\frac{4GM}{c^2} \\cdot \\frac{D_{ls}}{D_l D_s}}',
+                'formula-deflection-angle': '\\alpha_{Sun} = 1.75\\text{ arcsec}',
+                'formula-kruskal': 'U = \\sqrt{\\frac{r}{R_s} - 1} \\cdot e^{r/2R_s}',
+                'formula-penrose': 'T = \\arctan(U+V) + \\arctan(V-U)',
+                'formula-null-geodesic': 'ds^2 = 0 \\quad \\text{(light at 45°)}'
             };
 
             for (const [id, formula] of Object.entries(formulas)) {
