@@ -240,24 +240,24 @@
     </div>
 
     <nav class="nav-tabs">
-        <a class="nav-tab active" onclick="showSection('interactive')" data-en="3D Interactive" data-de="3D Interaktiv">3D Interactive</a>
-        <a class="nav-tab" onclick="showSection('spacetime')" data-en="Spacetime" data-de="Raumzeit">Spacetime</a>
-        <a class="nav-tab" onclick="showSection('atomic')" data-en="Atomic Scale" data-de="Atomare Skala">Atomic Scale</a>
-        <a class="nav-tab" onclick="showSection('forces')" data-en="Forces" data-de="Kraefte">Forces</a>
-        <a class="nav-tab" onclick="showSection('temperature')" data-en="Temperature" data-de="Temperatur">Temperature</a>
-        <a class="nav-tab" onclick="showSection('stellar')" data-en="Stellar Physics" data-de="Stellare Physik">Stellar Physics</a>
+        <a class="nav-tab active" onclick="showSection('interactive')" data-en="3D Models" data-de="3D-Modelle">3D Models</a>
+        <a class="nav-tab" onclick="showSection('spacetime')" data-en="Gravity & Spacetime" data-de="Gravitation & Raumzeit">Gravity & Spacetime</a>
+        <a class="nav-tab" onclick="showSection('atomic')" data-en="Quantum Physics" data-de="Quantenphysik">Quantum Physics</a>
+        <a class="nav-tab" onclick="showSection('forces')" data-en="Fundamental Forces" data-de="Fundamentalkraefte">Fundamental Forces</a>
+        <a class="nav-tab" onclick="showSection('temperature')" data-en="Thermal Physics" data-de="Thermophysik">Thermal Physics</a>
+        <a class="nav-tab" onclick="showSection('stellar')" data-en="Compact Stars" data-de="Kompakte Sterne">Compact Stars</a>
     </nav>
 
     <div class="content">
         <!-- Interactive 3D Section -->
         <div id="interactive" class="section active">
-            <h2 data-en="Interactive 3D Visualizations" data-de="Interaktive 3D-Visualisierungen">Interactive 3D Visualizations</h2>
+            <h2 data-en="Interactive 3D Physics Models" data-de="Interaktive 3D-Physikmodelle">Interactive 3D Physics Models</h2>
             <div class="interactive-tabs">
-                <button class="interactive-tab active" onclick="loadInteractive('spacetime_3d_interactive.html', this)" data-en="Spacetime Curvature" data-de="Raumzeitkruemmung">Spacetime Curvature</button>
-                <button class="interactive-tab" onclick="loadInteractive('spacetime_comparison_3d_interactive.html', this)" data-en="Multiple Masses" data-de="Mehrere Massen">Multiple Masses</button>
-                <button class="interactive-tab" onclick="loadInteractive('atom_scaling_3d_interactive.html', this)" data-en="Atom Scaling" data-de="Atomskalierung">Atom Scaling</button>
-                <button class="interactive-tab" onclick="loadInteractive('force_ratio_3d_interactive.html', this)" data-en="Force Ratio" data-de="Kraefteverhaeltnis">Force Ratio</button>
-                <button class="interactive-tab" onclick="loadInteractive('temperature_profile_3d_interactive.html', this)" data-en="Temperature Profile" data-de="Temperaturprofil">Temperature Profile</button>
+                <button class="interactive-tab active" onclick="loadInteractive('spacetime_3d_interactive.html', this)" data-en="Mass & Spacetime" data-de="Masse & Raumzeit">Mass & Spacetime</button>
+                <button class="interactive-tab" onclick="loadInteractive('spacetime_comparison_3d_interactive.html', this)" data-en="Stellar Comparison" data-de="Sternvergleich">Stellar Comparison</button>
+                <button class="interactive-tab" onclick="loadInteractive('atom_scaling_3d_interactive.html', this)" data-en="Quantum Orbitals" data-de="Quantenorbitale">Quantum Orbitals</button>
+                <button class="interactive-tab" onclick="loadInteractive('force_ratio_3d_interactive.html', this)" data-en="EM vs Gravity" data-de="EM vs Gravitation">EM vs Gravity</button>
+                <button class="interactive-tab" onclick="loadInteractive('temperature_profile_3d_interactive.html', this)" data-en="Thermal Gradients" data-de="Temperaturgradienten">Thermal Gradients</button>
             </div>
             <div class="interactive-container">
                 <iframe id="interactive-frame" src="visualizations/spacetime_3d_interactive.html"></iframe>
@@ -330,11 +330,23 @@
                     </div>
                 </div>
             </div>
+
+            <div class="viz-separator"></div>
+
+            <div class="viz-item">
+                <div class="viz-image">
+                    <img src="visualizations/spacetime_summary.png" data-img-base="spacetime_summary" alt="Spacetime Summary">
+                </div>
+                <div class="viz-details">
+                    <h3 data-en="Spacetime Physics Summary" data-de="Raumzeitphysik Zusammenfassung">Spacetime Physics Summary</h3>
+                    <p class="description" data-en="A comprehensive overview comparing compactness, escape velocity, and surface gravity across different astronomical objects from Earth to neutron stars." data-de="Ein umfassender Ueberblick, der Kompaktheit, Fluchtgeschwindigkeit und Oberflaechengravitation verschiedener astronomischer Objekte von der Erde bis zu Neutronensternen vergleicht.">A comprehensive overview comparing key gravitational properties across astronomical objects.</p>
+                </div>
+            </div>
         </div>
 
         <!-- Atomic Section -->
         <div id="atomic" class="section">
-            <h2 data-en="Atomic Scale Physics" data-de="Physik auf atomarer Skala">Atomic Scale Physics</h2>
+            <h2 data-en="Quantum Scale Physics" data-de="Quantenskalenphysik">Quantum Scale Physics</h2>
 
             <div class="viz-item">
                 <div class="viz-image">
@@ -400,11 +412,23 @@
                     </div>
                 </div>
             </div>
+
+            <div class="viz-separator"></div>
+
+            <div class="viz-item">
+                <div class="viz-image">
+                    <img src="visualizations/atomic_summary.png" data-img-base="atomic_summary" alt="Atomic Summary">
+                </div>
+                <div class="viz-details">
+                    <h3 data-en="Quantum Physics Summary" data-de="Quantenphysik Zusammenfassung">Quantum Physics Summary</h3>
+                    <p class="description" data-en="Comprehensive comparison showing how atomic properties scale with changes in Planck's constant, including energy levels, orbital radii, and the fine structure constant." data-de="Umfassender Vergleich, der zeigt, wie atomare Eigenschaften mit Aenderungen der Planck-Konstante skalieren, einschliesslich Energieniveaus, Orbitalradien und Feinstrukturkonstante.">Comprehensive comparison of atomic property scaling with Planck's constant changes.</p>
+                </div>
+            </div>
         </div>
 
         <!-- Forces Section -->
         <div id="forces" class="section">
-            <h2 data-en="Fundamental Forces" data-de="Fundamentale Kraefte">Fundamental Forces</h2>
+            <h2 data-en="Fundamental Forces Comparison" data-de="Vergleich fundamentaler Kraefte">Fundamental Forces Comparison</h2>
 
             <div class="viz-item">
                 <div class="viz-image">
@@ -452,11 +476,23 @@
                     </div>
                 </div>
             </div>
+
+            <div class="viz-separator"></div>
+
+            <div class="viz-item">
+                <div class="viz-image">
+                    <img src="visualizations/force_scaled_hbar0.1_G1.0.png" data-img-base="force_scaled_hbar0.1_G1.0" alt="Scaled Universe Forces">
+                </div>
+                <div class="viz-details">
+                    <h3 data-en="Scaled Universe: ℏ=0.1" data-de="Skaliertes Universum: ℏ=0.1">Scaled Universe: ℏ=0.1</h3>
+                    <p class="description" data-en="Force comparison in a universe where Planck's constant is reduced to 10% of its normal value. This dramatically changes the balance between electromagnetic and gravitational forces." data-de="Kraeftevergleich in einem Universum, in dem die Planck-Konstante auf 10% ihres normalen Wertes reduziert ist. Dies veraendert dramatisch das Gleichgewicht zwischen elektromagnetischen und gravitativen Kraeften.">Force comparison with reduced Planck's constant showing gravity dominance.</p>
+                </div>
+            </div>
         </div>
 
         <!-- Temperature Section -->
         <div id="temperature" class="section">
-            <h2 data-en="Temperature Physics" data-de="Temperaturphysik">Temperature Physics</h2>
+            <h2 data-en="Thermal Physics" data-de="Thermische Physik">Thermal Physics</h2>
 
             <div class="viz-item">
                 <div class="viz-image">
@@ -553,6 +589,18 @@
                         <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
                         <div class="formula" id="formula-degeneracy-pressure"></div>
                     </div>
+                </div>
+            </div>
+
+            <div class="viz-separator"></div>
+
+            <div class="viz-item">
+                <div class="viz-image">
+                    <img src="visualizations/white_dwarf_summary.png" data-img-base="white_dwarf_summary" alt="White Dwarf Summary">
+                </div>
+                <div class="viz-details">
+                    <h3 data-en="Compact Stars Summary" data-de="Kompakte Sterne Zusammenfassung">Compact Stars Summary</h3>
+                    <p class="description" data-en="Comprehensive overview of white dwarf physics including degeneracy pressure, mass-radius relation, and the Chandrasekhar limit. These extreme objects demonstrate quantum mechanics on stellar scales." data-de="Umfassender Ueberblick ueber die Physik Weisser Zwerge einschliesslich Entartungsdruck, Masse-Radius-Beziehung und Chandrasekhar-Grenze. Diese extremen Objekte demonstrieren Quantenmechanik auf stellaren Skalen.">Comprehensive overview of white dwarf physics and the Chandrasekhar limit.</p>
                 </div>
             </div>
         </div>
