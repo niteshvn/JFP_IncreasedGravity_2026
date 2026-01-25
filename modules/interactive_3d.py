@@ -132,22 +132,24 @@ def plot_spacetime_curvature_3d_interactive(
             ),
             aspectmode='manual',
             aspectratio=dict(x=1, y=1, z=0.5),
-            domain=dict(x=[0, 1], y=[0.2, 1])  # Leave space at bottom
+            domain=dict(x=[0, 0.75], y=[0.15, 1])  # Leave space for legend on right and colorbar at bottom
         ),
         height=800,
-        margin=dict(l=10, r=10, t=80, b=150),  # Extra bottom margin
+        margin=dict(l=10, r=150, t=80, b=100),  # Right margin for legend
         template='plotly_white',
         showlegend=True,
         legend=dict(
-            x=0.5,
-            y=-0.02,
-            xanchor='center',
-            yanchor='top',
+            x=1.02,
+            y=0.6,
+            xanchor='left',
+            yanchor='middle',
             bgcolor='rgba(255,255,255,0.95)',
             bordercolor='black',
             borderwidth=1,
-            font=dict(size=12),
-            orientation='h'
+            font=dict(size=13),
+            itemsizing='constant',
+            tracegroupgap=10,
+            orientation='v'
         )
     )
 
@@ -270,24 +272,24 @@ def plot_multiple_masses_3d_interactive(
             camera=dict(eye=dict(x=1.8, y=1.8, z=1.0)),
             aspectmode='manual',
             aspectratio=dict(x=1, y=1, z=0.4),
-            domain=dict(x=[0, 1], y=[0.2, 1])  # Leave space at bottom
+            domain=dict(x=[0, 0.75], y=[0.15, 1])  # Leave space for legend on right and colorbar at bottom
         ),
         height=800,
-        margin=dict(l=10, r=10, t=80, b=150),  # Extra bottom margin
+        margin=dict(l=10, r=150, t=80, b=100),  # Right margin for legend
         template='plotly_white',
         showlegend=True,
         legend=dict(
-            x=0.5,
-            y=-0.02,
-            xanchor='center',
-            yanchor='top',
+            x=1.02,
+            y=0.6,
+            xanchor='left',
+            yanchor='middle',
             bgcolor='rgba(255,255,255,0.95)',
             bordercolor='black',
             borderwidth=1,
-            font=dict(size=12),
+            font=dict(size=13),
             itemsizing='constant',
-            tracegroupgap=5,
-            orientation='h'
+            tracegroupgap=8,
+            orientation='v'
         )
     )
 
@@ -397,24 +399,24 @@ def plot_atom_scaling_3d_interactive(
             zaxis_title='Universe',
             camera=dict(eye=dict(x=1.5, y=1.5, z=1.5)),
             aspectmode='data',
-            domain=dict(x=[0, 1], y=[0.2, 1])  # Leave space at bottom for legend
+            domain=dict(x=[0, 0.7], y=[0, 1])  # Leave space for legend on right
         ),
-        height=800,
-        margin=dict(l=10, r=10, t=80, b=120),  # Extra bottom margin for legend
+        height=700,
+        margin=dict(l=10, r=180, t=80, b=10),  # Right margin for legend
         template='plotly_white',
         showlegend=True,
         legend=dict(
-            x=0.5,
-            y=-0.05,
-            xanchor='center',
-            yanchor='top',
+            x=1.02,
+            y=0.5,
+            xanchor='left',
+            yanchor='middle',
             bgcolor='rgba(255,255,255,0.95)',
             bordercolor='black',
             borderwidth=1,
-            font=dict(size=12),
+            font=dict(size=13),
             itemsizing='constant',
-            tracegroupgap=5,
-            orientation='h'  # Horizontal layout at bottom
+            tracegroupgap=10,
+            orientation='v'  # Vertical layout on right
         )
     )
 
@@ -521,22 +523,24 @@ def plot_force_ratio_3d_interactive(
             yaxis_title=y_title,
             zaxis_title=z_title,
             camera=dict(eye=dict(x=1.5, y=1.5, z=1.2)),
-            domain=dict(x=[0, 1], y=[0.2, 1])  # Leave space at bottom
+            domain=dict(x=[0, 0.7], y=[0.15, 1])  # Leave space for legend on right and colorbar at bottom
         ),
         height=800,
-        margin=dict(l=10, r=10, t=80, b=150),  # Extra bottom margin
+        margin=dict(l=10, r=180, t=80, b=100),  # Right margin for legend
         template='plotly_white',
         showlegend=True,
         legend=dict(
-            x=0.5,
-            y=-0.02,
-            xanchor='center',
-            yanchor='top',
+            x=1.02,
+            y=0.6,
+            xanchor='left',
+            yanchor='middle',
             bgcolor='rgba(255,255,255,0.95)',
             bordercolor='black',
             borderwidth=1,
-            font=dict(size=12),
-            orientation='h'
+            font=dict(size=13),
+            itemsizing='constant',
+            tracegroupgap=10,
+            orientation='v'
         )
     )
 
@@ -710,24 +714,24 @@ def plot_temperature_profile_3d_interactive(
             camera=dict(eye=dict(x=1.5, y=-1.8, z=1.0)),
             aspectmode='manual',
             aspectratio=dict(x=1.2, y=1, z=0.6),
-            domain=dict(x=[0, 1], y=[0.25, 1])  # Leave space at bottom
+            domain=dict(x=[0, 0.7], y=[0.15, 1])  # Leave space for legend on right and colorbar at bottom
         ),
-        height=850,
-        margin=dict(l=10, r=10, t=80, b=180),  # Extra bottom margin for legend + colorbar
+        height=800,
+        margin=dict(l=10, r=150, t=80, b=100),  # Right margin for legend
         template='plotly_white',
         showlegend=True,
         legend=dict(
-            x=0.5,
-            y=-0.02,
-            xanchor='center',
-            yanchor='top',
+            x=1.02,
+            y=0.6,
+            xanchor='left',
+            yanchor='middle',
             bgcolor='rgba(255,255,255,0.95)',
             bordercolor='black',
             borderwidth=1,
-            font=dict(size=12),
+            font=dict(size=13),
             itemsizing='constant',
-            tracegroupgap=5,
-            orientation='h'
+            tracegroupgap=8,
+            orientation='v'
         )
     )
 
