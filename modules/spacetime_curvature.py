@@ -1242,8 +1242,8 @@ def plot_time_dilation_comparison(
         constants = get_constants()
 
     # Create figure with 4x1 vertical layout for better readability
-    fig, axes = plt.subplots(4, 1, figsize=(12, 24))
-    fig.subplots_adjust(hspace=0.45)  # Add more space between plots
+    fig, axes = plt.subplots(4, 1, figsize=(12, 22))
+    fig.subplots_adjust(hspace=0.55, top=0.96, bottom=0.06)  # Better spacing between plots
 
     # Get stellar objects
     objects = get_stellar_objects(constants)
@@ -1390,9 +1390,6 @@ def plot_time_dilation_comparison(
     ax4.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=3)
     ax4.grid(True, alpha=0.3)
     ax4.set_yscale('log')
-
-    plt.subplots_adjust(bottom=0.15)
-    plt.tight_layout()
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)
@@ -1558,8 +1555,8 @@ def plot_time_dilation_summary(
     if constants is None:
         constants = get_constants()
 
-    fig = plt.figure(figsize=(12, 28))
-    gs = fig.add_gridspec(5, 1, height_ratios=[1, 1, 1, 1, 0.8], hspace=0.45)
+    fig = plt.figure(figsize=(12, 22))
+    gs = fig.add_gridspec(4, 1, hspace=0.55)
 
     # Plot 1: Formula visualization
     ax1 = fig.add_subplot(gs[0])
@@ -1707,80 +1704,15 @@ def plot_time_dilation_summary(
     ax4.grid(True, alpha=0.3)
     ax4.set_yscale('log')
 
-    # Plot 5: Summary text panel
-    ax5 = fig.add_subplot(gs[4])
-    ax5.axis('off')
-
-    # Calculate specific values for the summary
-    earth_factor = gravitational_time_dilation_factor(constants.R_earth, constants.M_earth, constants)
-    wd_factor = gravitational_time_dilation_factor(8e6, 0.6 * constants.M_sun, constants)
-    ns_factor = gravitational_time_dilation_factor(10e3, 1.4 * constants.M_sun, constants)
-
-    if language == 'de':
-        summary_text = f"""
-                    GRAVITATIONELLE ZEITDILATATION - Zusammenfassung
-        ─────────────────────────────────────────────────────────────────
-
-        FORMEL:     τ/t = √(1 - Rₛ/r) = √(1 - 2GM/(rc²))
-
-                    τ = Eigenzeit (auf Objektoberfläche)
-                    t = Koordinatenzeit (für fernen Beobachter)
-
-                                    BEISPIELE:
-            • Erde:                 {(1-earth_factor)*100:.6f}% langsamer   (kaum messbar)
-            • Weißer Zwerg:         {(1-wd_factor)*100:.4f}% langsamer
-            • Neutronenstern:       {(1-ns_factor)*100:.1f}% langsamer   (~30% wie im Essay)
-            • Schwarzes Loch:       Zeit steht still am Ereignishorizont
-
-                        SCHLÜSSELAUSSAGE AUS DEM ESSAY:
-          "Auf der Oberfläche eines Neutronensterns vergeht die Zeit
-           etwa 30% langsamer als für einen entfernten Beobachter."
-
-                            PHYSIKALISCHE BEDEUTUNG:
-        Je stärker die Gravitation (größeres G oder kompakteres Objekt),
-             desto langsamer vergeht die Zeit → Extremfall: Schwarzes Loch
-        """
-    else:
-        summary_text = f"""
-                    GRAVITATIONAL TIME DILATION - Summary
-        ─────────────────────────────────────────────────────────────────
-
-        FORMULA:    τ/t = √(1 - Rₛ/r) = √(1 - 2GM/(rc²))
-
-                    τ = proper time (on object surface)
-                    t = coordinate time (for distant observer)
-
-                                    EXAMPLES:
-            • Earth:                {(1-earth_factor)*100:.6f}% slower   (barely measurable)
-            • White Dwarf:          {(1-wd_factor)*100:.4f}% slower
-            • Neutron Star:         {(1-ns_factor)*100:.1f}% slower   (~30% as in essay)
-            • Black Hole:           Time stops at event horizon
-
-                            KEY STATEMENT FROM ESSAY:
-           "On the surface of a neutron star, time passes
-            about 30% slower than for a distant observer."
-
-                            PHYSICAL MEANING:
-         The stronger gravity (larger G or more compact object),
-              the slower time passes → Extreme case: Black Hole
-        """
-
-    ax5.text(0.5, 0.5, summary_text, transform=ax5.transAxes, fontsize=11,
-             verticalalignment='center', horizontalalignment='center',
-             fontfamily='monospace',
-             bbox=dict(boxstyle='round', facecolor='white', alpha=0.95,
-                      edgecolor=COLORS['primary_blue'], linewidth=2))
-
-    # Overall title
+    # Overall title - position closer to first plot
     if language == 'de':
         fig.suptitle('Gravitationelle Zeitdilatation: Allgemeine Relativitätstheorie',
-                    fontsize=16, fontweight='bold', y=0.98)
+                    fontsize=16, fontweight='bold', y=0.995)
     else:
         fig.suptitle('Gravitational Time Dilation: General Relativity',
-                    fontsize=16, fontweight='bold', y=0.98)
+                    fontsize=16, fontweight='bold', y=0.995)
 
-    plt.subplots_adjust(bottom=0.05)
-    plt.tight_layout()
+    plt.subplots_adjust(top=0.96, bottom=0.06)
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)
