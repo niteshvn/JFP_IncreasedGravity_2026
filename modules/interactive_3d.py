@@ -433,15 +433,15 @@ def plot_atom_scaling_3d_interactive(
             zaxis_title='Universe',
             camera=dict(eye=dict(x=1.5, y=1.5, z=1.5)),
             aspectmode='data',
-            domain=dict(x=[0.1, 0.9], y=[0.30, 0.95])  # Centered graph with space below
+            domain=dict(x=[0, 1], y=[0.18, 1])  # Full width, same as force_ratio
         ),
-        height=750,
-        margin=dict(l=20, r=20, t=60, b=20),
+        height=900,
+        margin=dict(l=0, r=0, t=50, b=10),  # Minimal margins for max graph space
         template='plotly_white',
         showlegend=True,
         legend=dict(
             x=0.5,
-            y=0.22,
+            y=0.12,
             xanchor='center',
             yanchor='top',
             bgcolor='rgba(255,255,255,0.95)',
@@ -687,7 +687,7 @@ def plot_temperature_profile_3d_interactive(
             title=dict(text='Temperature [K]' if language == 'en' else 'Temperatur [K]', side='bottom', font=dict(size=13)),
             orientation='h',
             x=0.5,
-            y=0.08,
+            y=0.02,
             xanchor='center',
             yanchor='top',
             len=0.5,
@@ -767,15 +767,15 @@ def plot_temperature_profile_3d_interactive(
             camera=dict(eye=dict(x=1.5, y=-1.8, z=1.0)),
             aspectmode='manual',
             aspectratio=dict(x=1.2, y=1, z=0.7),
-            domain=dict(x=[0, 1], y=[0.32, 0.95])  # Leave space at bottom for legend + colorbar
+            domain=dict(x=[0, 1], y=[0.18, 1])  # Full width, same as force_ratio
         ),
         height=900,
-        margin=dict(l=0, r=0, t=50, b=20),
+        margin=dict(l=0, r=0, t=50, b=10),  # Minimal margins for max graph space
         template='plotly_white',
         showlegend=True,
         legend=dict(
             x=0.5,
-            y=0.24,
+            y=0.12,
             xanchor='center',
             yanchor='top',
             bgcolor='rgba(255,255,255,0.95)',
