@@ -371,24 +371,24 @@ def plot_atom_scaling_3d_interactive(
             zaxis_title='Universe',
             camera=dict(eye=dict(x=1.5, y=1.5, z=1.5)),
             aspectmode='data',
-            domain=dict(x=[0.15, 0.95], y=[0, 1])
+            domain=dict(x=[0, 1], y=[0.2, 1])  # Leave space at bottom for legend
         ),
-        height=750,
-        margin=dict(l=10, r=50, t=80, b=10),
+        height=800,
+        margin=dict(l=10, r=10, t=80, b=120),  # Extra bottom margin for legend
         template='plotly_white',
         showlegend=True,
         legend=dict(
-            x=0.01,
-            y=0.95,
-            xanchor='left',
+            x=0.5,
+            y=-0.05,
+            xanchor='center',
             yanchor='top',
             bgcolor='rgba(255,255,255,0.95)',
             bordercolor='black',
             borderwidth=1,
             font=dict(size=12),
             itemsizing='constant',
-            tracegroupgap=3,
-            orientation='v'
+            tracegroupgap=5,
+            orientation='h'  # Horizontal layout at bottom
         )
     )
 
