@@ -244,11 +244,11 @@ def plot_multiple_masses_3d_interactive(
                 font=dict(size=13)
             ),
             orientation='h',
-            x=0.5,
-            y=0.04,
+            x=0.42,
+            y=0.02,
             xanchor='center',
             yanchor='top',
-            len=0.5,
+            len=0.6,
             thickness=15
         ),
         opacity=0.9,
@@ -291,24 +291,22 @@ def plot_multiple_masses_3d_interactive(
             camera=dict(eye=dict(x=1.5, y=1.5, z=1.2)),
             aspectmode='manual',
             aspectratio=dict(x=1, y=1, z=0.5),
-            domain=dict(x=[0, 1], y=[0.22, 1])  # More space at bottom for legend+colorbar
+            domain=dict(x=[0, 0.85], y=[0.15, 1])  # Leave space on right for legend
         ),
-        height=950,
+        height=900,
         margin=dict(l=0, r=0, t=50, b=10),
         template='plotly_white',
         showlegend=True,
         legend=dict(
-            x=0.5,
-            y=0.16,
-            xanchor='center',
-            yanchor='top',
+            x=1.0,
+            y=0.5,
+            xanchor='left',
+            yanchor='middle',
             bgcolor='rgba(255,255,255,0.95)',
             bordercolor='rgba(180,180,180,0.8)',
             borderwidth=1,
             font=dict(size=12),
-            orientation='h',
-            entrywidth=0,
-            entrywidthmode='pixels'
+            orientation='v'
         )
     )
 
@@ -686,11 +684,11 @@ def plot_temperature_profile_3d_interactive(
         colorbar=dict(
             title=dict(text='Temperature [K]' if language == 'en' else 'Temperatur [K]', side='bottom', font=dict(size=13)),
             orientation='h',
-            x=0.5,
-            y=0.04,
+            x=0.42,
+            y=0.02,
             xanchor='center',
             yanchor='top',
-            len=0.5,
+            len=0.6,
             thickness=15,
             tickfont=dict(size=11)
         ),
@@ -767,24 +765,22 @@ def plot_temperature_profile_3d_interactive(
             camera=dict(eye=dict(x=1.5, y=-1.8, z=1.0)),
             aspectmode='manual',
             aspectratio=dict(x=1.2, y=1, z=0.7),
-            domain=dict(x=[0, 1], y=[0.22, 1])  # More space at bottom for legend+colorbar
+            domain=dict(x=[0, 0.85], y=[0.15, 1])  # Leave space on right for legend
         ),
-        height=950,
+        height=900,
         margin=dict(l=0, r=0, t=50, b=10),
         template='plotly_white',
         showlegend=True,
         legend=dict(
-            x=0.5,
-            y=0.16,
-            xanchor='center',
-            yanchor='top',
+            x=1.0,
+            y=0.5,
+            xanchor='left',
+            yanchor='middle',
             bgcolor='rgba(255,255,255,0.95)',
             bordercolor='rgba(180,180,180,0.8)',
             borderwidth=1,
             font=dict(size=12),
-            orientation='h',  # Horizontal to save vertical space
-            entrywidth=0,
-            entrywidthmode='pixels'
+            orientation='v'
         )
     )
 
