@@ -1241,8 +1241,8 @@ def plot_time_dilation_comparison(
     if constants is None:
         constants = get_constants()
 
-    # Create figure with 2x2 subplots
-    fig, axes = plt.subplots(2, 2, figsize=(14, 12))
+    # Create figure with 4x1 vertical layout for better readability
+    fig, axes = plt.subplots(4, 1, figsize=(12, 20))
 
     # Get stellar objects
     objects = get_stellar_objects(constants)
@@ -1260,7 +1260,7 @@ def plot_time_dilation_comparison(
             time_slowdown_percent.append(100.0)
 
     # Plot 1: Time dilation factor (bar chart)
-    ax1 = axes[0, 0]
+    ax1 = axes[0]
     names = [obj.name if language == 'en' else obj.name_de for obj in objects]
     colors = get_stellar_colors()
 
@@ -1290,7 +1290,7 @@ def plot_time_dilation_comparison(
     plt.setp(ax1.xaxis.get_majorticklabels(), rotation=45, ha='right')
 
     # Plot 2: Time slowdown percentage (bar chart)
-    ax2 = axes[0, 1]
+    ax2 = axes[1]
     bars2 = ax2.bar(names, time_slowdown_percent, color=colors, edgecolor='black', linewidth=1.5)
 
     # Add value labels
@@ -1319,7 +1319,7 @@ def plot_time_dilation_comparison(
     plt.setp(ax2.xaxis.get_majorticklabels(), rotation=45, ha='right')
 
     # Plot 3: Time dilation vs distance from neutron star
-    ax3 = axes[1, 0]
+    ax3 = axes[2]
 
     # Neutron star parameters
     M_ns = 1.4 * constants.M_sun
@@ -1362,7 +1362,7 @@ def plot_time_dilation_comparison(
     ax3.grid(True, alpha=0.3)
 
     # Plot 4: Accumulated time difference example
-    ax4 = axes[1, 1]
+    ax4 = axes[3]
 
     # Calculate how much time differs after 1 year on different objects
     years = np.linspace(0, 10, 100)  # 10 years coordinate time
@@ -1431,7 +1431,7 @@ def plot_time_dilation_scaling(
     if constants is None:
         constants = get_constants()
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 10))
 
     # Plot 1: Time dilation vs G scaling for Earth
     G_scales = np.logspace(0, 10, 50)  # G scaling from 1 to 10^10
@@ -1556,11 +1556,11 @@ def plot_time_dilation_summary(
     if constants is None:
         constants = get_constants()
 
-    fig = plt.figure(figsize=(16, 12))
-    gs = fig.add_gridspec(2, 2, hspace=0.35, wspace=0.3)
+    fig = plt.figure(figsize=(12, 20))
+    gs = fig.add_gridspec(4, 1, hspace=0.4)
 
     # Plot 1: Formula visualization
-    ax1 = fig.add_subplot(gs[0, 0])
+    ax1 = fig.add_subplot(gs[0])
 
     r_over_Rs = np.linspace(1.01, 10, 100)  # r/R_s from just above 1 to 10
     dilation = np.sqrt(1 - 1/r_over_Rs)
@@ -1595,7 +1595,7 @@ def plot_time_dilation_summary(
     ax1.grid(True, alpha=0.3)
 
     # Plot 2: Object comparison
-    ax2 = fig.add_subplot(gs[0, 1])
+    ax2 = fig.add_subplot(gs[1])
 
     objects = get_stellar_objects(constants)
     names = [obj.name if language == 'en' else obj.name_de for obj in objects]
@@ -1634,7 +1634,7 @@ def plot_time_dilation_summary(
     ax2.grid(True, alpha=0.3, axis='x')
 
     # Plot 3: Time dilation vs G scaling
-    ax3 = fig.add_subplot(gs[1, 0])
+    ax3 = fig.add_subplot(gs[2])
 
     G_scales = np.logspace(0, 8, 50)
     M_earth = constants.M_earth
@@ -1673,7 +1673,7 @@ def plot_time_dilation_summary(
     ax3.grid(True, alpha=0.3)
 
     # Plot 4: Accumulated time difference over years
-    ax4 = fig.add_subplot(gs[1, 1])
+    ax4 = fig.add_subplot(gs[3])
 
     years = np.linspace(0, 10, 100)
     seconds_per_year = 365.25 * 24 * 3600
