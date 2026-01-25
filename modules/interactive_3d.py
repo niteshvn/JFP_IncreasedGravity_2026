@@ -305,10 +305,10 @@ def plot_atom_scaling_3d_interactive(
     # Standard Bohr radius
     a0_std = constants.a_0
 
-    # Colors for different universes
-    colors = [COLORS['primary_blue'], COLORS['standard'], COLORS['scaled']]
+    # Colors for different universes - distinct colors for orbitals
+    orbital_colors = [COLORS['primary_blue'], COLORS['standard'], COLORS['scaled']]
 
-    for i, (scale, color) in enumerate(zip(hbar_scales, colors)):
+    for i, (scale, color) in enumerate(zip(hbar_scales, orbital_colors)):
         # Calculate scaled Bohr radius
         a0 = a0_std * scale**2
 
@@ -323,46 +323,45 @@ def plot_atom_scaling_3d_interactive(
         y = r * np.outer(np.sin(u), np.sin(v))
         z = r * np.outer(np.ones(np.size(u)), np.cos(v)) + i * 3  # Offset in z
 
+        # Short legend names
         if language == 'de':
-            orbital_name = f'Orbital (ℏ×{scale}): a₀={a0*1e12:.1f} pm'
+            orbital_name = f'ℏ×{scale}: a₀={a0*1e12:.1f} pm'
         else:
-            orbital_name = f'Orbital (ℏ×{scale}): a₀={a0*1e12:.1f} pm'
+            orbital_name = f'ℏ×{scale}: a₀={a0*1e12:.1f} pm'
 
-        # Add a scatter3d trace for legend (surfaces don't show well in legends)
-        # Use a point on the sphere surface for the legend marker
-        fig.add_trace(go.Scatter3d(
-            x=[r], y=[0], z=[i * 3],
-            mode='markers',
-            marker=dict(size=15, color=color, opacity=0.5),
-            name=orbital_name,
-            showlegend=True
-        ))
-
-        # Add orbital surface (semi-transparent)
+        # Add orbital surface with legend
         fig.add_trace(go.Surface(
             x=x, y=y, z=z,
             colorscale=[[0, color], [1, color]],
-            opacity=0.3,
+            opacity=0.4,
             showscale=False,
-            showlegend=False,
+            showlegend=True,
             name=orbital_name
         ))
 
-        # Add nucleus
-        nucleus_name = f'Nucleus (ℏ×{scale})' if language == 'en' else f'Kern (ℏ×{scale})'
+        # Add nucleus (no legend - single entry for all nuclei below)
         fig.add_trace(go.Scatter3d(
             x=[0], y=[0], z=[i * 3],
             mode='markers',
-            marker=dict(size=5, color=COLORS['scaled']),
-            name=nucleus_name,
-            showlegend=True
+            marker=dict(size=6, color='darkred'),
+            showlegend=False
         ))
+
+    # Add single nucleus legend entry
+    nucleus_label = 'Nucleus' if language == 'en' else 'Kern'
+    fig.add_trace(go.Scatter3d(
+        x=[None], y=[None], z=[None],
+        mode='markers',
+        marker=dict(size=6, color='darkred'),
+        name=nucleus_label,
+        showlegend=True
+    ))
 
     # Update layout
     if language == 'de':
-        title = 'Atomgroessen in verschiedenen Universen (a_0 proportional zu hbar^2)<br><sup>Interaktive 3D-Ansicht</sup>'
+        title = 'Atomgrößen in verschiedenen Universen<br><sup>a₀ ∝ ℏ² — Interaktive 3D-Ansicht</sup>'
     else:
-        title = 'Atom Sizes in Different Universes (a_0 proportional to hbar^2)<br><sup>Interactive 3D View</sup>'
+        title = 'Atom Sizes in Different Universes<br><sup>a₀ ∝ ℏ² — Interactive 3D View</sup>'
 
     fig.update_layout(
         title=dict(text=title, x=0.5),
@@ -372,25 +371,24 @@ def plot_atom_scaling_3d_interactive(
             zaxis_title='Universe',
             camera=dict(eye=dict(x=1.5, y=1.5, z=1.5)),
             aspectmode='data',
-            domain=dict(x=[0.0, 0.75], y=[0, 1])
+            domain=dict(x=[0.15, 0.95], y=[0, 1])
         ),
         height=750,
-        margin=dict(l=10, r=10, t=80, b=10),
+        margin=dict(l=10, r=50, t=80, b=10),
         template='plotly_white',
         showlegend=True,
         legend=dict(
-            x=1.0,
-            y=0.5,
+            x=0.01,
+            y=0.95,
             xanchor='left',
-            yanchor='middle',
+            yanchor='top',
             bgcolor='rgba(255,255,255,0.95)',
             bordercolor='black',
             borderwidth=1,
-            font=dict(size=10),
+            font=dict(size=12),
             itemsizing='constant',
-            tracegroupgap=2,
-            orientation='v',
-            itemwidth=30
+            tracegroupgap=3,
+            orientation='v'
         )
     )
 
