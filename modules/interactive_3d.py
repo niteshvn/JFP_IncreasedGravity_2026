@@ -245,11 +245,11 @@ def plot_multiple_masses_3d_interactive(
             ),
             orientation='h',
             x=0.5,
-            y=0.02,
+            y=0.01,  # Move down to avoid legend overlap
             xanchor='center',
             yanchor='top',
             len=0.5,
-            thickness=18
+            thickness=15  # Slightly thinner
         ),
         opacity=0.9,
         showlegend=False
@@ -288,27 +288,27 @@ def plot_multiple_masses_3d_interactive(
             xaxis_title='x',
             yaxis_title='y',
             zaxis_title='Curvature' if language == 'en' else 'Kruemmung',
-            camera=dict(eye=dict(x=1.8, y=1.8, z=1.0)),
+            camera=dict(eye=dict(x=1.5, y=1.5, z=1.2)),
             aspectmode='manual',
-            aspectratio=dict(x=1, y=1, z=0.4),
-            domain=dict(x=[0, 1], y=[0.18, 1])  # Full width, more vertical space for graph
+            aspectratio=dict(x=1, y=1, z=0.5),
+            domain=dict(x=[0, 1], y=[0.18, 1])  # Same as spacetime_3d
         ),
         height=900,
-        margin=dict(l=0, r=0, t=50, b=10),  # Minimal margins for max graph space
+        margin=dict(l=0, r=0, t=50, b=10),
         template='plotly_white',
         showlegend=True,
         legend=dict(
             x=0.5,
-            y=0.12,
+            y=0.14,  # Moved up slightly
             xanchor='center',
             yanchor='top',
             bgcolor='rgba(255,255,255,0.95)',
             bordercolor='rgba(180,180,180,0.8)',
             borderwidth=1,
-            font=dict(size=14),
-            orientation='v',
-            entrywidth=0,  # Auto-size based on text width
-            entrywidthmode='pixels'  # Use pixels mode for auto-sizing
+            font=dict(size=12),
+            orientation='h',  # Horizontal layout to save vertical space
+            entrywidth=0,
+            entrywidthmode='pixels'
         )
     )
 
