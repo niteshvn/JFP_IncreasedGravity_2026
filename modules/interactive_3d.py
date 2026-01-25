@@ -225,14 +225,18 @@ def plot_multiple_masses_3d_interactive(
         colorscale='Plasma',
         showscale=True,
         colorbar=dict(
-            title=dict(text='Curvature' if language == 'en' else 'Kruemmung', side='bottom'),
+            title=dict(
+                text='Curvature' if language == 'en' else 'Kruemmung',
+                side='bottom',
+                font=dict(size=14)
+            ),
             orientation='h',
             x=0.5,
-            y=-0.30,
+            y=0.02,
             xanchor='center',
             yanchor='top',
-            len=0.6,
-            thickness=15
+            len=0.5,
+            thickness=20
         ),
         opacity=0.9,
         showlegend=False
@@ -274,24 +278,22 @@ def plot_multiple_masses_3d_interactive(
             camera=dict(eye=dict(x=1.8, y=1.8, z=1.0)),
             aspectmode='manual',
             aspectratio=dict(x=1, y=1, z=0.4),
-            domain=dict(x=[0, 1], y=[0.40, 1])  # Leave space at bottom for legend + colorbar
+            domain=dict(x=[0, 1], y=[0.32, 1])  # Graph in upper portion
         ),
-        height=900,
-        margin=dict(l=10, r=10, t=80, b=220),  # Large bottom margin for legend + colorbar
+        height=800,
+        margin=dict(l=20, r=20, t=80, b=50),
         template='plotly_white',
         showlegend=True,
         legend=dict(
             x=0.5,
-            y=-0.05,
+            y=0.22,
             xanchor='center',
             yanchor='top',
             bgcolor='rgba(255,255,255,0.95)',
             bordercolor='black',
             borderwidth=1,
-            font=dict(size=13),
-            itemsizing='constant',
-            tracegroupgap=8,
-            orientation='v'  # Vertical - one item per row for readability
+            font=dict(size=14),
+            orientation='v'
         )
     )
 
