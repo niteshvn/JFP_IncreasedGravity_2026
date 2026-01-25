@@ -645,12 +645,13 @@ def plot_hypothesis_summary(
     if constants is None:
         constants = get_constants()
 
-    fig, axes = plt.subplots(2, 2, figsize=(14, 12))
+    fig = plt.figure(figsize=(14, 16))
+    gs = fig.add_gridspec(3, 2, height_ratios=[1, 1, 0.6], hspace=0.4, wspace=0.3)
 
     M_sun = constants.M_sun
 
     # Plot 1: Object stability under standard physics
-    ax1 = axes[0, 0]
+    ax1 = fig.add_subplot(gs[0, 0])
 
     objects_data = [
         ('Earth', constants.M_earth, 5500, 'Stable (thermal)'),
@@ -686,7 +687,7 @@ def plot_hypothesis_summary(
     ax1.grid(True, alpha=0.3, which='both')
 
     # Plot 2: Pressure scaling with G
-    ax2 = axes[0, 1]
+    ax2 = fig.add_subplot(gs[0, 1])
 
     G_scales = np.logspace(0, 40, 100)
 
@@ -719,7 +720,7 @@ def plot_hypothesis_summary(
     ax2.grid(True, alpha=0.3, which='both')
 
     # Plot 3: Stability ratio vs G for different ℏ scalings
-    ax3 = axes[1, 0]
+    ax3 = fig.add_subplot(gs[1, 0])
 
     hbar_scalings = [1, 1e9, 1e18]
     labels_en = ['Standard ℏ', 'ℏ × 10⁹', 'ℏ × 10¹⁸']
@@ -749,7 +750,7 @@ def plot_hypothesis_summary(
     ax3.grid(True, alpha=0.3, which='both')
 
     # Plot 4: Required ℏ scaling for stability at different G
-    ax4 = axes[1, 1]
+    ax4 = fig.add_subplot(gs[1, 1])
 
     G_values = np.logspace(0, 40, 50)
     # For stability: P_grav = P_Pauli → G_scaled = ℏ_scaled²
@@ -783,8 +784,61 @@ def plot_hypothesis_summary(
     ax4.set_xlim(1, 1e42)
     ax4.set_ylim(1e-2, 1e25)
 
+    # Summary text panel (spans both columns)
+    ax5 = fig.add_subplot(gs[2, :])
+    ax5.axis('off')
+
+    if language == 'de':
+        summary_text = """
+                  GRAVITATION vs. PAULI-DRUCK - Zusammenfassung
+        ─────────────────────────────────────────────────────────────────
+
+        KERNFORMELN:    P_grav ∝ G·M²/R⁴       P_Pauli ∝ ℏ²·ρ^(5/3)/m
+
+                                STABILITÄTSBEDINGUNG:
+                        P_Pauli ≥ P_grav  →  ℏ² ∝ G  →  ℏ ∝ √G
+
+                            SCHLÜSSELAUSSAGE AUS DEM ESSAY:
+        "Um bei einer um 10³⁶ erhöhten Gravitation das Gleichgewicht zu
+         erhalten, müsste ℏ um den Faktor 10¹⁸ erhöht werden."
+
+                                IMPLIKATIONEN:
+            • In unserem Universum: G/ℏ² ist winzig → Gravitation auf
+              atomarer Skala vernachlässigbar
+            • Bei G × 10³⁶ (ohne ℏ-Änderung): Materie kollabiert bei
+              viel größeren Skalen als in unserem Universum
+            • Balance ℏ ∝ √G: Sternstruktur und Chemie bleiben möglich
+        """
+    else:
+        summary_text = """
+                    GRAVITY vs. PAULI PRESSURE - Summary
+        ─────────────────────────────────────────────────────────────────
+
+        CORE FORMULAS:  P_gravity ∝ G·M²/R⁴     P_Pauli ∝ ℏ²·ρ^(5/3)/m
+
+                                STABILITY CONDITION:
+                        P_Pauli ≥ P_gravity  →  ℏ² ∝ G  →  ℏ ∝ √G
+
+                            KEY STATEMENT FROM ESSAY:
+        "To maintain equilibrium with gravity increased by 10³⁶,
+         ℏ would need to increase by a factor of 10¹⁸."
+
+                                IMPLICATIONS:
+            • In our universe: G/ℏ² is tiny → gravity negligible at
+              atomic scales
+            • With G × 10³⁶ (no ℏ change): matter collapses at much
+              larger scales than in our universe
+            • Balance ℏ ∝ √G: stellar structure and chemistry remain possible
+        """
+
+    ax5.text(0.5, 0.5, summary_text, transform=ax5.transAxes, fontsize=11,
+             verticalalignment='center', horizontalalignment='center',
+             fontfamily='monospace',
+             bbox=dict(boxstyle='round', facecolor='white', alpha=0.95,
+                      edgecolor=COLORS['primary_blue'], linewidth=2))
+
     plt.tight_layout()
-    plt.subplots_adjust(bottom=0.12)
+    plt.subplots_adjust(bottom=0.05, top=0.95)
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)

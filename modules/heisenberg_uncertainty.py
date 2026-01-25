@@ -782,10 +782,10 @@ def plot_heisenberg_summary(
     if constants is None:
         constants = get_constants()
 
-    fig = plt.figure(figsize=(14, 12))
+    fig = plt.figure(figsize=(14, 16))
 
-    # Create grid layout (2x2 - data visualizations only, no text boxes)
-    gs = fig.add_gridspec(2, 2, hspace=0.35, wspace=0.3)
+    # Create grid layout (3 rows: 2x2 plots + summary text panel)
+    gs = fig.add_gridspec(3, 2, height_ratios=[1, 1, 0.6], hspace=0.4, wspace=0.3)
 
     # Plot 1: Basic uncertainty relation
     ax1 = fig.add_subplot(gs[0, 0])
@@ -891,6 +891,65 @@ def plot_heisenberg_summary(
     ax4.legend(fontsize=8, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=2)
     ax4.grid(True, alpha=0.3, which='both')
 
+    # Plot 5: Summary text panel (spans both columns)
+    ax5 = fig.add_subplot(gs[2, :])
+    ax5.axis('off')
+
+    if language == 'de':
+        summary_text = """
+                HEISENBERG-UNSCHÄRFEPRINZIP - Zusammenfassung
+        ─────────────────────────────────────────────────────────────────
+
+        FORMEL:     Δx · Δp ≥ ℏ/2
+
+                                DIE KAUSALKETTE:
+        Einschluss (kleines Δx) → Große Impulsunschärfe (Δp) → Hohe Geschwindigkeit
+                    → Kinetische Energie → Entartungsdruck
+
+                                WICHTIGE ERKENNTNIS:
+            • Entartungsdruck skaliert mit P ∝ ℏ²
+            • Kleinerer Einschluss = höherer Druck
+            • Diese Quanten-"Unruhe" verhindert den Kollaps von Sternen!
+
+                            SCHLÜSSELAUSSAGE AUS DEM ESSAY:
+        "Die Heisenberg-Unschärfe erzwingt eine minimale Bewegung - Teilchen
+         können nicht still stehen. Dies erzeugt Druck, auch bei T = 0 K."
+
+                                ANWENDUNGEN:
+        Weiße Zwerge: Elektronen-Entartungsdruck (P_e ∝ ℏ²/m_e)
+        Neutronensterne: Neutronen-Entartungsdruck (P_n ∝ ℏ²/m_n)
+        """
+    else:
+        summary_text = """
+                  HEISENBERG UNCERTAINTY PRINCIPLE - Summary
+        ─────────────────────────────────────────────────────────────────
+
+        FORMULA:    Δx · Δp ≥ ℏ/2
+
+                                THE CAUSAL CHAIN:
+        Confinement (small Δx) → Large momentum uncertainty (Δp) → High velocity
+                    → Kinetic energy → Degeneracy pressure
+
+                                KEY INSIGHT:
+            • Degeneracy pressure scales as P ∝ ℏ²
+            • Smaller confinement = higher pressure
+            • This quantum "restlessness" prevents stellar collapse!
+
+                            KEY STATEMENT FROM ESSAY:
+         "Heisenberg uncertainty enforces minimum motion - particles
+          cannot be still. This creates pressure, even at T = 0 K."
+
+                                APPLICATIONS:
+        White Dwarfs: Electron degeneracy pressure (P_e ∝ ℏ²/m_e)
+        Neutron Stars: Neutron degeneracy pressure (P_n ∝ ℏ²/m_n)
+        """
+
+    ax5.text(0.5, 0.5, summary_text, transform=ax5.transAxes, fontsize=11,
+             verticalalignment='center', horizontalalignment='center',
+             fontfamily='monospace',
+             bbox=dict(boxstyle='round', facecolor='white', alpha=0.95,
+                      edgecolor=COLORS['primary_blue'], linewidth=2))
+
     # Overall title
     if language == 'de':
         fig.suptitle('Heisenberg-Unschärfeprinzip: Von Quantenmechanik zu Sternenstabilität',
@@ -900,7 +959,7 @@ def plot_heisenberg_summary(
                     fontsize=16, fontweight='bold', y=0.98)
 
     plt.tight_layout()
-    plt.subplots_adjust(bottom=0.12, top=0.93)
+    plt.subplots_adjust(bottom=0.05, top=0.95)
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)

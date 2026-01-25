@@ -749,8 +749,12 @@ def plot_neutron_star_summary(
     M_ch = chandrasekhar_mass(constants) / constants.M_sun
     M_tov = tov_mass_limit(constants) / constants.M_sun
 
-    fig, axes = plt.subplots(2, 2, figsize=(14, 12))
-    ((ax1, ax2), (ax3, ax4)) = axes
+    fig = plt.figure(figsize=(14, 16))
+    gs = fig.add_gridspec(3, 2, height_ratios=[1, 1, 0.6], hspace=0.4, wspace=0.3)
+    ax1 = fig.add_subplot(gs[0, 0])
+    ax2 = fig.add_subplot(gs[0, 1])
+    ax3 = fig.add_subplot(gs[1, 0])
+    ax4 = fig.add_subplot(gs[1, 1])
 
     # === Plot 1: Mass limits with stability regions ===
     mass_range = np.linspace(0, 3.5, 200)
@@ -902,14 +906,71 @@ def plot_neutron_star_summary(
     ax4.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.18), ncol=1)
     ax4.grid(True, alpha=0.3, axis='y')
 
+    # Summary text panel (spans both columns)
+    ax5 = fig.add_subplot(gs[2, :])
+    ax5.axis('off')
+
+    ns_typical = calculate_neutron_star(1.4, constants)
+
+    if language == 'de':
+        summary_text = f"""
+                      NEUTRONENSTERN-PHYSIK - Zusammenfassung
+        ─────────────────────────────────────────────────────────────────
+
+        TYPISCHER NEUTRONENSTERN (1.4 M☉):
+            • Masse:                1.4 Sonnenmassen = {ns_typical.mass:.2e} kg
+            • Radius:               ~{ns_typical.radius_km:.0f} km (Größe einer Stadt!)
+            • Dichte:               ~{ns_typical.density:.1e} kg/m³
+                                    (1 Teelöffel = ~1 Milliarde Tonnen)
+            • Oberflächengravitation: {ns_typical.surface_gravity:.1e} m/s²
+            • Fluchtgeschwindigkeit:  {ns_typical.escape_velocity/1000:.0f} km/s ({ns_typical.escape_velocity/constants.c*100:.0f}% c)
+            • Zeitdilatation:         τ/t = {ns_typical.time_dilation:.2f} ({(1-ns_typical.time_dilation)*100:.0f}% langsamer)
+
+                                MASSENGRENZEN:
+            Chandrasekhar-Grenze:   {M_ch:.2f} M☉ (Weißer Zwerg → Neutronenstern)
+            TOV-Grenze:             {M_tov:.2f} M☉ (Neutronenstern → Schwarzes Loch)
+
+                            SCHLÜSSELAUSSAGE AUS DEM ESSAY:
+        "Neutronen-Entartungsdruck stützt diese extremen Objekte an der
+         Grenze zum Schwarzen Loch - Quantenmechanik vs. Gravitation."
+        """
+    else:
+        summary_text = f"""
+                      NEUTRON STAR PHYSICS - Summary
+        ─────────────────────────────────────────────────────────────────
+
+        TYPICAL NEUTRON STAR (1.4 M☉):
+            • Mass:                 1.4 Solar masses = {ns_typical.mass:.2e} kg
+            • Radius:               ~{ns_typical.radius_km:.0f} km (size of a city!)
+            • Density:              ~{ns_typical.density:.1e} kg/m³
+                                    (1 teaspoon = ~1 billion tons)
+            • Surface gravity:      {ns_typical.surface_gravity:.1e} m/s²
+            • Escape velocity:      {ns_typical.escape_velocity/1000:.0f} km/s ({ns_typical.escape_velocity/constants.c*100:.0f}% c)
+            • Time dilation:        τ/t = {ns_typical.time_dilation:.2f} ({(1-ns_typical.time_dilation)*100:.0f}% slower)
+
+                                MASS LIMITS:
+            Chandrasekhar Limit:    {M_ch:.2f} M☉ (White Dwarf → Neutron Star)
+            TOV Limit:              {M_tov:.2f} M☉ (Neutron Star → Black Hole)
+
+                            KEY STATEMENT FROM ESSAY:
+        "Neutron degeneracy pressure supports these extreme objects at the
+         edge of becoming black holes - quantum mechanics vs. gravity."
+        """
+
+    ax5.text(0.5, 0.5, summary_text, transform=ax5.transAxes, fontsize=11,
+             verticalalignment='center', horizontalalignment='center',
+             fontfamily='monospace',
+             bbox=dict(boxstyle='round', facecolor='white', alpha=0.95,
+                      edgecolor=COLORS['primary_blue'], linewidth=2))
+
     # Main title
     if language == 'de':
-        fig.suptitle('Neutronenstern-Physik: Zusammenfassung', fontsize=16, fontweight='bold', y=1.02)
+        fig.suptitle('Neutronenstern-Physik: Zusammenfassung', fontsize=16, fontweight='bold', y=0.98)
     else:
-        fig.suptitle('Neutron Star Physics: Summary', fontsize=16, fontweight='bold', y=1.02)
+        fig.suptitle('Neutron Star Physics: Summary', fontsize=16, fontweight='bold', y=0.98)
 
-    plt.subplots_adjust(bottom=0.15)
     plt.tight_layout()
+    plt.subplots_adjust(bottom=0.05, top=0.95)
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)
