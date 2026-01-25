@@ -1242,8 +1242,8 @@ def plot_time_dilation_comparison(
         constants = get_constants()
 
     # Create figure with 4x1 vertical layout for better readability
-    fig, axes = plt.subplots(4, 1, figsize=(12, 22))
-    fig.subplots_adjust(hspace=0.55, top=0.96, bottom=0.06)  # Better spacing between plots
+    fig, axes = plt.subplots(4, 1, figsize=(12, 32))
+    fig.subplots_adjust(hspace=0.7, top=0.97, bottom=0.04)  # Much more spacing between plots
 
     # Get stellar objects
     objects = get_stellar_objects(constants)
@@ -1286,7 +1286,7 @@ def plot_time_dilation_comparison(
         ax1.set_ylabel('Time dilation factor τ/t', fontsize=11)
         ax1.set_title('1. Time Dilation at Surface\n(τ/t = √(1 - R_s/R))', fontsize=12, fontweight='bold')
 
-    ax1.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.18), ncol=2)
+    ax1.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.28), ncol=2)
     ax1.grid(True, alpha=0.3, axis='y')
     plt.setp(ax1.xaxis.get_majorticklabels(), rotation=45, ha='right')
 
@@ -1315,7 +1315,7 @@ def plot_time_dilation_comparison(
         ax2.set_ylabel('Time slowdown (%)', fontsize=11)
         ax2.set_title('2. Percentage Time Slowdown\n(relative to distant observer)', fontsize=12, fontweight='bold')
 
-    ax2.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.18), ncol=2)
+    ax2.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.28), ncol=2)
     ax2.grid(True, alpha=0.3, axis='y')
     plt.setp(ax2.xaxis.get_majorticklabels(), rotation=45, ha='right')
 
@@ -1359,7 +1359,7 @@ def plot_time_dilation_comparison(
         ax3.set_ylabel('Time dilation factor τ/t', fontsize=11)
         ax3.set_title('3. Time Dilation vs. Distance\n(Neutron star: 1.4 M☉, R = 10 km)', fontsize=12, fontweight='bold')
 
-    ax3.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=2)
+    ax3.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.18), ncol=2)
     ax3.grid(True, alpha=0.3)
 
     # Plot 4: Accumulated time difference example
@@ -1387,7 +1387,7 @@ def plot_time_dilation_comparison(
         ax4.set_ylabel('Time lost (hours)', fontsize=11)
         ax4.set_title('4. Accumulated Time Difference\n(hours lost on object surface)', fontsize=12, fontweight='bold')
 
-    ax4.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=3)
+    ax4.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.18), ncol=3)
     ax4.grid(True, alpha=0.3)
     ax4.set_yscale('log')
 
@@ -1555,8 +1555,8 @@ def plot_time_dilation_summary(
     if constants is None:
         constants = get_constants()
 
-    fig = plt.figure(figsize=(12, 22))
-    gs = fig.add_gridspec(4, 1, hspace=0.55)
+    fig = plt.figure(figsize=(12, 28))
+    gs = fig.add_gridspec(4, 1, hspace=0.65)
 
     # Plot 1: Formula visualization
     ax1 = fig.add_subplot(gs[0])
@@ -1590,7 +1590,7 @@ def plot_time_dilation_summary(
         ax1.set_ylabel('Time dilation τ/t', fontsize=11)
         ax1.set_title('1. Time Dilation Formula', fontsize=12, fontweight='bold')
 
-    ax1.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=2)
+    ax1.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.18), ncol=2)
     ax1.grid(True, alpha=0.3)
 
     # Plot 2: Object comparison
@@ -1629,7 +1629,7 @@ def plot_time_dilation_summary(
         ax2.set_xlabel('Time slowdown (%)', fontsize=11)
         ax2.set_title('2. Time Slowdown on Object Surfaces', fontsize=12, fontweight='bold')
 
-    ax2.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=1)
+    ax2.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.18), ncol=1)
     ax2.grid(True, alpha=0.3, axis='x')
 
     # Plot 3: Time dilation vs G scaling
@@ -1668,7 +1668,7 @@ def plot_time_dilation_summary(
         ax3.set_ylabel('Time dilation τ/t', fontsize=11)
         ax3.set_title('3. Time Dilation vs. Gravity Strength', fontsize=12, fontweight='bold')
 
-    ax3.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=3)
+    ax3.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.18), ncol=3)
     ax3.grid(True, alpha=0.3)
 
     # Plot 4: Accumulated time difference over years
@@ -1700,7 +1700,7 @@ def plot_time_dilation_summary(
         ax4.set_ylabel('Accumulated time difference (hours)', fontsize=11)
         ax4.set_title('4. Accumulated Time Lost', fontsize=12, fontweight='bold')
 
-    ax4.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=3)
+    ax4.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.18), ncol=3)
     ax4.grid(True, alpha=0.3)
     ax4.set_yscale('log')
 
