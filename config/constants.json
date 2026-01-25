@@ -31,6 +31,13 @@
             "name_de": "Protonenmasse",
             "symbol": "m_p"
         },
+        "m_n": {
+            "value": 1.67492749804e-27,
+            "unit": "kg",
+            "name": "Neutron mass",
+            "name_de": "Neutronenmasse",
+            "symbol": "m_n"
+        },
         "m_e": {
             "value": 9.1093837015e-31,
             "unit": "kg",

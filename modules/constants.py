@@ -30,6 +30,7 @@ class PhysicalConstants:
     G: float             # Gravitational constant [m³·kg⁻¹·s⁻²]
     c: float             # Speed of light [m/s]
     m_p: float           # Proton mass [kg]
+    m_n: float           # Neutron mass [kg]
     m_e: float           # Electron mass [kg]
     e: float             # Elementary charge [C]
     k_e: float           # Coulomb constant [N·m²·C⁻²]
@@ -317,6 +318,7 @@ def get_constants(
     # Constants that don't scale
     c = fund['c']['value']
     m_p = fund['m_p']['value']
+    m_n = fund['m_n']['value']
     m_e = fund['m_e']['value']
     e = fund['e']['value']
     k_e = fund['k_e']['value']
@@ -343,6 +345,7 @@ def get_constants(
         G=G,
         c=c,
         m_p=m_p,
+        m_n=m_n,
         m_e=m_e,
         e=e,
         k_e=k_e,

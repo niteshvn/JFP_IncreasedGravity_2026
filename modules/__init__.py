@@ -63,6 +63,11 @@ from .spacetime_curvature import (
     calculate_infalling_worldline,
     plot_penrose_carter_diagram,
     plot_penrose_comparison,
+    # Time dilation
+    gravitational_time_dilation_factor,
+    plot_time_dilation_comparison,
+    plot_time_dilation_scaling,
+    plot_time_dilation_summary,
 )
 
 from .atomic_scale import (
@@ -95,6 +100,51 @@ from .thermal_physics import (
     verify_thermal_physics
 )
 
+from .neutron_star import (
+    NeutronStarProperties,
+    neutron_degeneracy_pressure,
+    neutron_degeneracy_pressure_relativistic,
+    tov_mass_limit,
+    neutron_star_radius,
+    gravitational_time_dilation,
+    calculate_neutron_star,
+    plot_tov_limit_comparison,
+    plot_neutron_star_structure,
+    plot_electron_capture,
+    plot_neutron_star_summary,
+    generate_all_neutron_star_plots,
+    verify_neutron_star_physics
+)
+
+from .heisenberg_uncertainty import (
+    UncertaintyProperties,
+    minimum_momentum_uncertainty,
+    confinement_velocity,
+    confinement_kinetic_energy,
+    degeneracy_pressure_from_uncertainty,
+    calculate_uncertainty_properties,
+    plot_uncertainty_principle_basic,
+    plot_confinement_velocity,
+    plot_uncertainty_to_pressure,
+    plot_uncertainty_hbar_scaling,
+    plot_heisenberg_summary,
+    generate_all_heisenberg_plots,
+    verify_heisenberg_physics
+)
+
+from .gravity_pauli_balance import (
+    PlanetaryEquilibrium,
+    gravitational_central_pressure,
+    electron_degeneracy_pressure_simple,
+    coulomb_thermal_pressure,
+    calculate_planetary_equilibrium,
+    plot_earth_structural_effects,
+    plot_gravity_vs_pauli,
+    plot_hypothesis_summary,
+    generate_all_gravity_pauli_plots,
+    verify_gravity_pauli_physics
+)
+
 # Interactive 3D visualizations (requires plotly)
 try:
     from .interactive_3d import (
@@ -104,6 +154,10 @@ try:
         plot_force_ratio_3d_interactive,
         plot_temperature_profile_3d_interactive,
         plot_light_bending_3d_interactive,
+        plot_neutron_star_3d_interactive,
+        plot_heisenberg_3d_interactive,
+        plot_time_dilation_3d_interactive,
+        plot_gravity_pauli_3d_interactive,
         generate_all_interactive_plots,
         PLOTLY_AVAILABLE
     )
@@ -162,6 +216,11 @@ __all__ = [
     'calculate_infalling_worldline',
     'plot_penrose_carter_diagram',
     'plot_penrose_comparison',
+    # Time dilation
+    'gravitational_time_dilation_factor',
+    'plot_time_dilation_comparison',
+    'plot_time_dilation_scaling',
+    'plot_time_dilation_summary',
     # Atomic scale
     'AtomicProperties',
     'calculate_atomic_properties',
@@ -188,6 +247,45 @@ __all__ = [
     'plot_temperature_summary',
     'generate_all_thermal_plots',
     'verify_thermal_physics',
+    # Neutron star physics
+    'NeutronStarProperties',
+    'neutron_degeneracy_pressure',
+    'neutron_degeneracy_pressure_relativistic',
+    'tov_mass_limit',
+    'neutron_star_radius',
+    'gravitational_time_dilation',
+    'calculate_neutron_star',
+    'plot_tov_limit_comparison',
+    'plot_neutron_star_structure',
+    'plot_electron_capture',
+    'plot_neutron_star_summary',
+    'generate_all_neutron_star_plots',
+    'verify_neutron_star_physics',
+    # Heisenberg uncertainty
+    'UncertaintyProperties',
+    'minimum_momentum_uncertainty',
+    'confinement_velocity',
+    'confinement_kinetic_energy',
+    'degeneracy_pressure_from_uncertainty',
+    'calculate_uncertainty_properties',
+    'plot_uncertainty_principle_basic',
+    'plot_confinement_velocity',
+    'plot_uncertainty_to_pressure',
+    'plot_uncertainty_hbar_scaling',
+    'plot_heisenberg_summary',
+    'generate_all_heisenberg_plots',
+    'verify_heisenberg_physics',
+    # Gravity vs Pauli balance
+    'PlanetaryEquilibrium',
+    'gravitational_central_pressure',
+    'electron_degeneracy_pressure_simple',
+    'coulomb_thermal_pressure',
+    'calculate_planetary_equilibrium',
+    'plot_earth_structural_effects',
+    'plot_gravity_vs_pauli',
+    'plot_hypothesis_summary',
+    'generate_all_gravity_pauli_plots',
+    'verify_gravity_pauli_physics',
     # Interactive 3D (optional, requires plotly)
     'plot_spacetime_curvature_3d_interactive',
     'plot_multiple_masses_3d_interactive',
@@ -195,6 +293,10 @@ __all__ = [
     'plot_force_ratio_3d_interactive',
     'plot_temperature_profile_3d_interactive',
     'plot_light_bending_3d_interactive',
+    'plot_neutron_star_3d_interactive',
+    'plot_heisenberg_3d_interactive',
+    'plot_time_dilation_3d_interactive',
+    'plot_gravity_pauli_3d_interactive',
     'generate_all_interactive_plots',
     'PLOTLY_AVAILABLE'
 ]

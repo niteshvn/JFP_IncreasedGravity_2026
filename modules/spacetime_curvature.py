@@ -1189,6 +1189,535 @@ def create_precession_animation(
     plt.close(fig)
 
 
+# =============================================================================
+# TIME DILATION VISUALIZATIONS
+# =============================================================================
+
+def gravitational_time_dilation_factor(r: float, M: float, constants: PhysicalConstants) -> float:
+    """
+    Calculate gravitational time dilation factor at distance r from mass M.
+    Berechnet den gravitativen Zeitdilatationsfaktor im Abstand r von Masse M.
+
+    Formula: τ/t = √(1 - R_s/r) = √(1 - 2GM/(rc²))
+
+    This is the ratio of proper time (τ, experienced by observer at r)
+    to coordinate time (t, experienced by distant observer).
+
+    Args:
+        r: Distance from center of mass [m]
+        M: Mass of the object [kg]
+        constants: Physical constants
+
+    Returns:
+        Time dilation factor (0 to 1, where 1 = no dilation)
+    """
+    R_s = constants.schwarzschild_radius(M)
+    if r <= R_s:
+        return 0.0  # At or inside event horizon
+    return np.sqrt(1 - R_s / r)
+
+
+def plot_time_dilation_comparison(
+    constants: Optional[PhysicalConstants] = None,
+    language: str = 'en',
+    save: bool = True,
+    show: bool = True
+) -> plt.Figure:
+    """
+    Compare gravitational time dilation on different stellar object surfaces.
+    Vergleicht gravitationelle Zeitdilatation auf verschiedenen Sternoberflaechen.
+
+    Essay reference: "30% slower" on neutron star surface.
+
+    Args:
+        constants: Physical constants
+        language: 'en' for English, 'de' for German
+        save: Whether to save the figure
+        show: Whether to display the figure
+
+    Returns:
+        matplotlib Figure object
+    """
+    if constants is None:
+        constants = get_constants()
+
+    # Create figure with 2x2 subplots
+    fig, axes = plt.subplots(2, 2, figsize=(14, 12))
+
+    # Get stellar objects
+    objects = get_stellar_objects(constants)
+
+    # Calculate time dilation for each object at surface
+    dilation_factors = []
+    time_slowdown_percent = []
+    for obj in objects:
+        if obj.radius > obj.schwarzschild_radius:
+            factor = gravitational_time_dilation_factor(obj.radius, obj.mass, constants)
+            dilation_factors.append(factor)
+            time_slowdown_percent.append((1 - factor) * 100)
+        else:
+            dilation_factors.append(0.0)
+            time_slowdown_percent.append(100.0)
+
+    # Plot 1: Time dilation factor (bar chart)
+    ax1 = axes[0, 0]
+    names = [obj.name if language == 'en' else obj.name_de for obj in objects]
+    colors = get_stellar_colors()
+
+    bars = ax1.bar(names, dilation_factors, color=colors, edgecolor='black', linewidth=1.5)
+
+    # Add value labels
+    for bar, factor in zip(bars, dilation_factors):
+        if factor > 0:
+            ax1.text(bar.get_x() + bar.get_width()/2, factor + 0.02,
+                    f'{factor:.4f}', ha='center', va='bottom', fontsize=9, fontweight='bold')
+
+    ax1.axhline(y=1.0, color=COLORS['standard'], linestyle='--', linewidth=1.5, alpha=0.7,
+               label='No dilation' if language == 'en' else 'Keine Dilatation')
+    ax1.axhline(y=0.7, color=COLORS['quantum'], linestyle=':', linewidth=1.5, alpha=0.7,
+               label='30% slower' if language == 'en' else '30% langsamer')
+
+    ax1.set_ylim(0, 1.1)
+    if language == 'de':
+        ax1.set_ylabel('Zeitdilatationsfaktor τ/t', fontsize=11)
+        ax1.set_title('1. Zeitdilatation auf Oberfläche\n(τ/t = √(1 - R_s/R))', fontsize=12, fontweight='bold')
+    else:
+        ax1.set_ylabel('Time dilation factor τ/t', fontsize=11)
+        ax1.set_title('1. Time Dilation at Surface\n(τ/t = √(1 - R_s/R))', fontsize=12, fontweight='bold')
+
+    ax1.legend(fontsize=9, loc='lower left')
+    ax1.grid(True, alpha=0.3, axis='y')
+    plt.setp(ax1.xaxis.get_majorticklabels(), rotation=45, ha='right')
+
+    # Plot 2: Time slowdown percentage (bar chart)
+    ax2 = axes[0, 1]
+    bars2 = ax2.bar(names, time_slowdown_percent, color=colors, edgecolor='black', linewidth=1.5)
+
+    # Add value labels
+    for bar, pct in zip(bars2, time_slowdown_percent):
+        if pct < 100:
+            ax2.text(bar.get_x() + bar.get_width()/2, pct + 1,
+                    f'{pct:.1f}%', ha='center', va='bottom', fontsize=9, fontweight='bold')
+        else:
+            ax2.text(bar.get_x() + bar.get_width()/2, pct/2,
+                    '∞', ha='center', va='center', fontsize=14, fontweight='bold', color='white')
+
+    # Mark the ~30% mentioned in essay
+    ax2.axhline(y=30, color=COLORS['quantum'], linestyle='--', linewidth=2, alpha=0.8,
+               label='~30% (essay reference)' if language == 'en' else '~30% (Essay-Referenz)')
+
+    ax2.set_ylim(0, 110)
+    if language == 'de':
+        ax2.set_ylabel('Zeitverlangsamung (%)', fontsize=11)
+        ax2.set_title('2. Prozentuale Zeitverlangsamung\n(relativ zu fernem Beobachter)', fontsize=12, fontweight='bold')
+    else:
+        ax2.set_ylabel('Time slowdown (%)', fontsize=11)
+        ax2.set_title('2. Percentage Time Slowdown\n(relative to distant observer)', fontsize=12, fontweight='bold')
+
+    ax2.legend(fontsize=9, loc='upper left')
+    ax2.grid(True, alpha=0.3, axis='y')
+    plt.setp(ax2.xaxis.get_majorticklabels(), rotation=45, ha='right')
+
+    # Plot 3: Time dilation vs distance from neutron star
+    ax3 = axes[1, 0]
+
+    # Neutron star parameters
+    M_ns = 1.4 * constants.M_sun
+    R_ns = 10e3  # 10 km
+    R_s_ns = constants.schwarzschild_radius(M_ns)
+
+    # Distance range (from surface to 10 R_ns)
+    r_range = np.linspace(R_ns, 10 * R_ns, 100)
+    dilation_vs_r = np.array([gravitational_time_dilation_factor(r, M_ns, constants) for r in r_range])
+
+    ax3.plot(r_range / 1e3, dilation_vs_r, '-', color=COLORS['quantum'], linewidth=2.5,
+             label='τ/t = √(1 - R_s/r)')
+
+    # Mark surface
+    surface_dilation = gravitational_time_dilation_factor(R_ns, M_ns, constants)
+    ax3.plot(R_ns / 1e3, surface_dilation, 'o', color=COLORS['scaled'], markersize=12,
+             label=f'Surface: {(1-surface_dilation)*100:.1f}% slower' if language == 'en'
+                   else f'Oberfläche: {(1-surface_dilation)*100:.1f}% langsamer')
+
+    # Mark Schwarzschild radius
+    ax3.axvline(x=R_s_ns / 1e3, color='red', linestyle='--', linewidth=1.5, alpha=0.7,
+               label=f'R_s = {R_s_ns/1e3:.1f} km')
+
+    ax3.axhline(y=1.0, color=COLORS['standard'], linestyle=':', linewidth=1, alpha=0.5)
+    ax3.axhline(y=0.7, color=COLORS['primary_amber'], linestyle=':', linewidth=1.5, alpha=0.7,
+               label='30% slower line')
+
+    ax3.set_xlim(0, 10 * R_ns / 1e3)
+    ax3.set_ylim(0, 1.1)
+    if language == 'de':
+        ax3.set_xlabel('Abstand vom Zentrum (km)', fontsize=11)
+        ax3.set_ylabel('Zeitdilatationsfaktor τ/t', fontsize=11)
+        ax3.set_title('3. Zeitdilatation vs. Abstand\n(Neutronenstern: 1.4 M☉, R = 10 km)', fontsize=12, fontweight='bold')
+    else:
+        ax3.set_xlabel('Distance from center (km)', fontsize=11)
+        ax3.set_ylabel('Time dilation factor τ/t', fontsize=11)
+        ax3.set_title('3. Time Dilation vs. Distance\n(Neutron star: 1.4 M☉, R = 10 km)', fontsize=12, fontweight='bold')
+
+    ax3.legend(fontsize=9, loc='lower right')
+    ax3.grid(True, alpha=0.3)
+
+    # Plot 4: Accumulated time difference example
+    ax4 = axes[1, 1]
+
+    # Calculate how much time differs after 1 year on different objects
+    years = np.linspace(0, 10, 100)  # 10 years coordinate time
+    seconds_per_year = 365.25 * 24 * 3600
+
+    # For each object, calculate proper time elapsed
+    for i, obj in enumerate(objects):
+        if obj.radius > obj.schwarzschild_radius:
+            factor = gravitational_time_dilation_factor(obj.radius, obj.mass, constants)
+            proper_years = years * factor
+            time_lost_hours = (years - proper_years) * seconds_per_year / 3600
+            label = obj.name if language == 'en' else obj.name_de
+            ax4.plot(years, time_lost_hours, '-', color=colors[i], linewidth=2, label=label)
+
+    if language == 'de':
+        ax4.set_xlabel('Koordinatenzeit (Jahre)', fontsize=11)
+        ax4.set_ylabel('Zeitverlust (Stunden)', fontsize=11)
+        ax4.set_title('4. Akkumulierter Zeitunterschied\n(Stunden verloren auf Objektoberfläche)', fontsize=12, fontweight='bold')
+    else:
+        ax4.set_xlabel('Coordinate time (years)', fontsize=11)
+        ax4.set_ylabel('Time lost (hours)', fontsize=11)
+        ax4.set_title('4. Accumulated Time Difference\n(hours lost on object surface)', fontsize=12, fontweight='bold')
+
+    ax4.legend(fontsize=9, loc='upper left')
+    ax4.grid(True, alpha=0.3)
+    ax4.set_yscale('log')
+
+    plt.tight_layout()
+
+    if save:
+        os.makedirs(VIS_DIR, exist_ok=True)
+        suffix = '_de' if language == 'de' else ''
+        filepath = os.path.join(VIS_DIR, f'time_dilation_comparison{suffix}.png')
+        fig.savefig(filepath, dpi=150, bbox_inches='tight')
+        print(f"Saved: {filepath}")
+
+    if show:
+        plt.show()
+
+    return fig
+
+
+def plot_time_dilation_scaling(
+    constants: Optional[PhysicalConstants] = None,
+    language: str = 'en',
+    save: bool = True,
+    show: bool = True
+) -> plt.Figure:
+    """
+    Show how time dilation changes with G and ℏ scaling.
+    Zeigt wie sich Zeitdilatation mit G- und ℏ-Skalierung aendert.
+
+    Key insight: R_s ∝ G, so stronger gravity → more time dilation.
+    When G increases by 10^36, Schwarzschild radii grow enormously.
+
+    Args:
+        constants: Physical constants
+        language: 'en' for English, 'de' for German
+        save: Whether to save the figure
+        show: Whether to display the figure
+
+    Returns:
+        matplotlib Figure object
+    """
+    if constants is None:
+        constants = get_constants()
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
+
+    # Plot 1: Time dilation vs G scaling for Earth
+    G_scales = np.logspace(0, 10, 50)  # G scaling from 1 to 10^10
+
+    M_earth = constants.M_earth
+    R_earth = constants.R_earth
+
+    dilation_earth = []
+    for G_scale in G_scales:
+        R_s_scaled = 2 * constants.G * G_scale * M_earth / constants.c**2
+        if R_earth > R_s_scaled:
+            factor = np.sqrt(1 - R_s_scaled / R_earth)
+        else:
+            factor = 0.0
+        dilation_earth.append(factor)
+
+    ax1.semilogx(G_scales, dilation_earth, '-', color=COLORS['primary_blue'], linewidth=2.5,
+                 label='Earth surface' if language == 'en' else 'Erdoberfläche')
+
+    # Mark where Earth becomes a black hole (R_s = R_earth)
+    G_bh = R_earth * constants.c**2 / (2 * constants.G * M_earth)
+    ax1.axvline(x=G_bh, color='red', linestyle='--', linewidth=2, alpha=0.7,
+               label=f'Earth → BH (G × {G_bh:.1e})' if language == 'en'
+                     else f'Erde → SL (G × {G_bh:.1e})')
+
+    # Mark standard G
+    ax1.axvline(x=1, color=COLORS['standard'], linestyle=':', linewidth=1.5, alpha=0.7,
+               label='Standard G')
+
+    # Mark 30% slowdown threshold
+    ax1.axhline(y=0.7, color=COLORS['quantum'], linestyle=':', linewidth=1.5, alpha=0.7,
+               label='30% slower')
+
+    ax1.set_ylim(0, 1.1)
+    if language == 'de':
+        ax1.set_xlabel('G-Skalierungsfaktor', fontsize=11)
+        ax1.set_ylabel('Zeitdilatationsfaktor τ/t', fontsize=11)
+        ax1.set_title('Zeitdilatation auf Erde vs. G-Skalierung', fontsize=12, fontweight='bold')
+    else:
+        ax1.set_xlabel('G scaling factor', fontsize=11)
+        ax1.set_ylabel('Time dilation factor τ/t', fontsize=11)
+        ax1.set_title('Time Dilation on Earth vs. G Scaling', fontsize=12, fontweight='bold')
+
+    ax1.legend(fontsize=9, loc='lower left')
+    ax1.grid(True, alpha=0.3)
+
+    # Plot 2: Compare objects at different G scales
+    ax2_colors = [COLORS['primary_blue'], COLORS['scaled'], COLORS['quantum'], COLORS['primary_amber']]
+    objects_subset = [
+        ('Earth', 'Erde', constants.M_earth, constants.R_earth),
+        ('Sun', 'Sonne', constants.M_sun, 6.96e8),
+        ('White Dwarf', 'Weißer Zwerg', 0.6 * constants.M_sun, 8e6),
+        ('Neutron Star', 'Neutronenstern', 1.4 * constants.M_sun, 10e3),
+    ]
+
+    G_scales_2 = np.logspace(0, 6, 50)
+
+    for (name_en, name_de, M, R), color in zip(objects_subset, ax2_colors):
+        dilation = []
+        for G_scale in G_scales_2:
+            R_s_scaled = 2 * constants.G * G_scale * M / constants.c**2
+            if R > R_s_scaled:
+                factor = np.sqrt(1 - R_s_scaled / R)
+            else:
+                factor = 0.0
+            dilation.append(factor)
+
+        label = name_en if language == 'en' else name_de
+        ax2.semilogx(G_scales_2, dilation, '-', color=color, linewidth=2, label=label)
+
+    ax2.axhline(y=0.7, color=COLORS['text_dark'], linestyle=':', linewidth=1.5, alpha=0.7,
+               label='30% slower')
+
+    ax2.set_ylim(0, 1.1)
+    if language == 'de':
+        ax2.set_xlabel('G-Skalierungsfaktor', fontsize=11)
+        ax2.set_ylabel('Zeitdilatationsfaktor τ/t', fontsize=11)
+        ax2.set_title('Zeitdilatation verschiedener Objekte vs. G', fontsize=12, fontweight='bold')
+    else:
+        ax2.set_xlabel('G scaling factor', fontsize=11)
+        ax2.set_ylabel('Time dilation factor τ/t', fontsize=11)
+        ax2.set_title('Time Dilation of Objects vs. G', fontsize=12, fontweight='bold')
+
+    ax2.legend(fontsize=9, loc='lower left')
+    ax2.grid(True, alpha=0.3)
+
+    plt.tight_layout()
+
+    if save:
+        os.makedirs(VIS_DIR, exist_ok=True)
+        suffix = '_de' if language == 'de' else ''
+        filepath = os.path.join(VIS_DIR, f'time_dilation_scaling{suffix}.png')
+        fig.savefig(filepath, dpi=150, bbox_inches='tight')
+        print(f"Saved: {filepath}")
+
+    if show:
+        plt.show()
+
+    return fig
+
+
+def plot_time_dilation_summary(
+    constants: Optional[PhysicalConstants] = None,
+    language: str = 'en',
+    save: bool = True,
+    show: bool = True
+) -> plt.Figure:
+    """
+    Create a comprehensive summary of gravitational time dilation.
+    Erstellt eine umfassende Zusammenfassung der gravitativen Zeitdilatation.
+
+    Args:
+        constants: Physical constants
+        language: 'en' for English, 'de' for German
+        save: Whether to save the figure
+        show: Whether to display the figure
+
+    Returns:
+        matplotlib Figure object
+    """
+    if constants is None:
+        constants = get_constants()
+
+    fig = plt.figure(figsize=(16, 12))
+    gs = fig.add_gridspec(2, 2, hspace=0.35, wspace=0.3)
+
+    # Plot 1: Formula visualization
+    ax1 = fig.add_subplot(gs[0, 0])
+
+    r_over_Rs = np.linspace(1.01, 10, 100)  # r/R_s from just above 1 to 10
+    dilation = np.sqrt(1 - 1/r_over_Rs)
+
+    ax1.plot(r_over_Rs, dilation, '-', color=COLORS['primary_blue'], linewidth=2.5,
+             label='τ/t = √(1 - R_s/r)')
+    ax1.fill_between(r_over_Rs, 0, dilation, alpha=0.2, color=COLORS['primary_blue'])
+
+    # Mark key points
+    ax1.axvline(x=1, color='red', linestyle='--', linewidth=2, label='Event horizon (r = R_s)')
+    ax1.axhline(y=0.7, color=COLORS['quantum'], linestyle=':', linewidth=1.5, alpha=0.7,
+               label='30% slower')
+
+    # Mark neutron star typical (r/R_s ≈ 2.4 for 10km, 1.4 M_sun)
+    ns_r_over_Rs = 10e3 / (2 * constants.G * 1.4 * constants.M_sun / constants.c**2)
+    ns_dilation = np.sqrt(1 - 1/ns_r_over_Rs)
+    ax1.plot(ns_r_over_Rs, ns_dilation, 'o', color=COLORS['quantum'], markersize=12,
+             label=f'NS surface: {(1-ns_dilation)*100:.0f}% slower')
+
+    ax1.set_xlim(1, 10)
+    ax1.set_ylim(0, 1.1)
+    if language == 'de':
+        ax1.set_xlabel('r / R_s (Abstand / Schwarzschild-Radius)', fontsize=11)
+        ax1.set_ylabel('Zeitdilatation τ/t', fontsize=11)
+        ax1.set_title('1. Zeitdilatationsformel', fontsize=12, fontweight='bold')
+    else:
+        ax1.set_xlabel('r / R_s (distance / Schwarzschild radius)', fontsize=11)
+        ax1.set_ylabel('Time dilation τ/t', fontsize=11)
+        ax1.set_title('1. Time Dilation Formula', fontsize=12, fontweight='bold')
+
+    ax1.legend(fontsize=9, loc='lower right')
+    ax1.grid(True, alpha=0.3)
+
+    # Plot 2: Object comparison
+    ax2 = fig.add_subplot(gs[0, 1])
+
+    objects = get_stellar_objects(constants)
+    names = [obj.name if language == 'en' else obj.name_de for obj in objects]
+    colors = get_stellar_colors()
+
+    slowdown_pct = []
+    for obj in objects:
+        if obj.radius > obj.schwarzschild_radius:
+            factor = gravitational_time_dilation_factor(obj.radius, obj.mass, constants)
+            slowdown_pct.append((1 - factor) * 100)
+        else:
+            slowdown_pct.append(100.0)
+
+    bars = ax2.barh(names, slowdown_pct, color=colors, edgecolor='black', linewidth=1.5)
+
+    # Add value labels
+    for bar, pct in zip(bars, slowdown_pct):
+        if pct < 100:
+            ax2.text(pct + 1, bar.get_y() + bar.get_height()/2,
+                    f'{pct:.2f}%', va='center', fontsize=9, fontweight='bold')
+        else:
+            ax2.text(50, bar.get_y() + bar.get_height()/2,
+                    '∞', va='center', ha='center', fontsize=14, fontweight='bold', color='white')
+
+    ax2.axvline(x=30, color=COLORS['quantum'], linestyle='--', linewidth=2, alpha=0.8,
+               label='~30% (essay)' if language == 'en' else '~30% (Essay)')
+
+    if language == 'de':
+        ax2.set_xlabel('Zeitverlangsamung (%)', fontsize=11)
+        ax2.set_title('2. Zeitverlangsamung auf Objektoberflächen', fontsize=12, fontweight='bold')
+    else:
+        ax2.set_xlabel('Time slowdown (%)', fontsize=11)
+        ax2.set_title('2. Time Slowdown on Object Surfaces', fontsize=12, fontweight='bold')
+
+    ax2.legend(fontsize=9, loc='lower right')
+    ax2.grid(True, alpha=0.3, axis='x')
+
+    # Plot 3: Text summary
+    ax3 = fig.add_subplot(gs[1, :])
+    ax3.axis('off')
+
+    # Calculate specific values
+    ns_factor = gravitational_time_dilation_factor(10e3, 1.4 * constants.M_sun, constants)
+    wd_factor = gravitational_time_dilation_factor(8e6, 0.6 * constants.M_sun, constants)
+    earth_factor = gravitational_time_dilation_factor(constants.R_earth, constants.M_earth, constants)
+
+    if language == 'de':
+        summary_text = f"""
+        GRAVITATIONELLE ZEITDILATATION - Zusammenfassung
+        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        FORMEL:    τ/t = √(1 - R_s/r) = √(1 - 2GM/(rc²))
+
+        τ = Eigenzeit (auf Objektoberfläche)
+        t = Koordinatenzeit (für fernen Beobachter)
+
+        BEISPIELE:
+        • Erde:             {(1-earth_factor)*100:.6f}% langsamer  (kaum messbar)
+        • Weißer Zwerg:     {(1-wd_factor)*100:.4f}% langsamer
+        • Neutronenstern:   {(1-ns_factor)*100:.1f}% langsamer  (~30% wie im Essay)
+        • Schwarzes Loch:   Zeit steht still am Ereignishorizont
+
+        SCHLÜSSELAUSSAGE AUS DEM ESSAY:
+        "Auf der Oberfläche eines Neutronensterns vergeht die Zeit
+         etwa 30% langsamer als für einen entfernten Beobachter."
+
+        PHYSIKALISCHE BEDEUTUNG:
+        Je stärker die Gravitation (größeres G oder kompakteres Objekt),
+        desto langsamer vergeht die Zeit → Extremfall: Schwarzes Loch
+        """
+    else:
+        summary_text = f"""
+        GRAVITATIONAL TIME DILATION - Summary
+        ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+        FORMULA:   τ/t = √(1 - R_s/r) = √(1 - 2GM/(rc²))
+
+        τ = proper time (on object surface)
+        t = coordinate time (for distant observer)
+
+        EXAMPLES:
+        • Earth:            {(1-earth_factor)*100:.6f}% slower  (barely measurable)
+        • White Dwarf:      {(1-wd_factor)*100:.4f}% slower
+        • Neutron Star:     {(1-ns_factor)*100:.1f}% slower  (~30% as in essay)
+        • Black Hole:       Time stops at event horizon
+
+        KEY STATEMENT FROM ESSAY:
+        "On the surface of a neutron star, time passes
+         about 30% slower than for a distant observer."
+
+        PHYSICAL MEANING:
+        The stronger gravity (larger G or more compact object),
+        the slower time passes → Extreme case: Black Hole
+        """
+
+    ax3.text(0.5, 0.5, summary_text, transform=ax3.transAxes, fontsize=11,
+             verticalalignment='center', horizontalalignment='center',
+             fontfamily='monospace',
+             bbox=dict(boxstyle='round', facecolor='white', alpha=0.9,
+                      edgecolor=COLORS['primary_blue'], linewidth=2))
+
+    # Overall title
+    if language == 'de':
+        fig.suptitle('Gravitationelle Zeitdilatation: Allgemeine Relativitätstheorie',
+                    fontsize=16, fontweight='bold', y=0.98)
+    else:
+        fig.suptitle('Gravitational Time Dilation: General Relativity',
+                    fontsize=16, fontweight='bold', y=0.98)
+
+    plt.tight_layout()
+
+    if save:
+        os.makedirs(VIS_DIR, exist_ok=True)
+        suffix = '_de' if language == 'de' else ''
+        filepath = os.path.join(VIS_DIR, f'time_dilation_summary{suffix}.png')
+        fig.savefig(filepath, dpi=150, bbox_inches='tight')
+        print(f"Saved: {filepath}")
+
+    if show:
+        plt.show()
+
+    return fig
+
+
 def generate_all_spacetime_plots(language: str = 'en', show: bool = False) -> List[plt.Figure]:
     """
     Generate all spacetime curvature visualizations.
@@ -1245,6 +1774,18 @@ def generate_all_spacetime_plots(language: str = 'en', show: bool = False) -> Li
     # 10. Penrose diagram comparison
     print("10. Penrose diagram comparison...")
     figures.append(plot_penrose_comparison(language=language, show=show))
+
+    # 11. Time dilation comparison
+    print("11. Time dilation comparison...")
+    figures.append(plot_time_dilation_comparison(language=language, show=show))
+
+    # 12. Time dilation scaling
+    print("12. Time dilation vs G scaling...")
+    figures.append(plot_time_dilation_scaling(language=language, show=show))
+
+    # 13. Time dilation summary
+    print("13. Time dilation summary...")
+    figures.append(plot_time_dilation_summary(language=language, show=show))
 
     print("=" * 50)
     print(f"Generated {len(figures)} visualizations in {VIS_DIR}")

@@ -1014,6 +1014,572 @@ def plot_light_bending_3d_interactive(
     return fig
 
 
+def plot_neutron_star_3d_interactive(
+    constants: Optional[PhysicalConstants] = None,
+    language: str = 'en',
+    save: bool = True
+) -> 'go.Figure':
+    """
+    Create an interactive 3D visualization of neutron star mass-radius-density relation.
+    Erstellt eine interaktive 3D-Visualisierung der Neutronenstern Masse-Radius-Dichte-Beziehung.
+
+    Args:
+        constants: Physical constants
+        language: 'en' for English, 'de' for German
+        save: Whether to save as HTML file
+
+    Returns:
+        Plotly Figure object
+    """
+    check_plotly()
+
+    if constants is None:
+        constants = get_constants()
+
+    # Import neutron star functions
+    from .neutron_star import tov_mass_limit, calculate_neutron_star
+
+    # Create data for neutron stars at different masses
+    M_tov = tov_mass_limit(constants) / constants.M_sun
+    masses = np.linspace(0.5, min(M_tov - 0.1, 2.2), 50)
+
+    radii = []
+    densities = []
+    pressures = []
+
+    for m in masses:
+        ns = calculate_neutron_star(m, constants)
+        radii.append(ns.radius_km)
+        densities.append(np.log10(ns.density))
+        pressures.append(np.log10(ns.pressure))
+
+    fig = go.Figure()
+
+    # 3D scatter plot of mass-radius-density
+    fig.add_trace(go.Scatter3d(
+        x=masses,
+        y=radii,
+        z=densities,
+        mode='markers+lines',
+        marker=dict(
+            size=6,
+            color=pressures,
+            colorscale='Plasma',
+            colorbar=dict(
+                title=dict(
+                    text='log₁₀(P) [Pa]' if language == 'en' else 'log₁₀(P) [Pa]',
+                    side='bottom',
+                    font=dict(size=12)
+                ),
+                orientation='h',
+                x=0.5,
+                y=0.02,
+                xanchor='center',
+                yanchor='top',
+                len=0.5,
+                thickness=18
+            ),
+            symbol='circle'
+        ),
+        line=dict(color=COLORS['neutron_star'], width=3),
+        name='Neutron Star' if language == 'en' else 'Neutronenstern'
+    ))
+
+    # Add TOV limit plane
+    x_plane = np.array([M_tov, M_tov])
+    y_plane = np.array([8, 14])
+    X_plane, Y_plane = np.meshgrid(x_plane, y_plane)
+    Z_plane = np.ones_like(X_plane) * np.mean(densities)
+
+    fig.add_trace(go.Surface(
+        x=X_plane, y=Y_plane, z=Z_plane,
+        opacity=0.3,
+        colorscale=[[0, 'red'], [1, 'red']],
+        showscale=False,
+        name=f'TOV Limit ({M_tov:.2f} M☉)' if language == 'en' else f'TOV-Grenze ({M_tov:.2f} M☉)'
+    ))
+
+    # Add legend entry for TOV limit
+    fig.add_trace(go.Scatter3d(
+        x=[None], y=[None], z=[None],
+        mode='markers',
+        marker=dict(size=10, color='red', symbol='square'),
+        name=f'TOV Limit ({M_tov:.2f} M☉)' if language == 'en' else f'TOV-Grenze ({M_tov:.2f} M☉)',
+        showlegend=True
+    ))
+
+    if language == 'de':
+        title = 'Neutronenstern: Masse-Radius-Dichte<br><sup>Farbskala zeigt Zentraldruck</sup>'
+        x_title = 'Masse (M☉)'
+        y_title = 'Radius (km)'
+        z_title = 'log₁₀(Dichte) [kg/m³]'
+    else:
+        title = 'Neutron Star: Mass-Radius-Density<br><sup>Color shows central pressure</sup>'
+        x_title = 'Mass (M☉)'
+        y_title = 'Radius (km)'
+        z_title = 'log₁₀(Density) [kg/m³]'
+
+    fig.update_layout(
+        title=dict(text=title, x=0.5),
+        scene=dict(
+            xaxis_title=x_title,
+            yaxis_title=y_title,
+            zaxis_title=z_title,
+            camera=dict(eye=dict(x=1.5, y=1.5, z=1.0)),
+            aspectmode='manual',
+            aspectratio=dict(x=1, y=1, z=0.8),
+            domain=dict(x=[0, 1], y=[0.18, 1])
+        ),
+        height=900,
+        margin=dict(l=0, r=0, t=50, b=10),
+        template='plotly_white',
+        legend=dict(
+            x=0.5,
+            y=0.12,
+            xanchor='center',
+            yanchor='top',
+            bgcolor='rgba(255,255,255,0.95)',
+            bordercolor='rgba(180,180,180,0.8)',
+            borderwidth=1,
+            font=dict(size=12),
+            orientation='h'
+        )
+    )
+
+    if save:
+        os.makedirs(VIS_DIR, exist_ok=True)
+        suffix = '_de' if language == 'de' else ''
+        filepath = os.path.join(VIS_DIR, f'neutron_star_3d_interactive{suffix}.html')
+        fig.write_html(filepath, config={'displaylogo': False, 'displayModeBar': True})
+        print(f"Saved: {filepath}")
+
+    return fig
+
+
+def plot_heisenberg_3d_interactive(
+    constants: Optional[PhysicalConstants] = None,
+    language: str = 'en',
+    save: bool = True
+) -> 'go.Figure':
+    """
+    Create an interactive 3D visualization of Heisenberg uncertainty and degeneracy pressure.
+    Erstellt eine interaktive 3D-Visualisierung der Heisenberg-Unschaerfe und Entartungsdruck.
+
+    Shows how confinement (Δx) affects momentum uncertainty (Δp) and resulting pressure.
+
+    Args:
+        constants: Physical constants
+        language: 'en' for English, 'de' for German
+        save: Whether to save as HTML file
+
+    Returns:
+        Plotly Figure object
+    """
+    check_plotly()
+
+    if constants is None:
+        constants = get_constants()
+
+    # Create mesh for Δx vs ℏ scaling
+    delta_x = np.logspace(-15, -10, 40)  # fm to pm scale
+    hbar_scale = np.logspace(-1, 1, 40)  # 0.1 to 10
+    Delta_X, Hbar_Scale = np.meshgrid(delta_x, hbar_scale)
+
+    # Calculate momentum uncertainty: Δp = ℏ / (2 * Δx)
+    hbar_scaled = constants.hbar * Hbar_Scale
+    Delta_P = hbar_scaled / (2 * Delta_X)
+
+    # Calculate pressure contribution (proportional to Δp² / m)
+    # Using log scale for visualization
+    Pressure = np.log10(Delta_P**2 / constants.m_e)
+
+    fig = go.Figure()
+
+    # 3D surface of pressure vs confinement vs ℏ
+    fig.add_trace(go.Surface(
+        x=np.log10(Delta_X * 1e15),  # Convert to fm, then log
+        y=np.log10(Hbar_Scale),
+        z=Pressure,
+        colorscale='Viridis',
+        colorbar=dict(
+            title=dict(
+                text='log₁₀(P) [arb.]' if language == 'en' else 'log₁₀(P) [willk.]',
+                side='bottom',
+                font=dict(size=12)
+            ),
+            orientation='h',
+            x=0.5,
+            y=0.02,
+            xanchor='center',
+            yanchor='top',
+            len=0.5,
+            thickness=18
+        ),
+        name='Degeneracy Pressure' if language == 'en' else 'Entartungsdruck',
+        showlegend=False
+    ))
+
+    # Add legend entry
+    fig.add_trace(go.Scatter3d(
+        x=[None], y=[None], z=[None],
+        mode='markers',
+        marker=dict(size=10, color='#31688e', symbol='square'),
+        name='P ∝ ℏ²/Δx²',
+        showlegend=True
+    ))
+
+    # Mark standard universe point
+    std_x = np.log10(constants.a_0 * 1e15)  # Bohr radius in fm (log)
+    std_hbar = 0  # log10(1)
+    std_pressure = np.log10((constants.hbar / (2 * constants.a_0))**2 / constants.m_e)
+
+    fig.add_trace(go.Scatter3d(
+        x=[std_x], y=[std_hbar], z=[std_pressure],
+        mode='markers',
+        marker=dict(size=12, color=COLORS['standard'], symbol='diamond'),
+        name='Standard (Bohr radius)' if language == 'en' else 'Standard (Bohr-Radius)'
+    ))
+
+    if language == 'de':
+        title = 'Heisenberg-Unschärfe → Entartungsdruck<br><sup>P ∝ ℏ²/Δx² (kleiner Δx = höherer Druck)</sup>'
+        x_title = 'log₁₀(Δx) [fm]'
+        y_title = 'log₁₀(ℏ/ℏ₀)'
+        z_title = 'log₁₀(Druck)'
+    else:
+        title = 'Heisenberg Uncertainty → Degeneracy Pressure<br><sup>P ∝ ℏ²/Δx² (smaller Δx = higher pressure)</sup>'
+        x_title = 'log₁₀(Δx) [fm]'
+        y_title = 'log₁₀(ℏ/ℏ₀)'
+        z_title = 'log₁₀(Pressure)'
+
+    fig.update_layout(
+        title=dict(text=title, x=0.5),
+        scene=dict(
+            xaxis_title=x_title,
+            yaxis_title=y_title,
+            zaxis_title=z_title,
+            camera=dict(eye=dict(x=1.8, y=1.8, z=1.0)),
+            aspectmode='manual',
+            aspectratio=dict(x=1, y=1, z=0.6),
+            domain=dict(x=[0, 1], y=[0.18, 1])
+        ),
+        height=900,
+        margin=dict(l=0, r=0, t=50, b=10),
+        template='plotly_white',
+        legend=dict(
+            x=0.5,
+            y=0.12,
+            xanchor='center',
+            yanchor='top',
+            bgcolor='rgba(255,255,255,0.95)',
+            bordercolor='rgba(180,180,180,0.8)',
+            borderwidth=1,
+            font=dict(size=12),
+            orientation='h'
+        )
+    )
+
+    if save:
+        os.makedirs(VIS_DIR, exist_ok=True)
+        suffix = '_de' if language == 'de' else ''
+        filepath = os.path.join(VIS_DIR, f'heisenberg_3d_interactive{suffix}.html')
+        fig.write_html(filepath, config={'displaylogo': False, 'displayModeBar': True})
+        print(f"Saved: {filepath}")
+
+    return fig
+
+
+def plot_time_dilation_3d_interactive(
+    constants: Optional[PhysicalConstants] = None,
+    language: str = 'en',
+    save: bool = True
+) -> 'go.Figure':
+    """
+    Create an interactive 3D visualization of gravitational time dilation.
+    Erstellt eine interaktive 3D-Visualisierung der gravitativen Zeitdilatation.
+
+    Shows time dilation factor vs distance and mass.
+
+    Args:
+        constants: Physical constants
+        language: 'en' for English, 'de' for German
+        save: Whether to save as HTML file
+
+    Returns:
+        Plotly Figure object
+    """
+    check_plotly()
+
+    if constants is None:
+        constants = get_constants()
+
+    # Create mesh for distance vs mass
+    # Distance in units of Schwarzschild radius
+    r_over_Rs = np.linspace(1.1, 10, 50)
+    # Mass in solar masses
+    mass_solar = np.linspace(0.5, 3, 50)
+    R_over_Rs, Mass_solar = np.meshgrid(r_over_Rs, mass_solar)
+
+    # Calculate time dilation: τ/t = √(1 - 1/(r/R_s))
+    # Since r/R_s is already our variable, this simplifies
+    Time_dilation = np.sqrt(1 - 1/R_over_Rs)
+
+    fig = go.Figure()
+
+    # 3D surface
+    fig.add_trace(go.Surface(
+        x=R_over_Rs,
+        y=Mass_solar,
+        z=Time_dilation,
+        colorscale='RdYlBu',
+        colorbar=dict(
+            title=dict(
+                text='τ/t' if language == 'en' else 'τ/t',
+                side='bottom',
+                font=dict(size=12)
+            ),
+            orientation='h',
+            x=0.5,
+            y=0.02,
+            xanchor='center',
+            yanchor='top',
+            len=0.5,
+            thickness=18
+        ),
+        name='Time dilation' if language == 'en' else 'Zeitdilatation',
+        showlegend=False
+    ))
+
+    # Add legend entry
+    fig.add_trace(go.Scatter3d(
+        x=[None], y=[None], z=[None],
+        mode='markers',
+        marker=dict(size=10, color='#4575b4', symbol='square'),
+        name='τ/t = √(1 - R_s/r)',
+        showlegend=True
+    ))
+
+    # Mark neutron star surface (r/R_s ≈ 2.4 for typical NS)
+    ns_r_over_Rs = 2.4
+    ns_dilation = np.sqrt(1 - 1/ns_r_over_Rs)
+    fig.add_trace(go.Scatter3d(
+        x=[ns_r_over_Rs], y=[1.4], z=[ns_dilation],
+        mode='markers',
+        marker=dict(size=12, color=COLORS['quantum'], symbol='diamond'),
+        name=f'Neutron Star (~{(1-ns_dilation)*100:.0f}% slower)' if language == 'en'
+             else f'Neutronenstern (~{(1-ns_dilation)*100:.0f}% langsamer)'
+    ))
+
+    # Mark event horizon
+    fig.add_trace(go.Scatter3d(
+        x=[1.1], y=[1.5], z=[0.3],
+        mode='markers',
+        marker=dict(size=10, color='red', symbol='x'),
+        name='Near event horizon' if language == 'en' else 'Nahe Ereignishorizont'
+    ))
+
+    if language == 'de':
+        title = 'Gravitationelle Zeitdilatation<br><sup>τ/t = √(1 - R_s/r) — Zeit verlangsamt sich nahe Masse</sup>'
+        x_title = 'r / R_s (Abstand / Schwarzschild-Radius)'
+        y_title = 'Masse (M☉)'
+        z_title = 'Zeitdilatation τ/t'
+    else:
+        title = 'Gravitational Time Dilation<br><sup>τ/t = √(1 - R_s/r) — Time slows near mass</sup>'
+        x_title = 'r / R_s (distance / Schwarzschild radius)'
+        y_title = 'Mass (M☉)'
+        z_title = 'Time dilation τ/t'
+
+    fig.update_layout(
+        title=dict(text=title, x=0.5),
+        scene=dict(
+            xaxis_title=x_title,
+            yaxis_title=y_title,
+            zaxis_title=z_title,
+            camera=dict(eye=dict(x=1.5, y=1.5, z=1.0)),
+            aspectmode='manual',
+            aspectratio=dict(x=1, y=1, z=0.6),
+            domain=dict(x=[0, 1], y=[0.18, 1])
+        ),
+        height=900,
+        margin=dict(l=0, r=0, t=50, b=10),
+        template='plotly_white',
+        legend=dict(
+            x=0.5,
+            y=0.12,
+            xanchor='center',
+            yanchor='top',
+            bgcolor='rgba(255,255,255,0.95)',
+            bordercolor='rgba(180,180,180,0.8)',
+            borderwidth=1,
+            font=dict(size=12),
+            orientation='h'
+        )
+    )
+
+    if save:
+        os.makedirs(VIS_DIR, exist_ok=True)
+        suffix = '_de' if language == 'de' else ''
+        filepath = os.path.join(VIS_DIR, f'time_dilation_3d_interactive{suffix}.html')
+        fig.write_html(filepath, config={'displaylogo': False, 'displayModeBar': True})
+        print(f"Saved: {filepath}")
+
+    return fig
+
+
+def plot_gravity_pauli_3d_interactive(
+    constants: Optional[PhysicalConstants] = None,
+    language: str = 'en',
+    save: bool = True
+) -> 'go.Figure':
+    """
+    Create an interactive 3D visualization of gravity vs Pauli pressure balance.
+    Erstellt eine interaktive 3D-Visualisierung des Gravitation-vs-Pauli-Druck-Gleichgewichts.
+
+    Shows how the pressure ratio P_grav/P_Pauli varies with G and ℏ scaling.
+
+    Args:
+        constants: Physical constants
+        language: 'en' for English, 'de' for German
+        save: Whether to save as HTML file
+
+    Returns:
+        Plotly Figure object
+    """
+    check_plotly()
+
+    if constants is None:
+        constants = get_constants()
+
+    # Create mesh for G scaling vs ℏ scaling
+    G_scale = np.logspace(0, 20, 50)
+    hbar_scale = np.logspace(0, 12, 50)
+    G_Scale, Hbar_Scale = np.meshgrid(G_scale, hbar_scale)
+
+    # Pressure ratio: P_grav/P_Pauli ∝ G/ℏ²
+    # Using log scale
+    Pressure_ratio = np.log10(G_Scale / Hbar_Scale**2)
+
+    fig = go.Figure()
+
+    # 3D surface
+    fig.add_trace(go.Surface(
+        x=np.log10(G_Scale),
+        y=np.log10(Hbar_Scale),
+        z=Pressure_ratio,
+        colorscale='RdBu_r',
+        colorbar=dict(
+            title=dict(
+                text='log₁₀(P_g/P_p)' if language == 'en' else 'log₁₀(P_g/P_p)',
+                side='bottom',
+                font=dict(size=12)
+            ),
+            orientation='h',
+            x=0.5,
+            y=0.02,
+            xanchor='center',
+            yanchor='top',
+            len=0.5,
+            thickness=18
+        ),
+        name='Pressure ratio' if language == 'en' else 'Druckverhältnis',
+        showlegend=False
+    ))
+
+    # Add equilibrium plane (log ratio = 0)
+    x_plane = np.log10(G_scale)
+    y_plane = np.log10(hbar_scale)
+    X_eq, Y_eq = np.meshgrid(x_plane, y_plane)
+    Z_eq = np.zeros_like(X_eq)
+
+    fig.add_trace(go.Surface(
+        x=X_eq, y=Y_eq, z=Z_eq,
+        opacity=0.3,
+        colorscale=[[0, 'green'], [1, 'green']],
+        showscale=False,
+        name='Equilibrium'
+    ))
+
+    # Legend entries
+    fig.add_trace(go.Scatter3d(
+        x=[None], y=[None], z=[None],
+        mode='markers',
+        marker=dict(size=10, color='#b2182b', symbol='square'),
+        name='P_grav/P_Pauli ∝ G/ℏ²',
+        showlegend=True
+    ))
+
+    fig.add_trace(go.Scatter3d(
+        x=[None], y=[None], z=[None],
+        mode='markers',
+        marker=dict(size=10, color='green', symbol='square', opacity=0.5),
+        name='Balance (ratio = 1)' if language == 'en' else 'Gleichgewicht (Verhältnis = 1)',
+        showlegend=True
+    ))
+
+    # Mark standard universe
+    fig.add_trace(go.Scatter3d(
+        x=[0], y=[0], z=[0],
+        mode='markers',
+        marker=dict(size=12, color=COLORS['standard'], symbol='diamond'),
+        name='Standard universe' if language == 'en' else 'Standarduniversum'
+    ))
+
+    # Mark essay scenario (G × 10^36, ℏ × 10^18)
+    fig.add_trace(go.Scatter3d(
+        x=[18], y=[9], z=[0],  # log10(10^36)/2 and log10(10^18) to get ratio of 1
+        mode='markers',
+        marker=dict(size=12, color=COLORS['quantum'], symbol='cross'),
+        name='Essay scenario (G×10³⁶, ℏ×10¹⁸)' if language == 'en'
+             else 'Essay-Szenario (G×10³⁶, ℏ×10¹⁸)'
+    ))
+
+    if language == 'de':
+        title = 'Gravitation vs. Pauli: Stabilitätslandschaft<br><sup>Rot = Kollaps, Blau = Stabil, Grün = Gleichgewicht</sup>'
+        x_title = 'log₁₀(G/G₀)'
+        y_title = 'log₁₀(ℏ/ℏ₀)'
+        z_title = 'log₁₀(P_grav/P_Pauli)'
+    else:
+        title = 'Gravity vs. Pauli: Stability Landscape<br><sup>Red = Collapse, Blue = Stable, Green = Balance</sup>'
+        x_title = 'log₁₀(G/G₀)'
+        y_title = 'log₁₀(ℏ/ℏ₀)'
+        z_title = 'log₁₀(P_grav/P_Pauli)'
+
+    fig.update_layout(
+        title=dict(text=title, x=0.5),
+        scene=dict(
+            xaxis_title=x_title,
+            yaxis_title=y_title,
+            zaxis_title=z_title,
+            camera=dict(eye=dict(x=1.5, y=1.5, z=1.2)),
+            aspectmode='manual',
+            aspectratio=dict(x=1, y=1, z=0.6),
+            domain=dict(x=[0, 1], y=[0.18, 1])
+        ),
+        height=900,
+        margin=dict(l=0, r=0, t=50, b=10),
+        template='plotly_white',
+        legend=dict(
+            x=0.5,
+            y=0.12,
+            xanchor='center',
+            yanchor='top',
+            bgcolor='rgba(255,255,255,0.95)',
+            bordercolor='rgba(180,180,180,0.8)',
+            borderwidth=1,
+            font=dict(size=12),
+            orientation='h'
+        )
+    )
+
+    if save:
+        os.makedirs(VIS_DIR, exist_ok=True)
+        suffix = '_de' if language == 'de' else ''
+        filepath = os.path.join(VIS_DIR, f'gravity_pauli_3d_interactive{suffix}.html')
+        fig.write_html(filepath, config={'displaylogo': False, 'displayModeBar': True})
+        print(f"Saved: {filepath}")
+
+    return fig
+
+
 def generate_all_interactive_plots(language: str = 'en') -> List['go.Figure']:
     """
     Generate all interactive 3D visualizations.
@@ -1049,6 +1615,18 @@ def generate_all_interactive_plots(language: str = 'en') -> List['go.Figure']:
 
     print("6. Light bending 3D...")
     figures.append(plot_light_bending_3d_interactive(language=language))
+
+    print("7. Neutron star 3D...")
+    figures.append(plot_neutron_star_3d_interactive(language=language))
+
+    print("8. Heisenberg uncertainty 3D...")
+    figures.append(plot_heisenberg_3d_interactive(language=language))
+
+    print("9. Time dilation 3D...")
+    figures.append(plot_time_dilation_3d_interactive(language=language))
+
+    print("10. Gravity vs Pauli 3D...")
+    figures.append(plot_gravity_pauli_3d_interactive(language=language))
 
     print("=" * 50)
     print(f"Generated {len(figures)} interactive visualizations")
