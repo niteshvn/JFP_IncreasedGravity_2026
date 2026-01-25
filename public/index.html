@@ -678,10 +678,13 @@
         function updateImageSources(lang) {
             document.querySelectorAll('img[data-img-base]').forEach(img => {
                 const base = img.getAttribute('data-img-base');
+                // Determine file extension from current src
+                const currentSrc = img.src;
+                const ext = currentSrc.includes('.gif') ? '.gif' : '.png';
                 if (lang === 'de') {
-                    img.src = `visualizations/${base}_de.png`;
+                    img.src = `visualizations/${base}_de${ext}`;
                 } else {
-                    img.src = `visualizations/${base}.png`;
+                    img.src = `visualizations/${base}${ext}`;
                 }
             });
         }
