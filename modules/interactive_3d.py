@@ -91,7 +91,7 @@ def plot_spacetime_curvature_3d_interactive(
             ),
             orientation='h',
             x=0.5,
-            y=0.08,
+            y=0.02,
             xanchor='center',
             yanchor='top',
             len=0.5,
@@ -102,6 +102,15 @@ def plot_spacetime_curvature_3d_interactive(
             z=dict(show=True, usecolormap=True, highlightcolor="white", project_z=True)
         ),
         name='Spacetime curvature' if language == 'en' else 'Raumzeitkruemmung',
+        showlegend=False  # Surface traces don't display well in legends
+    ))
+
+    # Add legend entry using Scatter3d (displays properly in legends)
+    fig.add_trace(go.Scatter3d(
+        x=[None], y=[None], z=[None],
+        mode='markers',
+        marker=dict(size=10, color='#31688e', symbol='square'),  # Viridis mid color
+        name='Spacetime curvature' if language == 'en' else 'Raumzeitkrümmung',
         showlegend=True
     ))
 
@@ -137,22 +146,24 @@ def plot_spacetime_curvature_3d_interactive(
             ),
             aspectmode='manual',
             aspectratio=dict(x=1, y=1, z=0.5),
-            domain=dict(x=[0.1, 0.9], y=[0.28, 0.95])  # Centered graph with space below
+            domain=dict(x=[0, 1], y=[0.18, 1])  # Full width, more vertical space for graph
         ),
-        height=700,
-        margin=dict(l=20, r=20, t=60, b=20),
+        height=900,
+        margin=dict(l=0, r=0, t=50, b=10),  # Minimal margins for max graph space
         template='plotly_white',
         showlegend=True,
         legend=dict(
             x=0.5,
-            y=0.20,
+            y=0.12,
             xanchor='center',
             yanchor='top',
             bgcolor='rgba(255,255,255,0.95)',
-            bordercolor='black',
+            bordercolor='rgba(180,180,180,0.8)',
             borderwidth=1,
             font=dict(size=14),
-            orientation='v'
+            orientation='v',
+            entrywidth=0,  # Auto-size based on text width
+            entrywidthmode='pixels'  # Use pixels mode for auto-sizing
         )
     )
 
@@ -234,7 +245,7 @@ def plot_multiple_masses_3d_interactive(
             ),
             orientation='h',
             x=0.5,
-            y=0.05,
+            y=0.02,
             xanchor='center',
             yanchor='top',
             len=0.5,
@@ -280,22 +291,24 @@ def plot_multiple_masses_3d_interactive(
             camera=dict(eye=dict(x=1.8, y=1.8, z=1.0)),
             aspectmode='manual',
             aspectratio=dict(x=1, y=1, z=0.4),
-            domain=dict(x=[0.1, 0.9], y=[0.35, 0.95])  # Centered graph with space below
+            domain=dict(x=[0, 1], y=[0.18, 1])  # Full width, more vertical space for graph
         ),
-        height=750,
-        margin=dict(l=20, r=20, t=60, b=20),
+        height=900,
+        margin=dict(l=0, r=0, t=50, b=10),  # Minimal margins for max graph space
         template='plotly_white',
         showlegend=True,
         legend=dict(
             x=0.5,
-            y=0.26,
+            y=0.12,
             xanchor='center',
             yanchor='top',
             bgcolor='rgba(255,255,255,0.95)',
-            bordercolor='black',
+            bordercolor='rgba(180,180,180,0.8)',
             borderwidth=1,
             font=dict(size=14),
-            orientation='v'
+            orientation='v',
+            entrywidth=0,  # Auto-size based on text width
+            entrywidthmode='pixels'  # Use pixels mode for auto-sizing
         )
     )
 
