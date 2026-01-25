@@ -282,6 +282,7 @@ def plot_multiple_masses_3d_interactive(
     else:
         title = 'Spacetime Curvature Comparison of Different Objects<br><sup>Interactive 3D View</sup>'
 
+    # 4 legend items need more vertical space
     fig.update_layout(
         title=dict(text=title, x=0.5),
         scene=dict(
@@ -291,7 +292,7 @@ def plot_multiple_masses_3d_interactive(
             camera=dict(eye=dict(x=1.5, y=1.5, z=1.2)),
             aspectmode='manual',
             aspectratio=dict(x=1, y=1, z=0.5),
-            domain=dict(x=[0, 1], y=[0.18, 1])
+            domain=dict(x=[0, 1], y=[0.25, 1])  # More bottom space for 4 legend items
         ),
         height=900,
         margin=dict(l=0, r=0, t=50, b=10),
@@ -299,7 +300,7 @@ def plot_multiple_masses_3d_interactive(
         showlegend=True,
         legend=dict(
             x=0.5,
-            y=0.12,
+            y=0.18,  # Higher position to avoid colorbar
             xanchor='center',
             yanchor='top',
             bgcolor='rgba(255,255,255,0.95)',
@@ -425,6 +426,7 @@ def plot_atom_scaling_3d_interactive(
     else:
         title = 'Atom Sizes in Different Universes<br><sup>a₀ ∝ ℏ² — Interactive 3D View</sup>'
 
+    # 4 legend items (3 orbitals + nucleus) need more vertical space
     fig.update_layout(
         title=dict(text=title, x=0.5),
         scene=dict(
@@ -433,24 +435,24 @@ def plot_atom_scaling_3d_interactive(
             zaxis_title='Universe',
             camera=dict(eye=dict(x=1.5, y=1.5, z=1.5)),
             aspectmode='data',
-            domain=dict(x=[0, 1], y=[0.18, 1])  # Full width, same as force_ratio
+            domain=dict(x=[0, 1], y=[0.25, 1])  # More bottom space for 4 legend items
         ),
         height=900,
-        margin=dict(l=0, r=0, t=50, b=10),  # Minimal margins for max graph space
+        margin=dict(l=0, r=0, t=50, b=10),
         template='plotly_white',
         showlegend=True,
         legend=dict(
             x=0.5,
-            y=0.12,
+            y=0.18,  # Higher position to avoid overlap
             xanchor='center',
             yanchor='top',
             bgcolor='rgba(255,255,255,0.95)',
             bordercolor='rgba(180,180,180,0.8)',
             borderwidth=1,
             font=dict(size=14),
-            orientation='v',  # Vertical - one item per row for readability
-            entrywidth=0,  # Auto-size based on text width
-            entrywidthmode='pixels'  # Use pixels mode for auto-sizing
+            orientation='v',
+            entrywidth=0,
+            entrywidthmode='pixels'
         )
     )
 
@@ -758,6 +760,7 @@ def plot_temperature_profile_3d_interactive(
         y_title = 'Gravity Scale (× g)'
         z_title = 'Temperature [K]'
 
+    # 6 legend items (5 lines + surface label) need more vertical space
     fig.update_layout(
         title=dict(text=title, x=0.5),
         scene=dict(
@@ -767,7 +770,7 @@ def plot_temperature_profile_3d_interactive(
             camera=dict(eye=dict(x=1.5, y=-1.8, z=1.0)),
             aspectmode='manual',
             aspectratio=dict(x=1.2, y=1, z=0.7),
-            domain=dict(x=[0, 1], y=[0.18, 1])
+            domain=dict(x=[0, 1], y=[0.30, 1])  # More bottom space for 6 legend items
         ),
         height=900,
         margin=dict(l=0, r=0, t=50, b=10),
@@ -775,7 +778,7 @@ def plot_temperature_profile_3d_interactive(
         showlegend=True,
         legend=dict(
             x=0.5,
-            y=0.12,
+            y=0.23,  # Higher position to avoid colorbar
             xanchor='center',
             yanchor='top',
             bgcolor='rgba(255,255,255,0.95)',

@@ -678,7 +678,7 @@ elif page == 'interactive':
                     html_content = f.read()
 
                 # Display at full viewport height
-                st.components.v1.html(html_content, height=800, scrolling=False)
+                st.components.v1.html(html_content, height=1100, scrolling=True)
             else:
                 st.warning(f"File not found: {html_file}")
                 st.markdown(f"Run `python main.py --interactive` to generate this file.")
