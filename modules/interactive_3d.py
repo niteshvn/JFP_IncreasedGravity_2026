@@ -84,14 +84,18 @@ def plot_spacetime_curvature_3d_interactive(
         colorscale='Viridis',
         showscale=True,
         colorbar=dict(
-            title=dict(text='Depth' if language == 'en' else 'Tiefe', side='bottom'),
+            title=dict(
+                text='Depth' if language == 'en' else 'Tiefe',
+                side='bottom',
+                font=dict(size=13)
+            ),
             orientation='h',
             x=0.5,
-            y=-0.25,
+            y=0.08,
             xanchor='center',
             yanchor='top',
-            len=0.6,
-            thickness=15,
+            len=0.5,
+            thickness=18,
             tickformat='.1f'
         ),
         contours=dict(
@@ -133,24 +137,22 @@ def plot_spacetime_curvature_3d_interactive(
             ),
             aspectmode='manual',
             aspectratio=dict(x=1, y=1, z=0.5),
-            domain=dict(x=[0, 1], y=[0.35, 1])  # Leave space at bottom for legend + colorbar
+            domain=dict(x=[0.1, 0.9], y=[0.28, 0.95])  # Centered graph with space below
         ),
-        height=850,
-        margin=dict(l=10, r=10, t=80, b=180),  # Bottom margin for legend + colorbar
+        height=700,
+        margin=dict(l=20, r=20, t=60, b=20),
         template='plotly_white',
         showlegend=True,
         legend=dict(
             x=0.5,
-            y=-0.05,
+            y=0.20,
             xanchor='center',
             yanchor='top',
             bgcolor='rgba(255,255,255,0.95)',
             bordercolor='black',
             borderwidth=1,
-            font=dict(size=13),
-            itemsizing='constant',
-            tracegroupgap=10,
-            orientation='v'  # Vertical so each item on its own row
+            font=dict(size=14),
+            orientation='v'
         )
     )
 
