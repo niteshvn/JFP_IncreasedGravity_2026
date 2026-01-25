@@ -1,0 +1,23 @@
+[build]
+  # No build command needed - we're serving pre-generated static files
+  publish = "public"
+
+[build.environment]
+  NODE_VERSION = "18"
+
+# Redirects - serve index.html for root
+[[redirects]]
+  from = "/"
+  to = "/index.html"
+  status = 200
+
+# Headers for better caching
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=3600"
+
+[[headers]]
+  for = "/*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"

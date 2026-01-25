@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gravity Physics Visualization - Jugend forscht 2026</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+        }
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: rgba(0,0,0,0.3);
+        }
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #00d4ff, #7b2cbf);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .header p {
+            font-size: 1.2rem;
+            color: #aaa;
+        }
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 20px;
+            background: rgba(0,0,0,0.2);
+        }
+        .nav-tab {
+            padding: 12px 24px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            color: #fff;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .nav-tab:hover, .nav-tab.active {
+            background: rgba(0,212,255,0.3);
+            border-color: #00d4ff;
+        }
+        .content {
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .section {
+            display: none;
+        }
+        .section.active {
+            display: block;
+        }
+        .section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #00d4ff;
+        }
+        .viz-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+        .viz-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: transform 0.3s;
+        }
+        .viz-card:hover {
+            transform: translateY(-5px);
+        }
+        .viz-card img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .viz-card .title {
+            padding: 15px;
+            font-weight: 500;
+            text-align: center;
+        }
+        .interactive-container {
+            width: 100%;
+            height: 900px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #fff;
+        }
+        .interactive-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .interactive-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .interactive-tab {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 6px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .interactive-tab:hover, .interactive-tab.active {
+            background: rgba(123,44,191,0.4);
+            border-color: #7b2cbf;
+        }
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Gravity Dominance in Alternative Universes</h1>
+        <p>Jugend forscht 2026 - Interactive Physics Visualization</p>
+    </div>
+
+    <nav class="nav-tabs">
+        <a class="nav-tab active" onclick="showSection('interactive')">3D Interactive</a>
+        <a class="nav-tab" onclick="showSection('spacetime')">Spacetime</a>
+        <a class="nav-tab" onclick="showSection('atomic')">Atomic Scale</a>
+        <a class="nav-tab" onclick="showSection('forces')">Forces</a>
+        <a class="nav-tab" onclick="showSection('temperature')">Temperature</a>
+        <a class="nav-tab" onclick="showSection('stellar')">Stellar Physics</a>
+    </nav>
+
+    <div class="content">
+        <!-- Interactive 3D Section -->
+        <div id="interactive" class="section active">
+            <h2>Interactive 3D Visualizations</h2>
+            <div class="interactive-tabs">
+                <button class="interactive-tab active" onclick="loadInteractive('spacetime_3d_interactive.html', this)">Spacetime Curvature</button>
+                <button class="interactive-tab" onclick="loadInteractive('spacetime_comparison_3d_interactive.html', this)">Multiple Masses</button>
+                <button class="interactive-tab" onclick="loadInteractive('atom_scaling_3d_interactive.html', this)">Atom Scaling</button>
+                <button class="interactive-tab" onclick="loadInteractive('force_ratio_3d_interactive.html', this)">Force Ratio</button>
+                <button class="interactive-tab" onclick="loadInteractive('temperature_profile_3d_interactive.html', this)">Temperature Profile</button>
+            </div>
+            <div class="interactive-container">
+                <iframe id="interactive-frame" src="visualizations/spacetime_3d_interactive.html"></iframe>
+            </div>
+        </div>
+
+        <!-- Spacetime Section -->
+        <div id="spacetime" class="section">
+            <h2>Spacetime Curvature</h2>
+            <div class="viz-grid">
+                <div class="viz-card">
+                    <img src="visualizations/potential_well_2d.png" alt="Potential Well 2D">
+                    <div class="title">Gravitational Potential Well (2D)</div>
+                </div>
+                <div class="viz-card">
+                    <img src="visualizations/potential_well_3d.png" alt="Potential Well 3D">
+                    <div class="title">Gravitational Potential Well (3D)</div>
+                </div>
+                <div class="viz-card">
+                    <img src="visualizations/escape_velocity.png" alt="Escape Velocity">
+                    <div class="title">Escape Velocity</div>
+                </div>
+                <div class="viz-card">
+                    <img src="visualizations/compactness_comparison.png" alt="Compactness Comparison">
+                    <div class="title">Compactness Comparison</div>
+                </div>
+                <div class="viz-card">
+                    <img src="visualizations/spacetime_summary.png" alt="Spacetime Summary">
+                    <div class="title">Spacetime Summary</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Atomic Section -->
+        <div id="atomic" class="section">
+            <h2>Atomic Scale Physics</h2>
+            <div class="viz-grid">
+                <div class="viz-card">
+                    <img src="visualizations/bohr_radius_scaling.png" alt="Bohr Radius Scaling">
+                    <div class="title">Bohr Radius Scaling</div>
+                </div>
+                <div class="viz-card">
+                    <img src="visualizations/atom_size_comparison.png" alt="Atom Size Comparison">
+                    <div class="title">Atom Size Comparison</div>
+                </div>
+                <div class="viz-card">
+                    <img src="visualizations/energy_levels.png" alt="Energy Levels">
+                    <div class="title">Hydrogen Energy Levels</div>
+                </div>
+                <div class="viz-card">
+                    <img src="visualizations/quantum_gravity_connection.png" alt="Quantum Gravity Connection">
+                    <div class="title">Quantum-Gravity Connection</div>
+                </div>
+                <div class="viz-card">
+                    <img src="visualizations/atomic_summary.png" alt="Atomic Summary">
+                    <div class="title">Atomic Physics Summary</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Forces Section -->
+        <div id="forces" class="section">
+            <h2>Fundamental Forces</h2>
+            <div class="viz-grid">
+                <div class="viz-card">
+                    <img src="visualizations/force_comparison_bar.png" alt="Force Comparison">
+                    <div class="title">Force Comparison</div>
+                </div>
+                <div class="viz-card">
+                    <img src="visualizations/force_vs_distance.png" alt="Force vs Distance">
+                    <div class="title">Force vs Distance</div>
+                </div>
+                <div class="viz-card">
+                    <img src="visualizations/force_across_scales.png" alt="Force Across Scales">
+                    <div class="title">Forces Across Scales</div>
+                </div>
+                <div class="viz-card">
+                    <img src="visualizations/force_scaled_hbar0.1_G1.0.png" alt="Force Scaled">
+                    <div class="title">Force with Scaled Constants</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Temperature Section -->
+        <div id="temperature" class="section">
+            <h2>Temperature Physics</h2>
+            <div class="viz-grid">
+                <div class="viz-card">
+                    <img src="visualizations/temperature_atmosphere.png" alt="Temperature Atmosphere">
+                    <div class="title">Atmospheric Temperature</div>
+                </div>
+                <div class="viz-card">
+                    <img src="visualizations/temperature_degeneracy.png" alt="Temperature Degeneracy">
+                    <div class="title">Degeneracy Temperature</div>
+                </div>
+                <div class="viz-card">
+                    <img src="visualizations/temperature_summary.png" alt="Temperature Summary">
+                    <div class="title">Temperature Summary</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stellar Section -->
+        <div id="stellar" class="section">
+            <h2>Stellar Physics</h2>
+            <div class="viz-grid">
+                <div class="viz-card">
+                    <img src="visualizations/chandrasekhar_limit.png" alt="Chandrasekhar Limit">
+                    <div class="title">Chandrasekhar Limit</div>
+                </div>
+                <div class="viz-card">
+                    <img src="visualizations/mass_radius_relation.png" alt="Mass Radius Relation">
+                    <div class="title">Mass-Radius Relation</div>
+                </div>
+                <div class="viz-card">
+                    <img src="visualizations/pressure_vs_density.png" alt="Pressure vs Density">
+                    <div class="title">Pressure vs Density</div>
+                </div>
+                <div class="viz-card">
+                    <img src="visualizations/white_dwarf_summary.png" alt="White Dwarf Summary">
+                    <div class="title">White Dwarf Summary</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Jugend forscht 2026 - Physics Visualization Project</p>
+        <p>Exploring gravity dominance in alternative universes</p>
+    </div>
+
+    <script>
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function loadInteractive(filename, button) {
+            document.getElementById('interactive-frame').src = 'visualizations/' + filename;
+            document.querySelectorAll('.interactive-tab').forEach(t => t.classList.remove('active'));
+            button.classList.add('active');
+        }
+    </script>
+</body>
+</html>

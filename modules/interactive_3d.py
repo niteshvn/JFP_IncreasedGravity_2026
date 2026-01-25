@@ -342,6 +342,9 @@ def plot_atom_scaling_3d_interactive(
     # Colors for different universes - distinct colors for orbitals
     orbital_colors = [COLORS['primary_blue'], COLORS['standard'], COLORS['scaled']]
 
+    # Store legend info for later
+    legend_entries = []
+
     for i, (scale, color) in enumerate(zip(hbar_scales, orbital_colors)):
         # Calculate scaled Bohr radius
         a0 = a0_std * scale**2
@@ -357,20 +360,22 @@ def plot_atom_scaling_3d_interactive(
         y = r * np.outer(np.sin(u), np.sin(v))
         z = r * np.outer(np.ones(np.size(u)), np.cos(v)) + i * 3  # Offset in z
 
-        # Short legend names
+        # Legend names
         if language == 'de':
             orbital_name = f'ℏ×{scale}: a₀={a0*1e12:.1f} pm'
         else:
             orbital_name = f'ℏ×{scale}: a₀={a0*1e12:.1f} pm'
 
-        # Add orbital surface with legend
+        # Store for legend entry
+        legend_entries.append((orbital_name, color, i * 3))
+
+        # Add orbital surface (hidden from legend - Surface traces don't display well)
         fig.add_trace(go.Surface(
             x=x, y=y, z=z,
             colorscale=[[0, color], [1, color]],
             opacity=0.4,
             showscale=False,
-            showlegend=True,
-            name=orbital_name
+            showlegend=False
         ))
 
         # Add nucleus (no legend - single entry for all nuclei below)
@@ -381,12 +386,22 @@ def plot_atom_scaling_3d_interactive(
             showlegend=False
         ))
 
+    # Add legend entries using Scatter3d traces (these display properly in legends)
+    for orbital_name, color, z_pos in legend_entries:
+        fig.add_trace(go.Scatter3d(
+            x=[None], y=[None], z=[None],
+            mode='markers',
+            marker=dict(size=12, color=color, symbol='square'),
+            name=orbital_name,
+            showlegend=True
+        ))
+
     # Add single nucleus legend entry
     nucleus_label = 'Nucleus' if language == 'en' else 'Kern'
     fig.add_trace(go.Scatter3d(
         x=[None], y=[None], z=[None],
         mode='markers',
-        marker=dict(size=6, color='darkred'),
+        marker=dict(size=8, color='darkred'),
         name=nucleus_label,
         showlegend=True
     ))
@@ -405,24 +420,24 @@ def plot_atom_scaling_3d_interactive(
             zaxis_title='Universe',
             camera=dict(eye=dict(x=1.5, y=1.5, z=1.5)),
             aspectmode='data',
-            domain=dict(x=[0, 1], y=[0.30, 1])  # Leave space at bottom for legend
+            domain=dict(x=[0.1, 0.9], y=[0.30, 0.95])  # Centered graph with space below
         ),
-        height=800,
-        margin=dict(l=10, r=10, t=80, b=160),  # Bottom margin for legend
+        height=750,
+        margin=dict(l=20, r=20, t=60, b=20),
         template='plotly_white',
         showlegend=True,
         legend=dict(
             x=0.5,
-            y=-0.05,
+            y=0.22,
             xanchor='center',
             yanchor='top',
             bgcolor='rgba(255,255,255,0.95)',
-            bordercolor='black',
+            bordercolor='rgba(180,180,180,0.8)',
             borderwidth=1,
-            font=dict(size=13),
-            itemsizing='constant',
-            tracegroupgap=8,
-            orientation='v'  # Vertical - one item per row for readability
+            font=dict(size=14),
+            orientation='v',  # Vertical - one item per row for readability
+            entrywidth=0,  # Auto-size based on text width
+            entrywidthmode='pixels'  # Use pixels mode for auto-sizing
         )
     )
 
@@ -482,32 +497,48 @@ def plot_force_ratio_3d_interactive(
 
     fig = go.Figure()
 
-    # Add surface
+    # Add surface (hidden from legend - Surface traces don't display well in legends)
     fig.add_trace(go.Surface(
         x=LOG_MASS, y=LOG_DIST, z=LOG_RATIO,
         colorscale='RdBu',
         showscale=True,
         colorbar=dict(
-            title=dict(text='log₁₀(F_em/F_grav)', side='bottom'),
+            title=dict(text='log₁₀(F_em/F_grav)', side='bottom', font=dict(size=13)),
             orientation='h',
             x=0.5,
-            y=-0.28,
+            y=0.02,
             xanchor='center',
             yanchor='top',
-            len=0.6,
-            thickness=15
+            len=0.5,
+            thickness=18,
+            tickfont=dict(size=11)
         ),
-        name='Force Ratio Surface' if language == 'en' else 'Kraftverhältnis',
-        showlegend=True
+        showlegend=False
     ))
 
-    # Add a plane at z=0 (where forces are equal)
+    # Add a plane at z=0 (where forces are equal) - hidden from legend
     fig.add_trace(go.Surface(
         x=LOG_MASS, y=LOG_DIST, z=np.zeros_like(LOG_RATIO),
         colorscale=[[0, 'gray'], [1, 'gray']],
         opacity=0.3,
         showscale=False,
-        name='F_em = F_grav',
+        showlegend=False
+    ))
+
+    # Add legend entries using Scatter3d (these display properly in legends)
+    fig.add_trace(go.Scatter3d(
+        x=[None], y=[None], z=[None],
+        mode='markers',
+        marker=dict(size=10, color='#4575b4', symbol='square'),  # Blue from RdBu colorscale
+        name='Force Ratio Surface' if language == 'en' else 'Kraftverhältnis',
+        showlegend=True
+    ))
+
+    fig.add_trace(go.Scatter3d(
+        x=[None], y=[None], z=[None],
+        mode='markers',
+        marker=dict(size=10, color='gray', symbol='square', opacity=0.5),
+        name='F_em = F_grav (equality plane)' if language == 'en' else 'F_em = F_grav (Gleichheitsebene)',
         showlegend=True
     ))
 
@@ -530,24 +561,24 @@ def plot_force_ratio_3d_interactive(
             yaxis_title=y_title,
             zaxis_title=z_title,
             camera=dict(eye=dict(x=1.5, y=1.5, z=1.2)),
-            domain=dict(x=[0, 1], y=[0.38, 1])  # Leave space at bottom for legend + colorbar
+            domain=dict(x=[0, 1], y=[0.18, 1])  # Full width, more vertical space for graph
         ),
-        height=850,
-        margin=dict(l=10, r=10, t=80, b=200),  # Bottom margin for legend + colorbar
+        height=900,
+        margin=dict(l=0, r=0, t=50, b=10),  # Minimal margins for max graph space
         template='plotly_white',
         showlegend=True,
         legend=dict(
             x=0.5,
-            y=-0.05,
+            y=0.12,
             xanchor='center',
             yanchor='top',
             bgcolor='rgba(255,255,255,0.95)',
-            bordercolor='black',
+            bordercolor='rgba(180,180,180,0.8)',
             borderwidth=1,
-            font=dict(size=13),
-            itemsizing='constant',
-            tracegroupgap=8,
-            orientation='v'  # Vertical - one item per row for readability
+            font=dict(size=14),
+            orientation='v',  # Vertical - one item per row for readability
+            entrywidth=0,  # Auto-size based on text width
+            entrywidthmode='pixels'  # Use pixels mode for auto-sizing
         )
     )
 
@@ -640,14 +671,15 @@ def plot_temperature_profile_3d_interactive(
         colorscale='RdBu_r',  # Red-Blue reversed (blue=cold, red=hot)
         showscale=True,
         colorbar=dict(
-            title=dict(text='Temperature [K]' if language == 'en' else 'Temperatur [K]', side='bottom'),
+            title=dict(text='Temperature [K]' if language == 'en' else 'Temperatur [K]', side='bottom', font=dict(size=13)),
             orientation='h',
             x=0.5,
-            y=-0.32,
+            y=0.08,
             xanchor='center',
             yanchor='top',
-            len=0.6,
-            thickness=15
+            len=0.5,
+            thickness=18,
+            tickfont=dict(size=11)
         ),
         opacity=0.95,
         contours=dict(
@@ -721,25 +753,25 @@ def plot_temperature_profile_3d_interactive(
             zaxis_title=z_title,
             camera=dict(eye=dict(x=1.5, y=-1.8, z=1.0)),
             aspectmode='manual',
-            aspectratio=dict(x=1.2, y=1, z=0.6),
-            domain=dict(x=[0, 1], y=[0.42, 1])  # Leave space at bottom for legend + colorbar
+            aspectratio=dict(x=1.2, y=1, z=0.7),
+            domain=dict(x=[0, 1], y=[0.32, 0.95])  # Leave space at bottom for legend + colorbar
         ),
-        height=950,
-        margin=dict(l=10, r=10, t=80, b=250),  # Large bottom margin for legend + colorbar
+        height=900,
+        margin=dict(l=0, r=0, t=50, b=20),
         template='plotly_white',
         showlegend=True,
         legend=dict(
             x=0.5,
-            y=-0.05,
+            y=0.24,
             xanchor='center',
             yanchor='top',
             bgcolor='rgba(255,255,255,0.95)',
-            bordercolor='black',
+            bordercolor='rgba(180,180,180,0.8)',
             borderwidth=1,
-            font=dict(size=13),
-            itemsizing='constant',
-            tracegroupgap=8,
-            orientation='v'  # Vertical - one item per row for readability
+            font=dict(size=14),
+            orientation='v',  # Vertical - one item per row
+            entrywidth=0,  # Auto-size based on text width
+            entrywidthmode='pixels'  # Use pixels mode for auto-sizing
         )
     )
 
