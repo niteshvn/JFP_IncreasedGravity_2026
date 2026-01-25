@@ -292,6 +292,10 @@
                 <button class="interactive-tab" onclick="loadInteractive('atom_scaling_3d_interactive.html', this)" data-en="Quantum Orbitals" data-de="Quantenorbitale">Quantum Orbitals</button>
                 <button class="interactive-tab" onclick="loadInteractive('force_ratio_3d_interactive.html', this)" data-en="EM vs Gravity" data-de="EM vs Gravitation">EM vs Gravity</button>
                 <button class="interactive-tab" onclick="loadInteractive('temperature_profile_3d_interactive.html', this)" data-en="Thermal Gradients" data-de="Temperaturgradienten">Thermal Gradients</button>
+                <button class="interactive-tab" onclick="loadInteractive('neutron_star_3d_interactive.html', this)" data-en="Neutron Stars" data-de="Neutronensterne">Neutron Stars</button>
+                <button class="interactive-tab" onclick="loadInteractive('heisenberg_3d_interactive.html', this)" data-en="Heisenberg" data-de="Heisenberg">Heisenberg</button>
+                <button class="interactive-tab" onclick="loadInteractive('time_dilation_3d_interactive.html', this)" data-en="Time Dilation" data-de="Zeitdilatation">Time Dilation</button>
+                <button class="interactive-tab" onclick="loadInteractive('gravity_pauli_3d_interactive.html', this)" data-en="Gravity vs Pauli" data-de="Gravitation vs Pauli">Gravity vs Pauli</button>
             </div>
             <div class="interactive-container">
                 <iframe id="interactive-frame" src="visualizations/spacetime_3d_interactive.html"></iframe>
@@ -307,6 +311,7 @@
                 <button class="subsection-tab" onclick="showSubsection('spacetime', 'orbits', this)" data-en="Orbital Dynamics" data-de="Orbitaldynamik">Orbital Dynamics</button>
                 <button class="subsection-tab" onclick="showSubsection('spacetime', 'lensing', this)" data-en="Gravitational Lensing" data-de="Gravitationslinsen">Gravitational Lensing</button>
                 <button class="subsection-tab" onclick="showSubsection('spacetime', 'penrose', this)" data-en="Penrose Diagrams" data-de="Penrose-Diagramme">Penrose Diagrams</button>
+                <button class="subsection-tab" onclick="showSubsection('spacetime', 'timedilation', this)" data-en="Time Dilation" data-de="Zeitdilatation">Time Dilation</button>
             </div>
 
             <!-- Curvature Sub-section -->
@@ -510,12 +515,68 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Time Dilation Sub-section -->
+            <div id="spacetime-timedilation" class="subsection-content">
+                <div class="viz-item">
+                    <div class="viz-image">
+                        <img src="visualizations/time_dilation_comparison.png" data-img-base="time_dilation_comparison" alt="Time Dilation Comparison">
+                    </div>
+                    <div class="viz-details">
+                        <h3 data-en="Gravitational Time Dilation" data-de="Gravitationszeitdilatation">Gravitational Time Dilation</h3>
+                        <p class="description" data-en="Time runs slower in stronger gravitational fields. On a neutron star surface, clocks tick about 30% slower than in flat space. This effect is described by the Schwarzschild metric and has been confirmed by GPS satellites." data-de="Die Zeit laeuft in staerkeren Gravitationsfeldern langsamer. Auf der Oberflaeche eines Neutronensterns ticken Uhren etwa 30% langsamer als im flachen Raum. Dieser Effekt wird durch die Schwarzschild-Metrik beschrieben und wurde durch GPS-Satelliten bestaetigt.">Time runs slower in stronger gravitational fields - confirmed by GPS satellites.</p>
+                        <div class="formulas">
+                            <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-time-dilation"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="viz-separator"></div>
+
+                <div class="viz-item">
+                    <div class="viz-image">
+                        <img src="visualizations/time_dilation_scaling.png" data-img-base="time_dilation_scaling" alt="Time Dilation Scaling">
+                    </div>
+                    <div class="viz-details">
+                        <h3 data-en="Time Dilation vs G Scaling" data-de="Zeitdilatation vs G-Skalierung">Time Dilation vs G Scaling</h3>
+                        <p class="description" data-en="How time dilation changes when the gravitational constant G is scaled. Increasing G makes gravitational effects stronger, leading to more extreme time dilation near massive objects." data-de="Wie sich die Zeitdilatation aendert, wenn die Gravitationskonstante G skaliert wird. Erhoehung von G verstaerkt Gravitationseffekte und fuehrt zu extremerer Zeitdilatation nahe massereicher Objekte.">How time dilation changes with scaled gravitational constant G.</p>
+                        <div class="formulas">
+                            <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-time-scaling"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="viz-separator"></div>
+
+                <div class="viz-item">
+                    <div class="viz-image">
+                        <img src="visualizations/time_dilation_summary.png" data-img-base="time_dilation_summary" alt="Time Dilation Summary">
+                    </div>
+                    <div class="viz-details">
+                        <h3 data-en="Time Dilation Summary" data-de="Zeitdilatation Zusammenfassung">Time Dilation Summary</h3>
+                        <p class="description" data-en="Comprehensive overview of gravitational time dilation across different astronomical objects. From Earth (negligible effect) to neutron stars (30% slower) to black holes (infinite at the event horizon). This effect is crucial for GPS accuracy." data-de="Umfassender Ueberblick ueber die Gravitationszeitdilatation bei verschiedenen astronomischen Objekten. Von der Erde (vernachlaessigbarer Effekt) bis zu Neutronensternen (30% langsamer) bis zu Schwarzen Loechern (unendlich am Ereignishorizont).">Overview of time dilation from Earth to black holes.</p>
+                        <div class="formulas">
+                            <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-time-summary"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Atomic Section -->
         <div id="atomic" class="section">
             <h2 data-en="Quantum Scale Physics" data-de="Quantenskalenphysik">Quantum Scale Physics</h2>
 
+            <div class="subsection-tabs">
+                <button class="subsection-tab active" onclick="showSubsection('atomic', 'structure', this)" data-en="Atomic Structure" data-de="Atomstruktur">Atomic Structure</button>
+                <button class="subsection-tab" onclick="showSubsection('atomic', 'heisenberg', this)" data-en="Heisenberg Uncertainty" data-de="Heisenberg-Unschaerfe">Heisenberg Uncertainty</button>
+            </div>
+
+            <!-- Atomic Structure Sub-section -->
+            <div id="atomic-structure" class="subsection-content active">
             <div class="viz-item">
                 <div class="viz-image">
                     <img src="visualizations/bohr_radius_scaling.png" data-img-base="bohr_radius_scaling" alt="Bohr Radius Scaling">
@@ -595,6 +656,88 @@
                         <div class="formula" id="formula-bohr-sum"></div>
                         <div class="formula" id="formula-energy-sum"></div>
                         <div class="formula" id="formula-fine-structure"></div>
+                    </div>
+                </div>
+            </div>
+            </div>
+
+            <!-- Heisenberg Uncertainty Sub-section -->
+            <div id="atomic-heisenberg" class="subsection-content">
+                <div class="viz-item">
+                    <div class="viz-image">
+                        <img src="visualizations/heisenberg_uncertainty_basic.png" data-img-base="heisenberg_uncertainty_basic" alt="Heisenberg Uncertainty Basic">
+                    </div>
+                    <div class="viz-details">
+                        <h3 data-en="Heisenberg Uncertainty Principle" data-de="Heisenbergsche Unschaerferelation">Heisenberg Uncertainty Principle</h3>
+                        <p class="description" data-en="The fundamental quantum limit: position and momentum cannot both be precisely known. Δx·Δp ≥ ℏ/2. This 'uncertainty' is not measurement error - it's a fundamental property of nature that gives rise to degeneracy pressure in compact stars." data-de="Die fundamentale Quantengrenze: Position und Impuls koennen nicht gleichzeitig genau bekannt sein. Δx·Δp ≥ ℏ/2. Diese 'Unschaerfe' ist kein Messfehler - sie ist eine fundamentale Eigenschaft der Natur, die zum Entartungsdruck in kompakten Sternen fuehrt.">The fundamental quantum limit that gives rise to degeneracy pressure.</p>
+                        <div class="formulas">
+                            <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-heisenberg"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="viz-separator"></div>
+
+                <div class="viz-item">
+                    <div class="viz-image">
+                        <img src="visualizations/confinement_velocity.png" data-img-base="confinement_velocity" alt="Confinement Velocity">
+                    </div>
+                    <div class="viz-details">
+                        <h3 data-en="Confinement Velocity ('Restlessness')" data-de="Einschlussgeschwindigkeit ('Unruhe')">Confinement Velocity ('Restlessness')</h3>
+                        <p class="description" data-en="When particles are confined to smaller spaces, their momentum uncertainty increases, causing them to move faster - the quantum 'restlessness'. In neutron stars, neutrons reach relativistic velocities due to extreme confinement." data-de="Wenn Teilchen auf kleinere Raeume beschraenkt werden, nimmt ihre Impulsunschaerfe zu, wodurch sie sich schneller bewegen - die Quanten-'Unruhe'. In Neutronensternen erreichen Neutronen relativistische Geschwindigkeiten durch extreme Einschraenkung.">Confined particles move faster - the quantum 'restlessness' that creates pressure.</p>
+                        <div class="formulas">
+                            <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-confinement"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="viz-separator"></div>
+
+                <div class="viz-item">
+                    <div class="viz-image">
+                        <img src="visualizations/uncertainty_to_pressure.png" data-img-base="uncertainty_to_pressure" alt="Uncertainty to Pressure">
+                    </div>
+                    <div class="viz-details">
+                        <h3 data-en="From Uncertainty to Pressure" data-de="Von Unschaerfe zu Druck">From Uncertainty to Pressure</h3>
+                        <p class="description" data-en="The causal chain: Gravity compresses matter → smaller Δx → larger Δp → faster motion → kinetic energy → outward PRESSURE. This is how quantum mechanics supports white dwarfs and neutron stars against collapse." data-de="Die Kausalkette: Gravitation komprimiert Materie → kleineres Δx → groesseres Δp → schnellere Bewegung → kinetische Energie → DRUCK nach aussen. So stuetzt Quantenmechanik Weisse Zwerge und Neutronensterne gegen den Kollaps.">The causal chain from uncertainty to degeneracy pressure.</p>
+                        <div class="formulas">
+                            <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-degeneracy"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="viz-separator"></div>
+
+                <div class="viz-item">
+                    <div class="viz-image">
+                        <img src="visualizations/uncertainty_hbar_scaling.png" data-img-base="uncertainty_hbar_scaling" alt="ℏ Scaling Effects">
+                    </div>
+                    <div class="viz-details">
+                        <h3 data-en="Effect of ℏ on Uncertainty" data-de="Effekt von ℏ auf Unschaerfe">Effect of ℏ on Uncertainty</h3>
+                        <p class="description" data-en="When ℏ changes, so does the uncertainty bound. Degeneracy pressure scales as ℏ², so doubling ℏ quadruples the pressure. This is key to understanding how changing fundamental constants affects stellar stability." data-de="Wenn sich ℏ aendert, aendert sich auch die Unschaerfegrenze. Entartungsdruck skaliert mit ℏ², daher vervierfacht eine Verdopplung von ℏ den Druck. Dies ist entscheidend fuer das Verstaendnis, wie sich aendernde Fundamentalkonstanten die Sternstabilitaet beeinflussen.">Degeneracy pressure scales as ℏ² - key to stellar stability.</p>
+                        <div class="formulas">
+                            <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-hbar-pressure"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="viz-separator"></div>
+
+                <div class="viz-item">
+                    <div class="viz-image">
+                        <img src="visualizations/heisenberg_summary.png" data-img-base="heisenberg_summary" alt="Heisenberg Summary">
+                    </div>
+                    <div class="viz-details">
+                        <h3 data-en="Heisenberg Summary" data-de="Heisenberg Zusammenfassung">Heisenberg Summary</h3>
+                        <p class="description" data-en="Complete overview of how the Heisenberg uncertainty principle connects to degeneracy pressure: uncertainty → momentum → velocity → kinetic energy → pressure. This quantum effect supports compact stars against gravitational collapse." data-de="Vollstaendiger Ueberblick, wie das Heisenbergsche Unschaerfeprinzip mit dem Entartungsdruck zusammenhaengt: Unschaerfe → Impuls → Geschwindigkeit → kinetische Energie → Druck. Dieser Quanteneffekt stuetzt kompakte Sterne gegen den Gravitationskollaps.">Complete overview of uncertainty to pressure connection.</p>
+                        <div class="formulas">
+                            <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-heisenberg-sum"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -726,6 +869,14 @@
         <div id="stellar" class="section">
             <h2 data-en="Stellar Physics" data-de="Stellare Physik">Stellar Physics</h2>
 
+            <div class="subsection-tabs">
+                <button class="subsection-tab active" onclick="showSubsection('stellar', 'whitedwarf', this)" data-en="White Dwarfs" data-de="Weisse Zwerge">White Dwarfs</button>
+                <button class="subsection-tab" onclick="showSubsection('stellar', 'neutronstar', this)" data-en="Neutron Stars" data-de="Neutronensterne">Neutron Stars</button>
+                <button class="subsection-tab" onclick="showSubsection('stellar', 'gravitypauli', this)" data-en="Gravity vs Pauli" data-de="Gravitation vs Pauli">Gravity vs Pauli</button>
+            </div>
+
+            <!-- White Dwarf Sub-section -->
+            <div id="stellar-whitedwarf" class="subsection-content active">
             <div class="viz-item">
                 <div class="viz-image">
                     <img src="visualizations/chandrasekhar_limit.png" data-img-base="chandrasekhar_limit" alt="Chandrasekhar Limit">
@@ -786,6 +937,121 @@
                         <div class="formula" id="formula-chandra-sum"></div>
                         <div class="formula" id="formula-mr-sum"></div>
                         <div class="formula" id="formula-deg-sum"></div>
+                    </div>
+                </div>
+            </div>
+            </div>
+
+            <!-- Neutron Star Sub-section -->
+            <div id="stellar-neutronstar" class="subsection-content">
+                <div class="viz-item">
+                    <div class="viz-image">
+                        <img src="visualizations/tov_limit_comparison.png" data-img-base="tov_limit_comparison" alt="TOV Limit">
+                    </div>
+                    <div class="viz-details">
+                        <h3 data-en="TOV Limit (Neutron Star Maximum Mass)" data-de="TOV-Grenze (Neutronenstern-Maximalmasse)">TOV Limit (Neutron Star Maximum Mass)</h3>
+                        <p class="description" data-en="The Tolman-Oppenheimer-Volkoff limit (~2-3 solar masses) is the maximum mass of a neutron star supported by neutron degeneracy pressure. Above this, the star collapses into a black hole. Analogous to the Chandrasekhar limit for white dwarfs." data-de="Die Tolman-Oppenheimer-Volkoff-Grenze (~2-3 Sonnenmassen) ist die maximale Masse eines Neutronensterns, die durch Neutronenentartungsdruck gestuetzt wird. Darueber kollabiert der Stern zu einem Schwarzen Loch. Analog zur Chandrasekhar-Grenze fuer Weisse Zwerge.">The maximum mass of a neutron star before collapse to black hole.</p>
+                        <div class="formulas">
+                            <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-tov"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="viz-separator"></div>
+
+                <div class="viz-item">
+                    <div class="viz-image">
+                        <img src="visualizations/neutron_star_structure.png" data-img-base="neutron_star_structure" alt="Neutron Star Structure">
+                    </div>
+                    <div class="viz-details">
+                        <h3 data-en="Neutron Star Structure" data-de="Neutronenstern-Struktur">Neutron Star Structure</h3>
+                        <p class="description" data-en="Neutron stars have extreme properties: density of 10^17 kg/m³, surface gravity 10^11 times Earth's, and magnetic fields 10^8-10^15 times stronger. Time runs ~30% slower on the surface due to gravitational time dilation." data-de="Neutronensterne haben extreme Eigenschaften: Dichte von 10^17 kg/m³, Oberflaechengravitation 10^11-mal staerker als die Erde, und Magnetfelder 10^8-10^15-mal staerker. Die Zeit laeuft auf der Oberflaeche durch Gravitationszeitdilatation ~30% langsamer.">Extreme properties: density, gravity, time dilation at neutron star surface.</p>
+                        <div class="formulas">
+                            <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-ns-density"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="viz-separator"></div>
+
+                <div class="viz-item">
+                    <div class="viz-image">
+                        <img src="visualizations/electron_capture.png" data-img-base="electron_capture" alt="Electron Capture">
+                    </div>
+                    <div class="viz-details">
+                        <h3 data-en="Electron Capture Process" data-de="Elektroneneinfang-Prozess">Electron Capture Process</h3>
+                        <p class="description" data-en="When electron degeneracy pressure fails, electrons are forced into protons: p + e⁻ → n + νₑ. This converts the star from electron-supported (white dwarf) to neutron-supported (neutron star). The released neutrinos carry away most of the energy." data-de="Wenn Elektronenentartungsdruck versagt, werden Elektronen in Protonen gedrueckt: p + e⁻ → n + νₑ. Dies wandelt den Stern von elektronengestuetzt (Weisser Zwerg) zu neutronengestuetzt (Neutronenstern) um. Die freigesetzten Neutrinos tragen den Grossteil der Energie weg.">The transition from white dwarf to neutron star via electron capture.</p>
+                        <div class="formulas">
+                            <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-electron-capture"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="viz-separator"></div>
+
+                <div class="viz-item">
+                    <div class="viz-image">
+                        <img src="visualizations/neutron_star_summary.png" data-img-base="neutron_star_summary" alt="Neutron Star Summary">
+                    </div>
+                    <div class="viz-details">
+                        <h3 data-en="Neutron Star Summary" data-de="Neutronenstern Zusammenfassung">Neutron Star Summary</h3>
+                        <p class="description" data-en="Complete overview of neutron star physics: TOV limit, density profile, time dilation, and the connection to the uncertainty principle. Neutron degeneracy pressure supports these extreme objects at the edge of becoming black holes." data-de="Vollstaendiger Ueberblick ueber Neutronensternphysik: TOV-Grenze, Dichteprofil, Zeitdilatation und die Verbindung zum Unschaerfeprinzip. Neutronenentartungsdruck stuetzt diese extremen Objekte an der Grenze zu Schwarzen Loechern.">Complete overview of neutron star physics and TOV limit.</p>
+                        <div class="formulas">
+                            <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-ns-summary"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gravity vs Pauli Sub-section -->
+            <div id="stellar-gravitypauli" class="subsection-content">
+                <div class="viz-item">
+                    <div class="viz-image">
+                        <img src="visualizations/earth_structural_effects.png" data-img-base="earth_structural_effects" alt="Earth Structural Effects">
+                    </div>
+                    <div class="viz-details">
+                        <h3 data-en="Earth Under Increased Gravity" data-de="Erde unter erhoehter Gravitation">Earth Under Increased Gravity</h3>
+                        <p class="description" data-en="How would Earth change if gravity were stronger? Higher central pressure, smaller radius, denser core. At extreme G values, even rocky planets would need degeneracy pressure support. This explores the essay's core hypothesis." data-de="Wie wuerde sich die Erde veraendern, wenn die Gravitation staerker waere? Hoeherer Zentraldruck, kleinerer Radius, dichterer Kern. Bei extremen G-Werten wuerden selbst Gesteinsplaneten Entartungsdruckunterstuetzung benoetigen. Dies erforscht die Kernhypothese des Essays.">How Earth would change with stronger gravity.</p>
+                        <div class="formulas">
+                            <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-central-pressure"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="viz-separator"></div>
+
+                <div class="viz-item">
+                    <div class="viz-image">
+                        <img src="visualizations/gravity_vs_pauli.png" data-img-base="gravity_vs_pauli" alt="Gravity vs Pauli">
+                    </div>
+                    <div class="viz-details">
+                        <h3 data-en="Gravity vs Pauli: The Core Balance" data-de="Gravitation vs Pauli: Das Kerngleichgewicht">Gravity vs Pauli: The Core Balance</h3>
+                        <p class="description" data-en="The central question of the essay: What happens when gravitational pressure (∝ G) competes with degeneracy pressure (∝ ℏ²)? The ratio P_grav/P_Pauli ∝ G/ℏ² determines whether matter collapses or remains stable." data-de="Die zentrale Frage des Essays: Was passiert, wenn Gravitationsdruck (∝ G) mit Entartungsdruck (∝ ℏ²) konkurriert? Das Verhaeltnis P_grav/P_Pauli ∝ G/ℏ² bestimmt, ob Materie kollabiert oder stabil bleibt.">The fundamental balance between gravity and quantum pressure.</p>
+                        <div class="formulas">
+                            <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-balance"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="viz-separator"></div>
+
+                <div class="viz-item">
+                    <div class="viz-image">
+                        <img src="visualizations/hypothesis_summary.png" data-img-base="hypothesis_summary" alt="Hypothesis Summary">
+                    </div>
+                    <div class="viz-details">
+                        <h3 data-en="Essay Hypothesis Summary" data-de="Essay-Hypothese Zusammenfassung">Essay Hypothesis Summary</h3>
+                        <p class="description" data-en="Summary of the essay's exploration: By scaling G or ℏ, we can shift the balance between gravitational and quantum forces. When G×10³⁶ or ℏ×10⁻¹⁸, gravity dominates at atomic scales, fundamentally changing the nature of matter and stellar structure." data-de="Zusammenfassung der Essay-Erforschung: Durch Skalierung von G oder ℏ koennen wir das Gleichgewicht zwischen Gravitations- und Quantenkraeften verschieben. Bei G×10³⁶ oder ℏ×10⁻¹⁸ dominiert Gravitation auf atomarer Skala und veraendert fundamental die Natur von Materie und Sternstruktur.">Summary: How changing G or ℏ shifts the gravity-quantum balance.</p>
+                        <div class="formulas">
+                            <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-hypothesis"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -917,7 +1183,26 @@
                 'formula-deflection-angle': '\\alpha_{Sun} = 1.75\\text{ arcsec}',
                 'formula-kruskal': 'U = \\sqrt{\\frac{r}{R_s} - 1} \\cdot e^{r/2R_s}',
                 'formula-penrose': 'T = \\arctan(U+V) + \\arctan(V-U)',
-                'formula-null-geodesic': 'ds^2 = 0 \\quad \\text{(light at 45°)}'
+                'formula-null-geodesic': 'ds^2 = 0 \\quad \\text{(light at 45°)}',
+                // Time dilation formulas
+                'formula-time-dilation': '\\frac{\\tau}{t} = \\sqrt{1 - \\frac{R_s}{r}} = \\sqrt{1 - \\frac{2GM}{rc^2}}',
+                'formula-time-scaling': '\\frac{\\tau}{t} \\propto \\sqrt{1 - \\frac{G}{G_0}}',
+                'formula-time-summary': '\\tau_{NS} \\approx 0.7t \\quad \\text{(30% slower)}',
+                // Heisenberg formulas
+                'formula-heisenberg': '\\Delta x \\cdot \\Delta p \\geq \\frac{\\hbar}{2}',
+                'formula-confinement': 'v \\sim \\frac{\\hbar}{m \\cdot \\Delta x}',
+                'formula-degeneracy': 'P_{deg} \\propto \\frac{\\hbar^2}{m} \\rho^{5/3}',
+                'formula-hbar-pressure': 'P \\propto \\hbar^2',
+                'formula-heisenberg-sum': '\\Delta x \\cdot \\Delta p \\geq \\frac{\\hbar}{2} \\rightarrow P_{deg}',
+                // Neutron star formulas
+                'formula-tov': 'M_{TOV} \\approx 2-3 M_\\odot',
+                'formula-ns-density': '\\rho_{NS} \\sim 10^{17} \\text{ kg/m}^3',
+                'formula-electron-capture': 'p + e^- \\rightarrow n + \\nu_e',
+                'formula-ns-summary': 'M_{TOV} < M_{Ch} \\cdot (m_p/m_e)^2',
+                // Gravity vs Pauli formulas
+                'formula-central-pressure': 'P_c \\approx \\frac{GM^2}{R^4}',
+                'formula-balance': '\\frac{P_{grav}}{P_{Pauli}} \\propto \\frac{G}{\\hbar^2}',
+                'formula-hypothesis': '\\text{If } G \\times 10^{36} \\text{ or } \\hbar \\times 10^{-18}: \\text{ gravity dominates}'
             };
 
             for (const [id, formula] of Object.entries(formulas)) {
