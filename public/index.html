@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gravity Physics Visualization - Jugend forscht 2026</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -18,30 +20,61 @@
         }
         .header {
             text-align: center;
-            padding: 40px 20px;
+            padding: 30px 20px;
             background: rgba(0,0,0,0.3);
+            position: relative;
         }
         .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
+            font-size: 2.2rem;
+            margin-bottom: 8px;
             background: linear-gradient(90deg, #00d4ff, #7b2cbf);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         .header p {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: #aaa;
+        }
+        .lang-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 5px;
+            background: rgba(255,255,255,0.1);
+            padding: 5px;
+            border-radius: 8px;
+        }
+        .lang-btn {
+            padding: 8px 16px;
+            border: none;
+            background: transparent;
+            color: #aaa;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        .lang-btn.active {
+            background: #00d4ff;
+            color: #1a1a2e;
+        }
+        .lang-btn:hover:not(.active) {
+            background: rgba(255,255,255,0.1);
         }
         .nav-tabs {
             display: flex;
             justify-content: center;
             flex-wrap: wrap;
             gap: 10px;
-            padding: 20px;
+            padding: 15px;
             background: rgba(0,0,0,0.2);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
         .nav-tab {
-            padding: 12px 24px;
+            padding: 10px 20px;
             background: rgba(255,255,255,0.1);
             border: 1px solid rgba(255,255,255,0.2);
             border-radius: 8px;
@@ -49,6 +82,7 @@
             text-decoration: none;
             transition: all 0.3s;
             cursor: pointer;
+            font-size: 0.95rem;
         }
         .nav-tab:hover, .nav-tab.active {
             background: rgba(0,212,255,0.3);
@@ -56,7 +90,7 @@
         }
         .content {
             padding: 20px;
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
         }
         .section {
@@ -66,38 +100,37 @@
             display: block;
         }
         .section h2 {
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             margin-bottom: 20px;
             color: #00d4ff;
-        }
-        .viz-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 20px;
-        }
-        .viz-card {
-            background: rgba(255,255,255,0.05);
-            border-radius: 12px;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.1);
-            transition: transform 0.3s;
-        }
-        .viz-card:hover {
-            transform: translateY(-5px);
-        }
-        .viz-card img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
-        .viz-card .title {
-            padding: 15px;
-            font-weight: 500;
             text-align: center;
+        }
+
+        /* Interactive 3D Section */
+        .interactive-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .interactive-tab {
+            padding: 10px 18px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 6px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+        .interactive-tab:hover, .interactive-tab.active {
+            background: rgba(123,44,191,0.4);
+            border-color: #7b2cbf;
         }
         .interactive-container {
             width: 100%;
-            height: 900px;
+            height: 850px;
             border-radius: 12px;
             overflow: hidden;
             background: #fff;
@@ -107,58 +140,124 @@
             height: 100%;
             border: none;
         }
-        .interactive-tabs {
+
+        /* Static Visualization Cards - Vertical Layout */
+        .viz-item {
             display: flex;
-            gap: 10px;
+            gap: 30px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 25px;
             margin-bottom: 20px;
-            flex-wrap: wrap;
+            border: 1px solid rgba(255,255,255,0.1);
         }
-        .interactive-tab {
-            padding: 10px 20px;
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 6px;
+        .viz-item:last-child {
+            margin-bottom: 0;
+        }
+        .viz-image {
+            flex: 0 0 55%;
+            max-width: 55%;
+        }
+        .viz-image img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            display: block;
+        }
+        .viz-details {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .viz-details h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: #00d4ff;
+        }
+        .viz-details .description {
+            color: #ccc;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+        .viz-details .formulas {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid #7b2cbf;
+        }
+        .viz-details .formulas h4 {
+            font-size: 0.9rem;
+            color: #7b2cbf;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .viz-details .formula {
+            font-family: 'Times New Roman', serif;
+            font-size: 1.1rem;
             color: #fff;
-            cursor: pointer;
-            transition: all 0.3s;
+            margin: 8px 0;
+            padding: 5px 0;
         }
-        .interactive-tab:hover, .interactive-tab.active {
-            background: rgba(123,44,191,0.4);
-            border-color: #7b2cbf;
+        .viz-separator {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            margin: 30px 0;
         }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .viz-item {
+                flex-direction: column;
+            }
+            .viz-image {
+                flex: none;
+                max-width: 100%;
+            }
+        }
+
         .footer {
             text-align: center;
             padding: 30px;
             color: #666;
             font-size: 0.9rem;
+            margin-top: 40px;
         }
+
+        /* KaTeX styling */
+        .katex { font-size: 1.1em; }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>Gravity Dominance in Alternative Universes</h1>
-        <p>Jugend forscht 2026 - Interactive Physics Visualization</p>
+        <div class="lang-toggle">
+            <button class="lang-btn active" onclick="setLanguage('en')">EN</button>
+            <button class="lang-btn" onclick="setLanguage('de')">DE</button>
+        </div>
+        <h1 data-en="Gravity Dominance in Alternative Universes" data-de="Gravitationsdominanz in alternativen Universen"></h1>
+        <p data-en="Jugend forscht 2026 - Interactive Physics Visualization" data-de="Jugend forscht 2026 - Interaktive Physik-Visualisierung"></p>
     </div>
 
     <nav class="nav-tabs">
-        <a class="nav-tab active" onclick="showSection('interactive')">3D Interactive</a>
-        <a class="nav-tab" onclick="showSection('spacetime')">Spacetime</a>
-        <a class="nav-tab" onclick="showSection('atomic')">Atomic Scale</a>
-        <a class="nav-tab" onclick="showSection('forces')">Forces</a>
-        <a class="nav-tab" onclick="showSection('temperature')">Temperature</a>
-        <a class="nav-tab" onclick="showSection('stellar')">Stellar Physics</a>
+        <a class="nav-tab active" onclick="showSection('interactive')" data-en="3D Interactive" data-de="3D Interaktiv">3D Interactive</a>
+        <a class="nav-tab" onclick="showSection('spacetime')" data-en="Spacetime" data-de="Raumzeit">Spacetime</a>
+        <a class="nav-tab" onclick="showSection('atomic')" data-en="Atomic Scale" data-de="Atomare Skala">Atomic Scale</a>
+        <a class="nav-tab" onclick="showSection('forces')" data-en="Forces" data-de="Kraefte">Forces</a>
+        <a class="nav-tab" onclick="showSection('temperature')" data-en="Temperature" data-de="Temperatur">Temperature</a>
+        <a class="nav-tab" onclick="showSection('stellar')" data-en="Stellar Physics" data-de="Stellare Physik">Stellar Physics</a>
     </nav>
 
     <div class="content">
         <!-- Interactive 3D Section -->
         <div id="interactive" class="section active">
-            <h2>Interactive 3D Visualizations</h2>
+            <h2 data-en="Interactive 3D Visualizations" data-de="Interaktive 3D-Visualisierungen">Interactive 3D Visualizations</h2>
             <div class="interactive-tabs">
-                <button class="interactive-tab active" onclick="loadInteractive('spacetime_3d_interactive.html', this)">Spacetime Curvature</button>
-                <button class="interactive-tab" onclick="loadInteractive('spacetime_comparison_3d_interactive.html', this)">Multiple Masses</button>
-                <button class="interactive-tab" onclick="loadInteractive('atom_scaling_3d_interactive.html', this)">Atom Scaling</button>
-                <button class="interactive-tab" onclick="loadInteractive('force_ratio_3d_interactive.html', this)">Force Ratio</button>
-                <button class="interactive-tab" onclick="loadInteractive('temperature_profile_3d_interactive.html', this)">Temperature Profile</button>
+                <button class="interactive-tab active" onclick="loadInteractive('spacetime_3d_interactive.html', this)" data-en="Spacetime Curvature" data-de="Raumzeitkruemmung">Spacetime Curvature</button>
+                <button class="interactive-tab" onclick="loadInteractive('spacetime_comparison_3d_interactive.html', this)" data-en="Multiple Masses" data-de="Mehrere Massen">Multiple Masses</button>
+                <button class="interactive-tab" onclick="loadInteractive('atom_scaling_3d_interactive.html', this)" data-en="Atom Scaling" data-de="Atomskalierung">Atom Scaling</button>
+                <button class="interactive-tab" onclick="loadInteractive('force_ratio_3d_interactive.html', this)" data-en="Force Ratio" data-de="Kraefteverhaeltnis">Force Ratio</button>
+                <button class="interactive-tab" onclick="loadInteractive('temperature_profile_3d_interactive.html', this)" data-en="Temperature Profile" data-de="Temperaturprofil">Temperature Profile</button>
             </div>
             <div class="interactive-container">
                 <iframe id="interactive-frame" src="visualizations/spacetime_3d_interactive.html"></iframe>
@@ -167,136 +266,319 @@
 
         <!-- Spacetime Section -->
         <div id="spacetime" class="section">
-            <h2>Spacetime Curvature</h2>
-            <div class="viz-grid">
-                <div class="viz-card">
+            <h2 data-en="Spacetime Curvature" data-de="Raumzeitkruemmung">Spacetime Curvature</h2>
+
+            <div class="viz-item">
+                <div class="viz-image">
                     <img src="visualizations/potential_well_2d.png" alt="Potential Well 2D">
-                    <div class="title">Gravitational Potential Well (2D)</div>
                 </div>
-                <div class="viz-card">
+                <div class="viz-details">
+                    <h3 data-en="Gravitational Potential Well (2D)" data-de="Gravitationspotentialtopf (2D)">Gravitational Potential Well (2D)</h3>
+                    <p class="description" data-en="The gravitational potential describes how much energy per unit mass is required to move an object from one point to another in a gravitational field. Deeper wells indicate stronger gravitational binding." data-de="Das Gravitationspotential beschreibt, wie viel Energie pro Masseneinheit benoetigt wird, um ein Objekt von einem Punkt zum anderen in einem Gravitationsfeld zu bewegen. Tiefere Toepfe zeigen staerkere gravitative Bindung an.">The gravitational potential describes how much energy per unit mass is required to move an object from one point to another in a gravitational field.</p>
+                    <div class="formulas">
+                        <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                        <div class="formula" id="formula-potential"></div>
+                        <div class="formula" id="formula-potential2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="viz-separator"></div>
+
+            <div class="viz-item">
+                <div class="viz-image">
                     <img src="visualizations/potential_well_3d.png" alt="Potential Well 3D">
-                    <div class="title">Gravitational Potential Well (3D)</div>
                 </div>
-                <div class="viz-card">
+                <div class="viz-details">
+                    <h3 data-en="Gravitational Potential Well (3D)" data-de="Gravitationspotentialtopf (3D)">Gravitational Potential Well (3D)</h3>
+                    <p class="description" data-en="A three-dimensional representation of spacetime curvature around a massive object. The 'rubber sheet' analogy shows how mass creates a depression in the fabric of spacetime." data-de="Eine dreidimensionale Darstellung der Raumzeitkruemmung um ein massives Objekt. Die 'Gummituch'-Analogie zeigt, wie Masse eine Vertiefung im Gewebe der Raumzeit erzeugt.">A three-dimensional representation of spacetime curvature around a massive object.</p>
+                    <div class="formulas">
+                        <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                        <div class="formula" id="formula-schwarzschild"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="viz-separator"></div>
+
+            <div class="viz-item">
+                <div class="viz-image">
                     <img src="visualizations/escape_velocity.png" alt="Escape Velocity">
-                    <div class="title">Escape Velocity</div>
                 </div>
-                <div class="viz-card">
+                <div class="viz-details">
+                    <h3 data-en="Escape Velocity" data-de="Fluchtgeschwindigkeit">Escape Velocity</h3>
+                    <p class="description" data-en="The minimum velocity needed for an object to escape from the gravitational influence of a massive body. When escape velocity exceeds the speed of light, the object becomes a black hole." data-de="Die Mindestgeschwindigkeit, die ein Objekt benoetigt, um dem Gravitationseinfluss eines massiven Koerpers zu entkommen. Wenn die Fluchtgeschwindigkeit die Lichtgeschwindigkeit uebersteigt, wird das Objekt zu einem Schwarzen Loch.">The minimum velocity needed for an object to escape from gravitational influence.</p>
+                    <div class="formulas">
+                        <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                        <div class="formula" id="formula-escape"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="viz-separator"></div>
+
+            <div class="viz-item">
+                <div class="viz-image">
                     <img src="visualizations/compactness_comparison.png" alt="Compactness Comparison">
-                    <div class="title">Compactness Comparison</div>
                 </div>
-                <div class="viz-card">
-                    <img src="visualizations/spacetime_summary.png" alt="Spacetime Summary">
-                    <div class="title">Spacetime Summary</div>
+                <div class="viz-details">
+                    <h3 data-en="Compactness Comparison" data-de="Kompaktheitsvergleich">Compactness Comparison</h3>
+                    <p class="description" data-en="Compactness measures how close an object is to becoming a black hole. It's the ratio of the Schwarzschild radius to the actual radius. Higher compactness means stronger spacetime curvature." data-de="Kompaktheit misst, wie nah ein Objekt daran ist, ein Schwarzes Loch zu werden. Es ist das Verhaeltnis des Schwarzschild-Radius zum tatsaechlichen Radius.">Compactness measures how close an object is to becoming a black hole.</p>
+                    <div class="formulas">
+                        <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                        <div class="formula" id="formula-compactness"></div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Atomic Section -->
         <div id="atomic" class="section">
-            <h2>Atomic Scale Physics</h2>
-            <div class="viz-grid">
-                <div class="viz-card">
+            <h2 data-en="Atomic Scale Physics" data-de="Physik auf atomarer Skala">Atomic Scale Physics</h2>
+
+            <div class="viz-item">
+                <div class="viz-image">
                     <img src="visualizations/bohr_radius_scaling.png" alt="Bohr Radius Scaling">
-                    <div class="title">Bohr Radius Scaling</div>
                 </div>
-                <div class="viz-card">
+                <div class="viz-details">
+                    <h3 data-en="Bohr Radius Scaling" data-de="Bohr-Radius-Skalierung">Bohr Radius Scaling</h3>
+                    <p class="description" data-en="The Bohr radius determines the size of atoms. It depends on Planck's constant squared, so reducing h-bar dramatically shrinks atoms. This is the key mechanism by which gravity becomes dominant at smaller scales." data-de="Der Bohr-Radius bestimmt die Groesse von Atomen. Er haengt vom Quadrat der Planck-Konstante ab, sodass eine Reduzierung von h-bar Atome dramatisch schrumpfen laesst.">The Bohr radius determines the size of atoms and depends on h-bar squared.</p>
+                    <div class="formulas">
+                        <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                        <div class="formula" id="formula-bohr"></div>
+                        <div class="formula" id="formula-bohr-scaling"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="viz-separator"></div>
+
+            <div class="viz-item">
+                <div class="viz-image">
                     <img src="visualizations/atom_size_comparison.png" alt="Atom Size Comparison">
-                    <div class="title">Atom Size Comparison</div>
                 </div>
-                <div class="viz-card">
+                <div class="viz-details">
+                    <h3 data-en="Atom Size Comparison" data-de="Atomgroessenvergleich">Atom Size Comparison</h3>
+                    <p class="description" data-en="Visual comparison of hydrogen atom sizes in different universes. When h-bar is reduced by a factor of 10, atoms shrink by a factor of 100 (since a₀ is proportional to h-bar squared)." data-de="Visueller Vergleich der Wasserstoffatomgroessen in verschiedenen Universen. Wenn h-bar um den Faktor 10 reduziert wird, schrumpfen Atome um den Faktor 100.">Visual comparison of hydrogen atom sizes in different universes.</p>
+                    <div class="formulas">
+                        <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                        <div class="formula" id="formula-atom-scale"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="viz-separator"></div>
+
+            <div class="viz-item">
+                <div class="viz-image">
                     <img src="visualizations/energy_levels.png" alt="Energy Levels">
-                    <div class="title">Hydrogen Energy Levels</div>
                 </div>
-                <div class="viz-card">
+                <div class="viz-details">
+                    <h3 data-en="Hydrogen Energy Levels" data-de="Wasserstoff-Energieniveaus">Hydrogen Energy Levels</h3>
+                    <p class="description" data-en="The quantized energy levels of hydrogen follow the formula E_n = -13.6 eV / n². These discrete levels explain atomic spectra and the stability of matter." data-de="Die quantisierten Energieniveaus des Wasserstoffs folgen der Formel E_n = -13.6 eV / n². Diese diskreten Niveaus erklaeren Atomspektren und die Stabilitaet der Materie.">The quantized energy levels of hydrogen explain atomic spectra.</p>
+                    <div class="formulas">
+                        <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                        <div class="formula" id="formula-energy"></div>
+                        <div class="formula" id="formula-orbital"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="viz-separator"></div>
+
+            <div class="viz-item">
+                <div class="viz-image">
                     <img src="visualizations/quantum_gravity_connection.png" alt="Quantum Gravity Connection">
-                    <div class="title">Quantum-Gravity Connection</div>
                 </div>
-                <div class="viz-card">
-                    <img src="visualizations/atomic_summary.png" alt="Atomic Summary">
-                    <div class="title">Atomic Physics Summary</div>
+                <div class="viz-details">
+                    <h3 data-en="Quantum-Gravity Connection" data-de="Quanten-Gravitations-Verbindung">Quantum-Gravity Connection</h3>
+                    <p class="description" data-en="The gravitational coupling constant alpha_G determines the strength of gravity relative to other forces. By changing h-bar, we can make gravity dominant over electromagnetic forces." data-de="Die Gravitationskopplungskonstante alpha_G bestimmt die Staerke der Gravitation relativ zu anderen Kraeften. Durch Aendern von h-bar koennen wir Gravitation ueber elektromagnetische Kraefte dominant machen.">The gravitational coupling constant determines gravity's relative strength.</p>
+                    <div class="formulas">
+                        <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                        <div class="formula" id="formula-alpha-g"></div>
+                        <div class="formula" id="formula-density"></div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Forces Section -->
         <div id="forces" class="section">
-            <h2>Fundamental Forces</h2>
-            <div class="viz-grid">
-                <div class="viz-card">
+            <h2 data-en="Fundamental Forces" data-de="Fundamentale Kraefte">Fundamental Forces</h2>
+
+            <div class="viz-item">
+                <div class="viz-image">
                     <img src="visualizations/force_comparison_bar.png" alt="Force Comparison">
-                    <div class="title">Force Comparison</div>
                 </div>
-                <div class="viz-card">
+                <div class="viz-details">
+                    <h3 data-en="Force Strength Comparison" data-de="Kraftstaerkenvergleich">Force Strength Comparison</h3>
+                    <p class="description" data-en="Comparison of the four fundamental forces. In our universe, gravity is 10^36 times weaker than electromagnetism at atomic scales. Our project explores universes where this ratio is different." data-de="Vergleich der vier fundamentalen Kraefte. In unserem Universum ist Gravitation 10^36 mal schwaecher als Elektromagnetismus auf atomarer Skala.">Comparison of the four fundamental forces in our universe.</p>
+                    <div class="formulas">
+                        <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                        <div class="formula" id="formula-gravity"></div>
+                        <div class="formula" id="formula-coulomb"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="viz-separator"></div>
+
+            <div class="viz-item">
+                <div class="viz-image">
                     <img src="visualizations/force_vs_distance.png" alt="Force vs Distance">
-                    <div class="title">Force vs Distance</div>
                 </div>
-                <div class="viz-card">
+                <div class="viz-details">
+                    <h3 data-en="Force vs Distance" data-de="Kraft vs Abstand">Force vs Distance</h3>
+                    <p class="description" data-en="Both gravitational and electromagnetic forces follow the inverse-square law (1/r²). However, their magnitudes differ by many orders of magnitude at typical atomic distances." data-de="Sowohl Gravitations- als auch elektromagnetische Kraefte folgen dem Abstandsquadratgesetz (1/r²). Ihre Groessenordnungen unterscheiden sich jedoch bei typischen atomaren Abstaenden um viele Zehnerpotenzen.">Both forces follow the inverse-square law but differ vastly in magnitude.</p>
+                    <div class="formulas">
+                        <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                        <div class="formula" id="formula-inverse-square"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="viz-separator"></div>
+
+            <div class="viz-item">
+                <div class="viz-image">
                     <img src="visualizations/force_across_scales.png" alt="Force Across Scales">
-                    <div class="title">Forces Across Scales</div>
                 </div>
-                <div class="viz-card">
-                    <img src="visualizations/force_scaled_hbar0.1_G1.0.png" alt="Force Scaled">
-                    <div class="title">Force with Scaled Constants</div>
+                <div class="viz-details">
+                    <h3 data-en="Forces Across Scales" data-de="Kraefte ueber Skalen">Forces Across Scales</h3>
+                    <p class="description" data-en="How the dominant force changes across different length scales. At atomic scales, electromagnetism dominates. At planetary scales, gravity dominates. Our project shifts this boundary." data-de="Wie sich die dominante Kraft ueber verschiedene Laengenskalen aendert. Auf atomarer Skala dominiert Elektromagnetismus. Auf planetarer Skala dominiert Gravitation.">The dominant force changes across different length scales.</p>
+                    <div class="formulas">
+                        <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                        <div class="formula" id="formula-ratio"></div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Temperature Section -->
         <div id="temperature" class="section">
-            <h2>Temperature Physics</h2>
-            <div class="viz-grid">
-                <div class="viz-card">
+            <h2 data-en="Temperature Physics" data-de="Temperaturphysik">Temperature Physics</h2>
+
+            <div class="viz-item">
+                <div class="viz-image">
                     <img src="visualizations/temperature_atmosphere.png" alt="Temperature Atmosphere">
-                    <div class="title">Atmospheric Temperature</div>
                 </div>
-                <div class="viz-card">
+                <div class="viz-details">
+                    <h3 data-en="Atmospheric Temperature Profile" data-de="Atmosphaerisches Temperaturprofil">Atmospheric Temperature Profile</h3>
+                    <p class="description" data-en="The adiabatic lapse rate describes how temperature decreases with altitude. Higher gravity increases this rate, compressing the atmosphere into a thinner layer near the surface." data-de="Die adiabatische Temperaturabnahme beschreibt, wie die Temperatur mit der Hoehe abnimmt. Hoehere Gravitation erhoeht diese Rate und komprimiert die Atmosphaere in eine duennere Schicht nahe der Oberflaeche.">The adiabatic lapse rate describes temperature change with altitude.</p>
+                    <div class="formulas">
+                        <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                        <div class="formula" id="formula-lapse"></div>
+                        <div class="formula" id="formula-scale-height"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="viz-separator"></div>
+
+            <div class="viz-item">
+                <div class="viz-image">
                     <img src="visualizations/temperature_degeneracy.png" alt="Temperature Degeneracy">
-                    <div class="title">Degeneracy Temperature</div>
                 </div>
-                <div class="viz-card">
+                <div class="viz-details">
+                    <h3 data-en="Degeneracy Temperature" data-de="Entartungstemperatur">Degeneracy Temperature</h3>
+                    <p class="description" data-en="The Fermi temperature determines when quantum degeneracy pressure dominates over thermal pressure. This is crucial for understanding white dwarfs and neutron stars." data-de="Die Fermi-Temperatur bestimmt, wann der Quantenentartungsdruck ueber den thermischen Druck dominiert. Dies ist entscheidend fuer das Verstaendnis von Weissen Zwergen und Neutronensternen.">The Fermi temperature determines when quantum effects dominate.</p>
+                    <div class="formulas">
+                        <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                        <div class="formula" id="formula-fermi"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="viz-separator"></div>
+
+            <div class="viz-item">
+                <div class="viz-image">
                     <img src="visualizations/temperature_summary.png" alt="Temperature Summary">
-                    <div class="title">Temperature Summary</div>
+                </div>
+                <div class="viz-details">
+                    <h3 data-en="Temperature Effects Summary" data-de="Zusammenfassung der Temperatureffekte">Temperature Effects Summary</h3>
+                    <p class="description" data-en="Summary of how increased gravity affects temperatures: compressed atmospheres, steeper lapse rates, higher core temperatures due to gravitational compression, and shifted degeneracy thresholds." data-de="Zusammenfassung, wie erhoehte Gravitation Temperaturen beeinflusst: komprimierte Atmosphaeren, steilere Temperaturgradienten, hoehere Kerntemperaturen durch Gravitationskompression.">Summary of how increased gravity affects temperatures.</p>
+                    <div class="formulas">
+                        <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                        <div class="formula" id="formula-virial"></div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- Stellar Section -->
         <div id="stellar" class="section">
-            <h2>Stellar Physics</h2>
-            <div class="viz-grid">
-                <div class="viz-card">
+            <h2 data-en="Stellar Physics" data-de="Stellare Physik">Stellar Physics</h2>
+
+            <div class="viz-item">
+                <div class="viz-image">
                     <img src="visualizations/chandrasekhar_limit.png" alt="Chandrasekhar Limit">
-                    <div class="title">Chandrasekhar Limit</div>
                 </div>
-                <div class="viz-card">
+                <div class="viz-details">
+                    <h3 data-en="Chandrasekhar Limit" data-de="Chandrasekhar-Grenze">Chandrasekhar Limit</h3>
+                    <p class="description" data-en="The maximum mass of a white dwarf supported by electron degeneracy pressure. Above this limit (~1.4 solar masses), the star collapses into a neutron star or black hole." data-de="Die maximale Masse eines Weissen Zwergs, die durch Elektronenentartungsdruck gestuetzt wird. Oberhalb dieser Grenze (~1.4 Sonnenmassen) kollabiert der Stern zu einem Neutronenstern oder Schwarzen Loch.">The maximum mass of a white dwarf supported by electron degeneracy.</p>
+                    <div class="formulas">
+                        <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                        <div class="formula" id="formula-chandrasekhar"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="viz-separator"></div>
+
+            <div class="viz-item">
+                <div class="viz-image">
                     <img src="visualizations/mass_radius_relation.png" alt="Mass Radius Relation">
-                    <div class="title">Mass-Radius Relation</div>
                 </div>
-                <div class="viz-card">
+                <div class="viz-details">
+                    <h3 data-en="Mass-Radius Relation" data-de="Masse-Radius-Beziehung">Mass-Radius Relation</h3>
+                    <p class="description" data-en="For white dwarfs, more mass means smaller radius - the opposite of planets! This counterintuitive result comes from degenerate matter physics where electrons resist compression through quantum pressure." data-de="Bei Weissen Zwergen bedeutet mehr Masse einen kleineren Radius - das Gegenteil von Planeten! Dieses kontraintuitive Ergebnis stammt aus der Physik entarteter Materie.">For white dwarfs, more mass means smaller radius.</p>
+                    <div class="formulas">
+                        <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                        <div class="formula" id="formula-mass-radius"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="viz-separator"></div>
+
+            <div class="viz-item">
+                <div class="viz-image">
                     <img src="visualizations/pressure_vs_density.png" alt="Pressure vs Density">
-                    <div class="title">Pressure vs Density</div>
                 </div>
-                <div class="viz-card">
-                    <img src="visualizations/white_dwarf_summary.png" alt="White Dwarf Summary">
-                    <div class="title">White Dwarf Summary</div>
+                <div class="viz-details">
+                    <h3 data-en="Pressure vs Density" data-de="Druck vs Dichte">Pressure vs Density</h3>
+                    <p class="description" data-en="The equation of state for degenerate matter. Electron degeneracy pressure increases with density to the 5/3 power, providing support against gravitational collapse." data-de="Die Zustandsgleichung fuer entartete Materie. Der Elektronenentartungsdruck nimmt mit der Dichte hoch 5/3 zu und bietet Unterstuetzung gegen Gravitationskollaps.">The equation of state for degenerate matter.</p>
+                    <div class="formulas">
+                        <h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                        <div class="formula" id="formula-degeneracy-pressure"></div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="footer">
-        <p>Jugend forscht 2026 - Physics Visualization Project</p>
-        <p>Exploring gravity dominance in alternative universes</p>
+        <p data-en="Jugend forscht 2026 - Physics Visualization Project" data-de="Jugend forscht 2026 - Physik-Visualisierungsprojekt">Jugend forscht 2026 - Physics Visualization Project</p>
+        <p data-en="Exploring gravity dominance in alternative universes" data-de="Erforschung der Gravitationsdominanz in alternativen Universen">Exploring gravity dominance in alternative universes</p>
     </div>
 
     <script>
+        let currentLang = 'en';
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelector(`.lang-btn[onclick="setLanguage('${lang}')"]`).classList.add('active');
+
+            document.querySelectorAll('[data-en]').forEach(el => {
+                el.textContent = el.getAttribute(`data-${lang}`);
+            });
+        }
+
         function showSection(sectionId) {
-            // Hide all sections
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-
-            // Show selected section
             document.getElementById(sectionId).classList.add('active');
             event.target.classList.add('active');
         }
@@ -306,6 +588,42 @@
             document.querySelectorAll('.interactive-tab').forEach(t => t.classList.remove('active'));
             button.classList.add('active');
         }
+
+        // Render formulas with KaTeX
+        document.addEventListener('DOMContentLoaded', function() {
+            const formulas = {
+                'formula-potential': '\\phi(r) = -\\frac{GM}{r}',
+                'formula-potential2': 'g = \\frac{GM}{r^2}',
+                'formula-schwarzschild': 'R_s = \\frac{2GM}{c^2}',
+                'formula-escape': 'v_{esc} = \\sqrt{\\frac{2GM}{R}}',
+                'formula-compactness': '\\mathcal{C} = \\frac{R_s}{R} = \\frac{2GM}{Rc^2}',
+                'formula-bohr': 'a_0 = \\frac{4\\pi\\varepsilon_0\\hbar^2}{m_e e^2}',
+                'formula-bohr-scaling': 'a_0 \\propto \\hbar^2',
+                'formula-atom-scale': 'a_0(\\hbar\') = a_0 \\cdot \\left(\\frac{\\hbar\'}{\\hbar}\\right)^2',
+                'formula-energy': 'E_n = -\\frac{13.6 \\text{ eV}}{n^2}',
+                'formula-orbital': 'r_n = n^2 \\cdot a_0',
+                'formula-alpha-g': '\\alpha_G = \\frac{Gm_p^2}{\\hbar c} \\approx 10^{-39}',
+                'formula-density': '\\rho \\propto \\frac{1}{a_0^3} \\propto \\frac{1}{\\hbar^6}',
+                'formula-gravity': 'F_G = \\frac{Gm_1m_2}{r^2}',
+                'formula-coulomb': 'F_E = \\frac{k_e q_1 q_2}{r^2}',
+                'formula-inverse-square': 'F \\propto \\frac{1}{r^2}',
+                'formula-ratio': '\\frac{F_E}{F_G} = \\frac{k_e e^2}{Gm_p^2} \\approx 10^{36}',
+                'formula-lapse': '\\frac{dT}{dz} = -\\frac{g}{c_p}',
+                'formula-scale-height': 'H = \\frac{k_B T}{\\mu g}',
+                'formula-fermi': 'T_F = \\frac{E_F}{k_B} = \\frac{\\hbar^2}{2m_e k_B}(3\\pi^2 n_e)^{2/3}',
+                'formula-virial': 'T_{virial} \\approx \\frac{GMm_p}{3k_B R}',
+                'formula-chandrasekhar': 'M_{Ch} \\approx 1.4 M_\\odot \\cdot \\left(\\frac{\\hbar c}{Gm_p^2}\\right)^{3/2}',
+                'formula-mass-radius': 'R \\propto M^{-1/3}',
+                'formula-degeneracy-pressure': 'P_{deg} \\propto \\rho^{5/3}'
+            };
+
+            for (const [id, formula] of Object.entries(formulas)) {
+                const el = document.getElementById(id);
+                if (el) {
+                    katex.render(formula, el, { displayMode: true, throwOnError: false });
+                }
+            }
+        });
     </script>
 </body>
 </html>
