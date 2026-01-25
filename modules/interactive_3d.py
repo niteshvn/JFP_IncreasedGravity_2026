@@ -84,11 +84,12 @@ def plot_spacetime_curvature_3d_interactive(
         colorscale='Viridis',
         showscale=True,
         colorbar=dict(
-            title=dict(text='Depth' if language == 'en' else 'Tiefe', side='right'),
+            title=dict(text='Depth' if language == 'en' else 'Tiefe', side='bottom'),
             orientation='h',
             x=0.5,
-            y=-0.15,
+            y=-0.25,
             xanchor='center',
+            yanchor='top',
             len=0.6,
             thickness=15,
             tickformat='.1f'
@@ -132,24 +133,24 @@ def plot_spacetime_curvature_3d_interactive(
             ),
             aspectmode='manual',
             aspectratio=dict(x=1, y=1, z=0.5),
-            domain=dict(x=[0, 0.75], y=[0.15, 1])  # Leave space for legend on right and colorbar at bottom
+            domain=dict(x=[0, 1], y=[0.35, 1])  # Leave space at bottom for legend + colorbar
         ),
-        height=800,
-        margin=dict(l=10, r=150, t=80, b=100),  # Right margin for legend
+        height=850,
+        margin=dict(l=10, r=10, t=80, b=180),  # Bottom margin for legend + colorbar
         template='plotly_white',
         showlegend=True,
         legend=dict(
-            x=1.02,
-            y=0.6,
-            xanchor='left',
-            yanchor='middle',
+            x=0.5,
+            y=-0.05,
+            xanchor='center',
+            yanchor='top',
             bgcolor='rgba(255,255,255,0.95)',
             bordercolor='black',
             borderwidth=1,
             font=dict(size=13),
             itemsizing='constant',
             tracegroupgap=10,
-            orientation='v'
+            orientation='v'  # Vertical so each item on its own row
         )
     )
 
@@ -224,11 +225,12 @@ def plot_multiple_masses_3d_interactive(
         colorscale='Plasma',
         showscale=True,
         colorbar=dict(
-            title=dict(text='Curvature' if language == 'en' else 'Kruemmung', side='right'),
+            title=dict(text='Curvature' if language == 'en' else 'Kruemmung', side='bottom'),
             orientation='h',
             x=0.5,
-            y=-0.15,
+            y=-0.30,
             xanchor='center',
+            yanchor='top',
             len=0.6,
             thickness=15
         ),
@@ -272,24 +274,24 @@ def plot_multiple_masses_3d_interactive(
             camera=dict(eye=dict(x=1.8, y=1.8, z=1.0)),
             aspectmode='manual',
             aspectratio=dict(x=1, y=1, z=0.4),
-            domain=dict(x=[0, 0.75], y=[0.15, 1])  # Leave space for legend on right and colorbar at bottom
+            domain=dict(x=[0, 1], y=[0.40, 1])  # Leave space at bottom for legend + colorbar
         ),
-        height=800,
-        margin=dict(l=10, r=150, t=80, b=100),  # Right margin for legend
+        height=900,
+        margin=dict(l=10, r=10, t=80, b=220),  # Large bottom margin for legend + colorbar
         template='plotly_white',
         showlegend=True,
         legend=dict(
-            x=1.02,
-            y=0.6,
-            xanchor='left',
-            yanchor='middle',
+            x=0.5,
+            y=-0.05,
+            xanchor='center',
+            yanchor='top',
             bgcolor='rgba(255,255,255,0.95)',
             bordercolor='black',
             borderwidth=1,
             font=dict(size=13),
             itemsizing='constant',
             tracegroupgap=8,
-            orientation='v'
+            orientation='v'  # Vertical - one item per row for readability
         )
     )
 
@@ -399,24 +401,24 @@ def plot_atom_scaling_3d_interactive(
             zaxis_title='Universe',
             camera=dict(eye=dict(x=1.5, y=1.5, z=1.5)),
             aspectmode='data',
-            domain=dict(x=[0, 0.7], y=[0, 1])  # Leave space for legend on right
+            domain=dict(x=[0, 1], y=[0.30, 1])  # Leave space at bottom for legend
         ),
-        height=700,
-        margin=dict(l=10, r=180, t=80, b=10),  # Right margin for legend
+        height=800,
+        margin=dict(l=10, r=10, t=80, b=160),  # Bottom margin for legend
         template='plotly_white',
         showlegend=True,
         legend=dict(
-            x=1.02,
-            y=0.5,
-            xanchor='left',
-            yanchor='middle',
+            x=0.5,
+            y=-0.05,
+            xanchor='center',
+            yanchor='top',
             bgcolor='rgba(255,255,255,0.95)',
             bordercolor='black',
             borderwidth=1,
             font=dict(size=13),
             itemsizing='constant',
-            tracegroupgap=10,
-            orientation='v'  # Vertical layout on right
+            tracegroupgap=8,
+            orientation='v'  # Vertical - one item per row for readability
         )
     )
 
@@ -482,11 +484,12 @@ def plot_force_ratio_3d_interactive(
         colorscale='RdBu',
         showscale=True,
         colorbar=dict(
-            title=dict(text='log₁₀(F_em/F_grav)', side='right'),
+            title=dict(text='log₁₀(F_em/F_grav)', side='bottom'),
             orientation='h',
             x=0.5,
-            y=-0.15,
+            y=-0.28,
             xanchor='center',
+            yanchor='top',
             len=0.6,
             thickness=15
         ),
@@ -523,24 +526,24 @@ def plot_force_ratio_3d_interactive(
             yaxis_title=y_title,
             zaxis_title=z_title,
             camera=dict(eye=dict(x=1.5, y=1.5, z=1.2)),
-            domain=dict(x=[0, 0.7], y=[0.15, 1])  # Leave space for legend on right and colorbar at bottom
+            domain=dict(x=[0, 1], y=[0.38, 1])  # Leave space at bottom for legend + colorbar
         ),
-        height=800,
-        margin=dict(l=10, r=180, t=80, b=100),  # Right margin for legend
+        height=850,
+        margin=dict(l=10, r=10, t=80, b=200),  # Bottom margin for legend + colorbar
         template='plotly_white',
         showlegend=True,
         legend=dict(
-            x=1.02,
-            y=0.6,
-            xanchor='left',
-            yanchor='middle',
+            x=0.5,
+            y=-0.05,
+            xanchor='center',
+            yanchor='top',
             bgcolor='rgba(255,255,255,0.95)',
             bordercolor='black',
             borderwidth=1,
             font=dict(size=13),
             itemsizing='constant',
-            tracegroupgap=10,
-            orientation='v'
+            tracegroupgap=8,
+            orientation='v'  # Vertical - one item per row for readability
         )
     )
 
@@ -633,11 +636,12 @@ def plot_temperature_profile_3d_interactive(
         colorscale='RdBu_r',  # Red-Blue reversed (blue=cold, red=hot)
         showscale=True,
         colorbar=dict(
-            title=dict(text='Temperature [K]' if language == 'en' else 'Temperatur [K]', side='right'),
+            title=dict(text='Temperature [K]' if language == 'en' else 'Temperatur [K]', side='bottom'),
             orientation='h',
             x=0.5,
-            y=-0.18,
+            y=-0.32,
             xanchor='center',
+            yanchor='top',
             len=0.6,
             thickness=15
         ),
@@ -714,24 +718,24 @@ def plot_temperature_profile_3d_interactive(
             camera=dict(eye=dict(x=1.5, y=-1.8, z=1.0)),
             aspectmode='manual',
             aspectratio=dict(x=1.2, y=1, z=0.6),
-            domain=dict(x=[0, 0.7], y=[0.15, 1])  # Leave space for legend on right and colorbar at bottom
+            domain=dict(x=[0, 1], y=[0.42, 1])  # Leave space at bottom for legend + colorbar
         ),
-        height=800,
-        margin=dict(l=10, r=150, t=80, b=100),  # Right margin for legend
+        height=950,
+        margin=dict(l=10, r=10, t=80, b=250),  # Large bottom margin for legend + colorbar
         template='plotly_white',
         showlegend=True,
         legend=dict(
-            x=1.02,
-            y=0.6,
-            xanchor='left',
-            yanchor='middle',
+            x=0.5,
+            y=-0.05,
+            xanchor='center',
+            yanchor='top',
             bgcolor='rgba(255,255,255,0.95)',
             bordercolor='black',
             borderwidth=1,
             font=dict(size=13),
             itemsizing='constant',
             tracegroupgap=8,
-            orientation='v'
+            orientation='v'  # Vertical - one item per row for readability
         )
     )
 
