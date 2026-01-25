@@ -132,7 +132,7 @@ def plot_spacetime_curvature_3d_interactive(
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)
         filepath = os.path.join(VIS_DIR, 'spacetime_3d_interactive.html')
-        fig.write_html(filepath)
+        fig.write_html(filepath, config={'displaylogo': False, 'displayModeBar': True})
         print(f"Saved: {filepath}")
 
     return fig
@@ -268,7 +268,7 @@ def plot_multiple_masses_3d_interactive(
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)
         filepath = os.path.join(VIS_DIR, 'spacetime_comparison_3d_interactive.html')
-        fig.write_html(filepath)
+        fig.write_html(filepath, config={'displaylogo': False, 'displayModeBar': True})
         print(f"Saved: {filepath}")
 
     return fig
@@ -324,9 +324,19 @@ def plot_atom_scaling_3d_interactive(
         z = r * np.outer(np.ones(np.size(u)), np.cos(v)) + i * 3  # Offset in z
 
         if language == 'de':
-            name = f'hbar x {scale}: a_0 = {a0*1e12:.2f} pm'
+            orbital_name = f'Orbital (ℏ×{scale}): a₀={a0*1e12:.1f} pm'
         else:
-            name = f'hbar x {scale}: a_0 = {a0*1e12:.2f} pm'
+            orbital_name = f'Orbital (ℏ×{scale}): a₀={a0*1e12:.1f} pm'
+
+        # Add a scatter3d trace for legend (surfaces don't show well in legends)
+        # Use a point on the sphere surface for the legend marker
+        fig.add_trace(go.Scatter3d(
+            x=[r], y=[0], z=[i * 3],
+            mode='markers',
+            marker=dict(size=15, color=color, opacity=0.5),
+            name=orbital_name,
+            showlegend=True
+        ))
 
         # Add orbital surface (semi-transparent)
         fig.add_trace(go.Surface(
@@ -334,16 +344,18 @@ def plot_atom_scaling_3d_interactive(
             colorscale=[[0, color], [1, color]],
             opacity=0.3,
             showscale=False,
-            name=name
+            showlegend=False,
+            name=orbital_name
         ))
 
         # Add nucleus
+        nucleus_name = f'Nucleus (ℏ×{scale})' if language == 'en' else f'Kern (ℏ×{scale})'
         fig.add_trace(go.Scatter3d(
             x=[0], y=[0], z=[i * 3],
             mode='markers',
             marker=dict(size=5, color=COLORS['scaled']),
-            name='Nucleus' if i == 0 else None,
-            showlegend=(i == 0)
+            name=nucleus_name,
+            showlegend=True
         ))
 
     # Update layout
@@ -360,31 +372,32 @@ def plot_atom_scaling_3d_interactive(
             zaxis_title='Universe',
             camera=dict(eye=dict(x=1.5, y=1.5, z=1.5)),
             aspectmode='data',
-            domain=dict(x=[0.18, 0.95], y=[0, 1])
+            domain=dict(x=[0.0, 0.75], y=[0, 1])
         ),
         height=750,
-        margin=dict(l=10, r=80, t=80, b=10),
+        margin=dict(l=10, r=10, t=80, b=10),
         template='plotly_white',
         showlegend=True,
         legend=dict(
-            x=0.01,
-            y=0.95,
+            x=1.0,
+            y=0.5,
             xanchor='left',
-            yanchor='top',
+            yanchor='middle',
             bgcolor='rgba(255,255,255,0.95)',
             bordercolor='black',
             borderwidth=1,
-            font=dict(size=11),
+            font=dict(size=10),
             itemsizing='constant',
-            tracegroupgap=3,
-            orientation='v'
+            tracegroupgap=2,
+            orientation='v',
+            itemwidth=30
         )
     )
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)
         filepath = os.path.join(VIS_DIR, 'atom_scaling_3d_interactive.html')
-        fig.write_html(filepath)
+        fig.write_html(filepath, config={'displaylogo': False, 'displayModeBar': True})
         print(f"Saved: {filepath}")
 
     return fig
@@ -483,7 +496,7 @@ def plot_force_ratio_3d_interactive(
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)
         filepath = os.path.join(VIS_DIR, 'force_ratio_3d_interactive.html')
-        fig.write_html(filepath)
+        fig.write_html(filepath, config={'displaylogo': False, 'displayModeBar': True})
         print(f"Saved: {filepath}")
 
     return fig
@@ -670,7 +683,7 @@ def plot_temperature_profile_3d_interactive(
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)
         filepath = os.path.join(VIS_DIR, 'temperature_profile_3d_interactive.html')
-        fig.write_html(filepath)
+        fig.write_html(filepath, config={'displaylogo': False, 'displayModeBar': True})
         print(f"Saved: {filepath}")
 
     return fig
