@@ -230,15 +230,15 @@ def plot_multiple_masses_3d_interactive(
             title=dict(
                 text='Curvature' if language == 'en' else 'Kruemmung',
                 side='bottom',
-                font=dict(size=14)
+                font=dict(size=13)
             ),
             orientation='h',
             x=0.5,
-            y=0.02,
+            y=0.05,
             xanchor='center',
             yanchor='top',
             len=0.5,
-            thickness=20
+            thickness=18
         ),
         opacity=0.9,
         showlegend=False
@@ -280,15 +280,15 @@ def plot_multiple_masses_3d_interactive(
             camera=dict(eye=dict(x=1.8, y=1.8, z=1.0)),
             aspectmode='manual',
             aspectratio=dict(x=1, y=1, z=0.4),
-            domain=dict(x=[0, 1], y=[0.32, 1])  # Graph in upper portion
+            domain=dict(x=[0.1, 0.9], y=[0.35, 0.95])  # Centered graph with space below
         ),
-        height=800,
-        margin=dict(l=20, r=20, t=80, b=50),
+        height=750,
+        margin=dict(l=20, r=20, t=60, b=20),
         template='plotly_white',
         showlegend=True,
         legend=dict(
             x=0.5,
-            y=0.22,
+            y=0.26,
             xanchor='center',
             yanchor='top',
             bgcolor='rgba(255,255,255,0.95)',
