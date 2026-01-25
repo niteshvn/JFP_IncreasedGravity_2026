@@ -84,13 +84,20 @@ def plot_spacetime_curvature_3d_interactive(
         colorscale='Viridis',
         showscale=True,
         colorbar=dict(
-            title='Depth' if language == 'en' else 'Tiefe',
+            title=dict(text='Depth' if language == 'en' else 'Tiefe', side='right'),
+            orientation='h',
+            x=0.5,
+            y=-0.15,
+            xanchor='center',
+            len=0.6,
+            thickness=15,
             tickformat='.1f'
         ),
         contours=dict(
             z=dict(show=True, usecolormap=True, highlightcolor="white", project_z=True)
         ),
-        name='Spacetime curvature' if language == 'en' else 'Raumzeitkruemmung'
+        name='Spacetime curvature' if language == 'en' else 'Raumzeitkruemmung',
+        showlegend=True
     ))
 
     # Add a marker for the central mass
@@ -98,7 +105,8 @@ def plot_spacetime_curvature_3d_interactive(
         x=[0], y=[0], z=[-4.5],
         mode='markers',
         marker=dict(size=10, color=COLORS['scaled'], symbol='circle'),
-        name='Mass' if language == 'en' else 'Masse'
+        name='Mass' if language == 'en' else 'Masse',
+        showlegend=True
     ))
 
     # Update layout
@@ -123,10 +131,24 @@ def plot_spacetime_curvature_3d_interactive(
                 eye=dict(x=1.5, y=1.5, z=1.2)
             ),
             aspectmode='manual',
-            aspectratio=dict(x=1, y=1, z=0.5)
+            aspectratio=dict(x=1, y=1, z=0.5),
+            domain=dict(x=[0, 1], y=[0.2, 1])  # Leave space at bottom
         ),
-        margin=dict(l=50, r=100, t=50, b=0),
-        template='plotly_white'
+        height=800,
+        margin=dict(l=10, r=10, t=80, b=150),  # Extra bottom margin
+        template='plotly_white',
+        showlegend=True,
+        legend=dict(
+            x=0.5,
+            y=-0.02,
+            xanchor='center',
+            yanchor='top',
+            bgcolor='rgba(255,255,255,0.95)',
+            bordercolor='black',
+            borderwidth=1,
+            font=dict(size=12),
+            orientation='h'
+        )
     )
 
     if save:
@@ -200,9 +222,13 @@ def plot_multiple_masses_3d_interactive(
         colorscale='Plasma',
         showscale=True,
         colorbar=dict(
-            title='Curvature' if language == 'en' else 'Kruemmung',
-            x=1.0,
-            len=0.8
+            title=dict(text='Curvature' if language == 'en' else 'Kruemmung', side='right'),
+            orientation='h',
+            x=0.5,
+            y=-0.15,
+            xanchor='center',
+            len=0.6,
+            thickness=15
         ),
         opacity=0.9,
         showlegend=False
@@ -244,24 +270,24 @@ def plot_multiple_masses_3d_interactive(
             camera=dict(eye=dict(x=1.8, y=1.8, z=1.0)),
             aspectmode='manual',
             aspectratio=dict(x=1, y=1, z=0.4),
-            domain=dict(x=[0.15, 0.95], y=[0, 1])
+            domain=dict(x=[0, 1], y=[0.2, 1])  # Leave space at bottom
         ),
-        height=750,
-        margin=dict(l=10, r=100, t=80, b=10),
+        height=800,
+        margin=dict(l=10, r=10, t=80, b=150),  # Extra bottom margin
         template='plotly_white',
         showlegend=True,
         legend=dict(
-            x=0.01,
-            y=0.95,
-            xanchor='left',
+            x=0.5,
+            y=-0.02,
+            xanchor='center',
             yanchor='top',
             bgcolor='rgba(255,255,255,0.95)',
             bordercolor='black',
             borderwidth=1,
             font=dict(size=12),
             itemsizing='constant',
-            tracegroupgap=3,
-            orientation='v'
+            tracegroupgap=5,
+            orientation='h'
         )
     )
 
@@ -454,8 +480,16 @@ def plot_force_ratio_3d_interactive(
         colorscale='RdBu',
         showscale=True,
         colorbar=dict(
-            title='log10(F_em/F_grav)' if language == 'en' else 'log10(F_em/F_grav)'
-        )
+            title=dict(text='log₁₀(F_em/F_grav)', side='right'),
+            orientation='h',
+            x=0.5,
+            y=-0.15,
+            xanchor='center',
+            len=0.6,
+            thickness=15
+        ),
+        name='Force Ratio Surface' if language == 'en' else 'Kraftverhältnis',
+        showlegend=True
     ))
 
     # Add a plane at z=0 (where forces are equal)
@@ -464,20 +498,21 @@ def plot_force_ratio_3d_interactive(
         colorscale=[[0, 'gray'], [1, 'gray']],
         opacity=0.3,
         showscale=False,
-        name='F_em = F_grav'
+        name='F_em = F_grav',
+        showlegend=True
     ))
 
     # Update layout
     if language == 'de':
-        title = 'Verhaeltnis elektromagnetischer zu gravitativer Kraft<br><sup>Abhaengigkeit von der Teilchenmasse</sup>'
-        x_title = 'log10(Masse / kg)'
-        y_title = 'log10(Abstand / m)'
-        z_title = 'log10(F_em / F_grav)'
+        title = 'Verhältnis elektromagnetischer zu gravitativer Kraft<br><sup>Abhängigkeit von der Teilchenmasse</sup>'
+        x_title = 'log₁₀(Masse / kg)'
+        y_title = 'log₁₀(Abstand / m)'
+        z_title = 'log₁₀(F_em / F_grav)'
     else:
         title = 'Electromagnetic to Gravitational Force Ratio<br><sup>Dependence on particle mass</sup>'
-        x_title = 'log10(Mass / kg)'
-        y_title = 'log10(Distance / m)'
-        z_title = 'log10(F_em / F_grav)'
+        x_title = 'log₁₀(Mass / kg)'
+        y_title = 'log₁₀(Distance / m)'
+        z_title = 'log₁₀(F_em / F_grav)'
 
     fig.update_layout(
         title=dict(text=title, x=0.5),
@@ -485,10 +520,24 @@ def plot_force_ratio_3d_interactive(
             xaxis_title=x_title,
             yaxis_title=y_title,
             zaxis_title=z_title,
-            camera=dict(eye=dict(x=1.5, y=1.5, z=1.2))
+            camera=dict(eye=dict(x=1.5, y=1.5, z=1.2)),
+            domain=dict(x=[0, 1], y=[0.2, 1])  # Leave space at bottom
         ),
-        margin=dict(l=50, r=120, t=50, b=0),
-        template='plotly_white'
+        height=800,
+        margin=dict(l=10, r=10, t=80, b=150),  # Extra bottom margin
+        template='plotly_white',
+        showlegend=True,
+        legend=dict(
+            x=0.5,
+            y=-0.02,
+            xanchor='center',
+            yanchor='top',
+            bgcolor='rgba(255,255,255,0.95)',
+            bordercolor='black',
+            borderwidth=1,
+            font=dict(size=12),
+            orientation='h'
+        )
     )
 
     if save:
@@ -580,9 +629,13 @@ def plot_temperature_profile_3d_interactive(
         colorscale='RdBu_r',  # Red-Blue reversed (blue=cold, red=hot)
         showscale=True,
         colorbar=dict(
-            title='Temperature [K]' if language == 'en' else 'Temperatur [K]',
-            x=1.0,
-            len=0.8
+            title=dict(text='Temperature [K]' if language == 'en' else 'Temperatur [K]', side='right'),
+            orientation='h',
+            x=0.5,
+            y=-0.18,
+            xanchor='center',
+            len=0.6,
+            thickness=15
         ),
         opacity=0.95,
         contours=dict(
@@ -657,24 +710,24 @@ def plot_temperature_profile_3d_interactive(
             camera=dict(eye=dict(x=1.5, y=-1.8, z=1.0)),
             aspectmode='manual',
             aspectratio=dict(x=1.2, y=1, z=0.6),
-            domain=dict(x=[0.15, 0.95], y=[0, 1])
+            domain=dict(x=[0, 1], y=[0.25, 1])  # Leave space at bottom
         ),
-        height=750,
-        margin=dict(l=10, r=100, t=80, b=10),
+        height=850,
+        margin=dict(l=10, r=10, t=80, b=180),  # Extra bottom margin for legend + colorbar
         template='plotly_white',
         showlegend=True,
         legend=dict(
-            x=0.01,
-            y=0.95,
-            xanchor='left',
+            x=0.5,
+            y=-0.02,
+            xanchor='center',
             yanchor='top',
             bgcolor='rgba(255,255,255,0.95)',
             bordercolor='black',
             borderwidth=1,
-            font=dict(size=11),
+            font=dict(size=12),
             itemsizing='constant',
-            tracegroupgap=3,
-            orientation='v'
+            tracegroupgap=5,
+            orientation='h'
         )
     )
 
