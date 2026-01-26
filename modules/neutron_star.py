@@ -431,8 +431,10 @@ def plot_neutron_star_structure(
     if constants is None:
         constants = get_constants()
 
-    fig, axes = plt.subplots(2, 2, figsize=(14, 12))
-    ((ax1, ax2), (ax3, ax4)) = axes
+    # Vertical layout for better readability
+    fig, axes = plt.subplots(4, 1, figsize=(12, 32))
+    fig.subplots_adjust(hspace=0.5, top=0.95, bottom=0.04)
+    ax1, ax2, ax3, ax4 = axes
 
     # === Plot 1: Mass-Radius relation ===
     masses = np.linspace(0.5, 2.5, 100)
@@ -454,18 +456,19 @@ def plot_neutron_star_structure(
                       label='Black hole region' if language == 'en' else 'Schwarzes-Loch-Bereich')
 
     if language == 'de':
-        ax1.set_xlabel('Masse (M☉)', fontsize=11)
-        ax1.set_ylabel('Radius (km)', fontsize=11)
-        ax1.set_title('1. Masse-Radius-Beziehung', fontsize=12, fontweight='bold')
+        ax1.set_xlabel('Masse (M☉)', fontsize=12)
+        ax1.set_ylabel('Radius (km)', fontsize=12)
+        ax1.set_title('1. Masse-Radius-Beziehung', fontsize=14, fontweight='bold')
     else:
-        ax1.set_xlabel('Mass (M☉)', fontsize=11)
-        ax1.set_ylabel('Radius (km)', fontsize=11)
-        ax1.set_title('1. Mass-Radius Relationship', fontsize=12, fontweight='bold')
+        ax1.set_xlabel('Mass (M☉)', fontsize=12)
+        ax1.set_ylabel('Radius (km)', fontsize=12)
+        ax1.set_title('1. Mass-Radius Relationship', fontsize=14, fontweight='bold')
 
     ax1.set_xlim(0.5, 2.5)
     ax1.set_ylim(0, 15)
-    ax1.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=3, framealpha=0.9)
+    ax1.legend(fontsize=11, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3, framealpha=0.9)
     ax1.grid(True, alpha=0.3)
+    ax1.tick_params(axis='both', labelsize=11)
 
     # === Plot 2: Density comparison ===
     objects = [
@@ -495,14 +498,15 @@ def plot_neutron_star_structure(
                 f'{density:.0e}', ha='center', va='bottom', fontsize=9)
 
     if language == 'de':
-        ax2.set_ylabel('Dichte (kg/m³)', fontsize=11)
-        ax2.set_title('2. Dichtevergleich', fontsize=12, fontweight='bold')
+        ax2.set_ylabel('Dichte (kg/m³)', fontsize=12)
+        ax2.set_title('2. Dichtevergleich', fontsize=14, fontweight='bold')
     else:
-        ax2.set_ylabel('Density (kg/m³)', fontsize=11)
-        ax2.set_title('2. Density Comparison', fontsize=12, fontweight='bold')
+        ax2.set_ylabel('Density (kg/m³)', fontsize=12)
+        ax2.set_title('2. Density Comparison', fontsize=14, fontweight='bold')
 
     ax2.set_ylim(1e2, 1e19)
     ax2.grid(True, alpha=0.3, axis='y')
+    ax2.tick_params(axis='both', labelsize=11)
 
     # === Plot 3: Pressure vs Density (neutron vs electron degeneracy) ===
     rho = np.logspace(14, 18, 100)
@@ -524,16 +528,17 @@ def plot_neutron_star_structure(
               label='Neutron (rel)' if language == 'en' else 'Neutron (rel)')
 
     if language == 'de':
-        ax3.set_xlabel('Dichte ρ (kg/m³)', fontsize=11)
-        ax3.set_ylabel('Entartungsdruck P (Pa)', fontsize=11)
-        ax3.set_title('3. Entartungsdruck: Elektronen vs. Neutronen', fontsize=12, fontweight='bold')
+        ax3.set_xlabel('Dichte ρ (kg/m³)', fontsize=12)
+        ax3.set_ylabel('Entartungsdruck P (Pa)', fontsize=12)
+        ax3.set_title('3. Entartungsdruck: Elektronen vs. Neutronen', fontsize=14, fontweight='bold')
     else:
-        ax3.set_xlabel('Density ρ (kg/m³)', fontsize=11)
-        ax3.set_ylabel('Degeneracy Pressure P (Pa)', fontsize=11)
-        ax3.set_title('3. Degeneracy Pressure: Electrons vs. Neutrons', fontsize=12, fontweight='bold')
+        ax3.set_xlabel('Density ρ (kg/m³)', fontsize=12)
+        ax3.set_ylabel('Degeneracy Pressure P (Pa)', fontsize=12)
+        ax3.set_title('3. Degeneracy Pressure: Electrons vs. Neutrons', fontsize=14, fontweight='bold')
 
-    ax3.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=2, framealpha=0.9)
+    ax3.legend(fontsize=11, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=2, framealpha=0.9)
     ax3.grid(True, alpha=0.3, which='both')
+    ax3.tick_params(axis='both', labelsize=11)
 
     # === Plot 4: Surface gravity comparison ===
     ns_14 = calculate_neutron_star(1.4, constants)
@@ -563,22 +568,21 @@ def plot_neutron_star_structure(
     ax4.set_yscale('log')
 
     if language == 'de':
-        ax4.set_ylabel('Oberflächengravitation (m/s²)', fontsize=11)
-        ax4.set_title('4. Oberflächengravitation', fontsize=12, fontweight='bold')
+        ax4.set_ylabel('Oberflächengravitation (m/s²)', fontsize=12)
+        ax4.set_title('4. Oberflächengravitation', fontsize=14, fontweight='bold')
     else:
-        ax4.set_ylabel('Surface Gravity (m/s²)', fontsize=11)
-        ax4.set_title('4. Surface Gravity Comparison', fontsize=12, fontweight='bold')
+        ax4.set_ylabel('Surface Gravity (m/s²)', fontsize=12)
+        ax4.set_title('4. Surface Gravity Comparison', fontsize=14, fontweight='bold')
 
-    ax4.tick_params(axis='x', rotation=30)
+    ax4.tick_params(axis='x', rotation=30, labelsize=11)
+    ax4.tick_params(axis='y', labelsize=11)
     ax4.grid(True, alpha=0.3, axis='y')
 
     # Main title
     if language == 'de':
-        fig.suptitle('Neutronenstern-Physik', fontsize=16, fontweight='bold', y=1.02)
+        fig.suptitle('Neutronenstern-Physik', fontsize=16, fontweight='bold', y=0.98)
     else:
-        fig.suptitle('Neutron Star Physics', fontsize=16, fontweight='bold', y=1.02)
-
-    plt.tight_layout()
+        fig.suptitle('Neutron Star Physics', fontsize=16, fontweight='bold', y=0.98)
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)
@@ -752,12 +756,13 @@ def plot_neutron_star_summary(
     M_ch = chandrasekhar_mass(constants) / constants.M_sun
     M_tov = tov_mass_limit(constants) / constants.M_sun
 
-    fig = plt.figure(figsize=(14, 16))
-    gs = fig.add_gridspec(3, 2, height_ratios=[1, 1, 0.6], hspace=0.4, wspace=0.3)
-    ax1 = fig.add_subplot(gs[0, 0])
-    ax2 = fig.add_subplot(gs[0, 1])
-    ax3 = fig.add_subplot(gs[1, 0])
-    ax4 = fig.add_subplot(gs[1, 1])
+    # Vertical layout for better readability
+    fig = plt.figure(figsize=(12, 32))
+    gs = fig.add_gridspec(4, 1, hspace=0.5)
+    ax1 = fig.add_subplot(gs[0])
+    ax2 = fig.add_subplot(gs[1])
+    ax3 = fig.add_subplot(gs[2])
+    ax4 = fig.add_subplot(gs[3])
 
     # === Plot 1: Mass limits with stability regions ===
     mass_range = np.linspace(0, 3.5, 200)
@@ -782,13 +787,14 @@ def plot_neutron_star_summary(
     ax1.set_yticks([])
 
     if language == 'de':
-        ax1.set_xlabel('Masse (Sonnenmassen M☉)', fontsize=11)
-        ax1.set_title('1. Stabilitätsbereiche nach Masse', fontsize=12, fontweight='bold')
+        ax1.set_xlabel('Masse (Sonnenmassen M☉)', fontsize=12)
+        ax1.set_title('1. Stabilitätsbereiche nach Masse', fontsize=14, fontweight='bold')
     else:
-        ax1.set_xlabel('Mass (Solar masses M☉)', fontsize=11)
-        ax1.set_title('1. Stability Regions by Mass', fontsize=12, fontweight='bold')
+        ax1.set_xlabel('Mass (Solar masses M☉)', fontsize=12)
+        ax1.set_title('1. Stability Regions by Mass', fontsize=14, fontweight='bold')
 
-    ax1.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.1), ncol=3)
+    ax1.legend(fontsize=11, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3)
+    ax1.tick_params(axis='both', labelsize=11)
 
     # === Plot 2: Radius comparison ===
     objects_r = [
@@ -815,13 +821,14 @@ def plot_neutron_star_summary(
                 f'{r:,} km', ha='center', va='bottom', fontsize=10)
 
     if language == 'de':
-        ax2.set_ylabel('Radius (km)', fontsize=11)
-        ax2.set_title('2. Radiusvergleich', fontsize=12, fontweight='bold')
+        ax2.set_ylabel('Radius (km)', fontsize=12)
+        ax2.set_title('2. Radiusvergleich', fontsize=14, fontweight='bold')
     else:
-        ax2.set_ylabel('Radius (km)', fontsize=11)
-        ax2.set_title('2. Radius Comparison', fontsize=12, fontweight='bold')
+        ax2.set_ylabel('Radius (km)', fontsize=12)
+        ax2.set_title('2. Radius Comparison', fontsize=14, fontweight='bold')
 
     ax2.grid(True, alpha=0.3, axis='y')
+    ax2.tick_params(axis='both', labelsize=11)
 
     # === Plot 3: Surface properties comparison ===
     ns_typical = calculate_neutron_star(1.4, constants)
@@ -858,19 +865,21 @@ def plot_neutron_star_summary(
     ax3.set_xticklabels([o[0] for o in objects_surf])
 
     if language == 'de':
-        ax3.set_ylabel('Oberflächengravitation (×g)', fontsize=11)
-        ax3_twin.set_ylabel('Fluchtgeschwindigkeit (km/s)', fontsize=11)
-        ax3.set_title('3. Oberflächeneigenschaften', fontsize=12, fontweight='bold')
+        ax3.set_ylabel('Oberflächengravitation (×g)', fontsize=12)
+        ax3_twin.set_ylabel('Fluchtgeschwindigkeit (km/s)', fontsize=12)
+        ax3.set_title('3. Oberflächeneigenschaften', fontsize=14, fontweight='bold')
     else:
-        ax3.set_ylabel('Surface gravity (×g)', fontsize=11)
-        ax3_twin.set_ylabel('Escape velocity (km/s)', fontsize=11)
-        ax3.set_title('3. Surface Properties', fontsize=12, fontweight='bold')
+        ax3.set_ylabel('Surface gravity (×g)', fontsize=12)
+        ax3_twin.set_ylabel('Escape velocity (km/s)', fontsize=12)
+        ax3.set_title('3. Surface Properties', fontsize=14, fontweight='bold')
 
     # Combined legend at bottom
     lines1, labels1 = ax3.get_legend_handles_labels()
     lines2, labels2 = ax3_twin.get_legend_handles_labels()
-    ax3.legend(lines1 + lines2, labels1 + labels2, fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=2)
+    ax3.legend(lines1 + lines2, labels1 + labels2, fontsize=11, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=2)
     ax3.grid(True, alpha=0.3, axis='y')
+    ax3.tick_params(axis='both', labelsize=11)
+    ax3_twin.tick_params(axis='both', labelsize=11)
 
     # === Plot 4: Compactness comparison ===
     objects_c = [
@@ -899,81 +908,22 @@ def plot_neutron_star_summary(
                label='BH limit (C=1)' if language == 'en' else 'SL-Grenze (C=1)')
 
     if language == 'de':
-        ax4.set_ylabel('Kompaktheit C = Rₛ/R', fontsize=11)
-        ax4.set_title('4. Kompaktheitsvergleich', fontsize=12, fontweight='bold')
+        ax4.set_ylabel('Kompaktheit C = Rₛ/R', fontsize=12)
+        ax4.set_title('4. Kompaktheitsvergleich', fontsize=14, fontweight='bold')
     else:
-        ax4.set_ylabel('Compactness C = Rₛ/R', fontsize=11)
-        ax4.set_title('4. Compactness Comparison', fontsize=12, fontweight='bold')
+        ax4.set_ylabel('Compactness C = Rₛ/R', fontsize=12)
+        ax4.set_title('4. Compactness Comparison', fontsize=14, fontweight='bold')
 
-    ax4.tick_params(axis='x', rotation=30)
-    ax4.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.18), ncol=1)
+    ax4.tick_params(axis='x', rotation=30, labelsize=11)
+    ax4.tick_params(axis='y', labelsize=11)
+    ax4.legend(fontsize=11, loc='upper center', bbox_to_anchor=(0.5, -0.18), ncol=1)
     ax4.grid(True, alpha=0.3, axis='y')
-
-    # Summary text panel (spans both columns)
-    ax5 = fig.add_subplot(gs[2, :])
-    ax5.axis('off')
-
-    ns_typical = calculate_neutron_star(1.4, constants)
-
-    if language == 'de':
-        summary_text = f"""
-                      NEUTRONENSTERN-PHYSIK - Zusammenfassung
-        ─────────────────────────────────────────────────────────────────
-
-        TYPISCHER NEUTRONENSTERN (1.4 M☉):
-            • Masse:                1.4 Sonnenmassen = {ns_typical.mass:.2e} kg
-            • Radius:               ~{ns_typical.radius_km:.0f} km (Größe einer Stadt!)
-            • Dichte:               ~{ns_typical.density:.1e} kg/m³
-                                    (1 Teelöffel = ~1 Milliarde Tonnen)
-            • Oberflächengravitation: {ns_typical.surface_gravity:.1e} m/s²
-            • Fluchtgeschwindigkeit:  {ns_typical.escape_velocity/1000:.0f} km/s ({ns_typical.escape_velocity/constants.c*100:.0f}% c)
-            • Zeitdilatation:         τ/t = {ns_typical.time_dilation:.2f} ({(1-ns_typical.time_dilation)*100:.0f}% langsamer)
-
-                                MASSENGRENZEN:
-            Chandrasekhar-Grenze:   {M_ch:.2f} M☉ (Weißer Zwerg → Neutronenstern)
-            TOV-Grenze:             {M_tov:.2f} M☉ (Neutronenstern → Schwarzes Loch)
-
-                            SCHLÜSSELAUSSAGE AUS DEM ESSAY:
-        "Neutronen-Entartungsdruck stützt diese extremen Objekte an der
-         Grenze zum Schwarzen Loch - Quantenmechanik vs. Gravitation."
-        """
-    else:
-        summary_text = f"""
-                      NEUTRON STAR PHYSICS - Summary
-        ─────────────────────────────────────────────────────────────────
-
-        TYPICAL NEUTRON STAR (1.4 M☉):
-            • Mass:                 1.4 Solar masses = {ns_typical.mass:.2e} kg
-            • Radius:               ~{ns_typical.radius_km:.0f} km (size of a city!)
-            • Density:              ~{ns_typical.density:.1e} kg/m³
-                                    (1 teaspoon = ~1 billion tons)
-            • Surface gravity:      {ns_typical.surface_gravity:.1e} m/s²
-            • Escape velocity:      {ns_typical.escape_velocity/1000:.0f} km/s ({ns_typical.escape_velocity/constants.c*100:.0f}% c)
-            • Time dilation:        τ/t = {ns_typical.time_dilation:.2f} ({(1-ns_typical.time_dilation)*100:.0f}% slower)
-
-                                MASS LIMITS:
-            Chandrasekhar Limit:    {M_ch:.2f} M☉ (White Dwarf → Neutron Star)
-            TOV Limit:              {M_tov:.2f} M☉ (Neutron Star → Black Hole)
-
-                            KEY STATEMENT FROM ESSAY:
-        "Neutron degeneracy pressure supports these extreme objects at the
-         edge of becoming black holes - quantum mechanics vs. gravity."
-        """
-
-    ax5.text(0.5, 0.5, summary_text, transform=ax5.transAxes, fontsize=11,
-             verticalalignment='center', horizontalalignment='center',
-             fontfamily='monospace',
-             bbox=dict(boxstyle='round', facecolor='white', alpha=0.95,
-                      edgecolor=COLORS['primary_blue'], linewidth=2))
 
     # Main title
     if language == 'de':
         fig.suptitle('Neutronenstern-Physik: Zusammenfassung', fontsize=16, fontweight='bold', y=0.98)
     else:
         fig.suptitle('Neutron Star Physics: Summary', fontsize=16, fontweight='bold', y=0.98)
-
-    plt.tight_layout()
-    plt.subplots_adjust(bottom=0.05, top=0.95)
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)
