@@ -301,8 +301,9 @@ def plot_tov_limit_comparison(
     M_ch = chandrasekhar_mass(constants) / constants.M_sun
     M_tov = tov_mass_limit(constants) / constants.M_sun
 
-    # Create figure with two subplots
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 8))
+    # Create figure with vertical layout for better readability
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 18))
+    fig.subplots_adjust(hspace=0.4, top=0.94, bottom=0.04)
 
     # === Left: Mass limits bar chart ===
     limits = [M_ch, M_tov]
@@ -612,9 +613,11 @@ def plot_electron_capture(
     Returns:
         matplotlib Figure object
     """
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 7))
+    # Vertical layout for better readability
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 18))
+    fig.subplots_adjust(hspace=0.3, top=0.94, bottom=0.04)
 
-    # === Left: Beta-minus decay ===
+    # === Top: Beta-minus decay ===
     ax1.set_xlim(0, 10)
     ax1.set_ylim(0, 10)
     ax1.set_aspect('equal')
@@ -659,7 +662,7 @@ def plot_electron_capture(
         ax1.set_title('Beta-Minus Decay (β⁻)', fontsize=14, fontweight='bold', pad=15)
         ax1.text(5, 0.5, 'Neutron → Proton\n(Standard radioactivity)', ha='center', fontsize=11)
 
-    # === Right: Electron capture (inverse beta decay) ===
+    # === Bottom: Electron capture (inverse beta decay) ===
     ax2.set_xlim(0, 10)
     ax2.set_ylim(0, 10)
     ax2.set_aspect('equal')

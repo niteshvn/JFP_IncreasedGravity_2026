@@ -759,7 +759,9 @@ def plot_gravitational_vector_field(
     if constants is None:
         constants = get_constants()
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 7))
+    # Vertical layout for better readability
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 18))
+    fig.subplots_adjust(hspace=0.35, top=0.94, bottom=0.04)
 
     # Create grid for vector field
     x = np.linspace(-4, 4, 15)
@@ -908,13 +910,15 @@ def plot_gravitational_vector_field(
         Line2D([0], [0], color='blue', marker='>', linestyle='-', markersize=8,
                label='Tangential compression' if language == 'en' else 'Tangentiale Kompression')
     ]
-    ax2.legend(handles=legend_elements, loc='upper right', fontsize=10)
-
-    plt.tight_layout()
+    ax2.legend(handles=legend_elements, loc='upper center', bbox_to_anchor=(0.5, -0.1),
+               fontsize=11, ncol=2)
+    ax1.tick_params(axis='both', labelsize=11)
+    ax2.tick_params(axis='both', labelsize=11)
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)
-        filepath = os.path.join(VIS_DIR, 'gravitational_vector_field.png')
+        suffix = '_de' if language == 'de' else ''
+        filepath = os.path.join(VIS_DIR, f'gravitational_vector_field{suffix}.png')
         fig.savefig(filepath, dpi=150, bbox_inches='tight')
         print(f"Saved: {filepath}")
 
@@ -952,9 +956,11 @@ def plot_orbital_precession(
     if constants is None:
         constants = get_constants()
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 7))
+    # Vertical layout for better readability
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 20))
+    fig.subplots_adjust(hspace=0.35, top=0.94, bottom=0.04)
 
-    # ===== LEFT PLOT: Static view of precessing orbit =====
+    # ===== TOP PLOT: Static view of precessing orbit =====
     # Orbital parameters
     a = 1.0  # Semi-major axis (normalized)
     e = 0.6  # Eccentricity (exaggerated for visualization)
@@ -1027,7 +1033,7 @@ def plot_orbital_precession(
     sm.set_array([])
     cbar = plt.colorbar(sm, ax=ax1, shrink=0.6, label='Orbit number' if language == 'en' else 'Umlaufnummer')
 
-    # ===== RIGHT PLOT: Comparison of Newtonian vs GR orbits =====
+    # ===== BOTTOM PLOT: Comparison of Newtonian vs GR orbits =====
     theta2 = np.linspace(0, 4*np.pi, 1000)  # Two full orbits
 
     # Newtonian orbit (no precession)
@@ -1064,22 +1070,23 @@ def plot_orbital_precession(
         ax2.set_title('Newton vs. General Relativity\n(2 orbits)',
                      fontsize=14, fontweight='bold', pad=15)
 
-    ax2.legend(loc='upper right', fontsize=10)
+    ax2.legend(loc='upper center', bbox_to_anchor=(0.5, -0.1), fontsize=11, ncol=2)
     ax2.grid(True, alpha=0.3)
+    ax1.tick_params(axis='both', labelsize=11)
+    ax2.tick_params(axis='both', labelsize=11)
 
     # Add physics note
     note_text = ("Mercury's perihelion precesses by 43\"/century\n"
                 "due to spacetime curvature near the Sun" if language == 'en' else
                 "Merkurs Perihel praezediert um 43\"/Jahrhundert\n"
                 "durch Raumzeitkruemmung nahe der Sonne")
-    ax2.text(0.02, 0.02, note_text, transform=ax2.transAxes, fontsize=9,
+    ax2.text(0.02, 0.02, note_text, transform=ax2.transAxes, fontsize=10,
             verticalalignment='bottom', bbox=dict(boxstyle='round', facecolor='wheat', alpha=0.8))
-
-    plt.tight_layout()
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)
-        filepath = os.path.join(VIS_DIR, 'orbital_precession.png')
+        suffix = '_de' if language == 'de' else ''
+        filepath = os.path.join(VIS_DIR, f'orbital_precession{suffix}.png')
         fig.savefig(filepath, dpi=150, bbox_inches='tight')
         print(f"Saved: {filepath}")
 
@@ -1961,9 +1968,11 @@ def plot_light_bending(
     if constants is None:
         constants = get_constants()
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 8))
+    # Vertical layout for better readability
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 20))
+    fig.subplots_adjust(hspace=0.4, top=0.94, bottom=0.06)
 
-    # ===== LEFT PLOT: Light rays bending around mass =====
+    # ===== TOP PLOT: Light rays bending around mass =====
 
     # Central mass (black hole / star)
     central_mass = plt.Circle((0, 0), 1.0, color='black', zorder=10)
@@ -2006,8 +2015,8 @@ def plot_light_bending(
     ax1.set_xlim(-25, 25)
     ax1.set_ylim(-15, 15)
     ax1.set_aspect('equal')
-    ax1.set_xlabel('x (Schwarzschild radii)' if language == 'en' else 'x (Schwarzschild-Radien)', fontsize=11)
-    ax1.set_ylabel('y (Schwarzschild radii)' if language == 'en' else 'y (Schwarzschild-Radien)', fontsize=11)
+    ax1.set_xlabel('x (Schwarzschild radii)' if language == 'en' else 'x (Schwarzschild-Radien)', fontsize=12)
+    ax1.set_ylabel('y (Schwarzschild radii)' if language == 'en' else 'y (Schwarzschild-Radien)', fontsize=12)
 
     if language == 'de':
         ax1.set_title('Lichtablenkung durch Gravitation',
@@ -2031,10 +2040,11 @@ def plot_light_bending(
         Line2D([0], [0], color='gray', linestyle=':',
                label='No gravity (straight)' if language == 'en' else 'Ohne Gravitation (gerade)'),
     ]
-    ax1.legend(handles=legend_elements, loc='upper right', bbox_to_anchor=(1.0, -0.08),
-               fontsize=9, ncol=2, framealpha=0.7)
+    ax1.legend(handles=legend_elements, loc='upper center', bbox_to_anchor=(0.5, -0.12),
+               fontsize=11, ncol=2, framealpha=0.9)
+    ax1.tick_params(axis='both', labelsize=11)
 
-    # ===== RIGHT PLOT: Einstein Ring =====
+    # ===== BOTTOM PLOT: Einstein Ring =====
 
     # Background source (star or galaxy)
     ax2.plot(0, 0, '*', color=COLORS['highlight'], markersize=20, zorder=15)
@@ -2070,8 +2080,8 @@ def plot_light_bending(
     ax2.set_xlim(-4, 4)
     ax2.set_ylim(-4, 4)
     ax2.set_aspect('equal')
-    ax2.set_xlabel('x (arcsec)' if language == 'en' else 'x (Bogensekunden)', fontsize=11)
-    ax2.set_ylabel('y (arcsec)' if language == 'en' else 'y (Bogensekunden)', fontsize=11)
+    ax2.set_xlabel('x (arcsec)' if language == 'en' else 'x (Bogensekunden)', fontsize=12)
+    ax2.set_ylabel('y (arcsec)' if language == 'en' else 'y (Bogensekunden)', fontsize=12)
 
     if language == 'de':
         ax2.set_title('Einstein-Ring (Perfekte Ausrichtung)',
@@ -2093,10 +2103,9 @@ def plot_light_bending(
         Line2D([0], [0], color='red', linewidth=2,
                label='Einstein Radius (θ_E)' if language == 'en' else 'Einstein-Radius (θ_E)'),
     ]
-    ax2.legend(handles=legend_elements2, loc='upper right', bbox_to_anchor=(1.0, -0.08),
-               fontsize=9, ncol=2, framealpha=0.7)
-
-    plt.tight_layout()
+    ax2.legend(handles=legend_elements2, loc='upper center', bbox_to_anchor=(0.5, -0.12),
+               fontsize=11, ncol=2, framealpha=0.9)
+    ax2.tick_params(axis='both', labelsize=11)
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)

@@ -202,8 +202,9 @@ def plot_uncertainty_principle_basic(
     if constants is None:
         constants = get_constants()
 
-    # Create figure
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
+    # Create figure - vertical layout for better readability
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 16))
+    fig.subplots_adjust(hspace=0.5, top=0.94, bottom=0.06)
 
     # Range of position uncertainties
     delta_x = np.logspace(-15, -9, 100)  # From nuclear to atomic scales
@@ -249,8 +250,9 @@ def plot_uncertainty_principle_basic(
         ax1.set_ylabel('Minimum momentum Δp_min (kg·m/s)', fontsize=12)
         ax1.set_title('Heisenberg Uncertainty Relation: Δx·Δp ≥ ℏ/2', fontsize=14, fontweight='bold')
 
-    ax1.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=3)
+    ax1.legend(fontsize=11, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3)
     ax1.grid(True, alpha=0.3, which='both')
+    ax1.tick_params(axis='both', labelsize=11)
 
     # Plot 2: Phase space visualization
     # Show that allowed states form a hyperbolic boundary
@@ -290,11 +292,9 @@ def plot_uncertainty_principle_basic(
         ax2.set_ylabel('Δp (normalized units)', fontsize=12)
         ax2.set_title('Phase Space Representation', fontsize=14, fontweight='bold')
 
-    ax2.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=2)
+    ax2.legend(fontsize=11, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=2)
     ax2.grid(True, alpha=0.3)
-
-    plt.tight_layout()
-    plt.subplots_adjust(bottom=0.18)
+    ax2.tick_params(axis='both', labelsize=11)
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)
@@ -333,7 +333,9 @@ def plot_confinement_velocity(
     if constants is None:
         constants = get_constants()
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
+    # Vertical layout for better readability
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 18))
+    fig.subplots_adjust(hspace=0.5, top=0.94, bottom=0.06)
 
     # Range of confinement sizes
     delta_x = np.logspace(-15, -9, 100)
@@ -385,9 +387,10 @@ def plot_confinement_velocity(
         ax1.set_ylabel('Velocity v/c', fontsize=12)
         ax1.set_title('"Restlessness" from Confinement: v ∝ ℏ/(m·Δx)', fontsize=14, fontweight='bold')
 
-    ax1.legend(fontsize=8, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=4)
+    ax1.legend(fontsize=10, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3)
     ax1.grid(True, alpha=0.3, which='both')
     ax1.set_ylim(1e-4, 10)
+    ax1.tick_params(axis='both', labelsize=11)
 
     # Plot 2: Kinetic energy vs confinement
     E_electron = confinement_kinetic_energy(delta_x, constants.m_e, constants)
@@ -424,11 +427,9 @@ def plot_confinement_velocity(
         ax2.set_ylabel('Kinetic energy (eV)', fontsize=12)
         ax2.set_title('Zero-point Energy: E ∝ ℏ²/(m·Δx²)', fontsize=14, fontweight='bold')
 
-    ax2.legend(fontsize=8, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=3)
+    ax2.legend(fontsize=10, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3)
     ax2.grid(True, alpha=0.3, which='both')
-
-    plt.tight_layout()
-    plt.subplots_adjust(bottom=0.2)
+    ax2.tick_params(axis='both', labelsize=11)
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)
