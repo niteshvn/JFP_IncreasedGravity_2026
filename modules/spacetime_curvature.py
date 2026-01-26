@@ -2491,11 +2491,12 @@ def plot_penrose_carter_diagram(
     ax.set_xlim(-2, 2)
     ax.set_ylim(-2, 2)
     ax.set_aspect('equal')
-    ax.set_xlabel('X (compactified space)' if language == 'en' else 'X (kompaktifizierter Raum)', fontsize=11)
-    ax.set_ylabel('T (compactified time)' if language == 'en' else 'T (kompaktifizierte Zeit)', fontsize=11)
+    ax.set_xlabel('X (compactified space)' if language == 'en' else 'X (kompaktifizierter Raum)', fontsize=12)
+    ax.set_ylabel('T (compactified time)' if language == 'en' else 'T (kompaktifizierte Zeit)', fontsize=12)
+    ax.tick_params(axis='both', labelsize=11)
 
     ax.set_title(f'Penrose-Carter Diagram: {title}',
-                fontsize=14, fontweight='bold', pad=15)
+                fontsize=16, fontweight='bold', pad=15)
 
     # Legend at bottom
     from matplotlib.lines import Line2D
@@ -2511,8 +2512,8 @@ def plot_penrose_carter_diagram(
         Line2D([0], [0], color='blue', linewidth=1.5, marker='>',
                label='Light (45°)' if language == 'en' else 'Licht (45°)'),
     ]
-    ax.legend(handles=legend_elements, loc='upper center', bbox_to_anchor=(0.5, -0.08),
-              fontsize=9, ncol=3, framealpha=0.7)
+    ax.legend(handles=legend_elements, loc='upper center', bbox_to_anchor=(0.5, -0.12),
+              fontsize=11, ncol=3, framealpha=0.9)
 
     ax.grid(True, alpha=0.3)
 
@@ -2555,12 +2556,14 @@ def plot_penrose_comparison(
     if constants is None:
         constants = get_constants()
 
-    fig, axes = plt.subplots(1, 3, figsize=(18, 10))
+    # Vertical layout (3x1) for better readability
+    fig, axes = plt.subplots(3, 1, figsize=(12, 28))
+    fig.subplots_adjust(hspace=0.5, top=0.95, bottom=0.06)
 
     # Common settings
     titles = {
-        'en': ['Minkowski (Flat)', 'Schwarzschild (Eternal BH)', 'Stellar Collapse'],
-        'de': ['Minkowski (Flach)', 'Schwarzschild (Ewiges SL)', 'Sternkollaps']
+        'en': ['1. Minkowski Spacetime (Flat)', '2. Schwarzschild Spacetime (Eternal Black Hole)', '3. Stellar Collapse to Black Hole'],
+        'de': ['1. Minkowski-Raumzeit (Flach)', '2. Schwarzschild-Raumzeit (Ewiges Schwarzes Loch)', '3. Sternkollaps zum Schwarzen Loch']
     }
 
     for idx, ax in enumerate(axes):
@@ -2568,9 +2571,10 @@ def plot_penrose_comparison(
         ax.set_ylim(-2, 2)
         ax.set_aspect('equal')
         ax.grid(True, alpha=0.3)
-        ax.set_xlabel('X', fontsize=11)
-        ax.set_ylabel('T', fontsize=11)
-        ax.set_title(titles[language][idx], fontsize=12, fontweight='bold')
+        ax.set_xlabel('X (compactified coordinate)' if language == 'en' else 'X (kompaktifizierte Koordinate)', fontsize=12)
+        ax.set_ylabel('T (compactified time)' if language == 'en' else 'T (kompaktifizierte Zeit)', fontsize=12)
+        ax.set_title(titles[language][idx], fontsize=14, fontweight='bold')
+        ax.tick_params(axis='both', labelsize=11)
 
     # ===== MINKOWSKI =====
     ax = axes[0]
@@ -2584,9 +2588,9 @@ def plot_penrose_comparison(
         t_line = np.linspace(-np.pi/2 + abs(x0) + 0.1, np.pi/2 - abs(x0) - 0.1, 30)
         ax.plot(np.ones_like(t_line) * x0, t_line, 'b-', alpha=0.4, linewidth=1)
 
-    ax.text(0, np.pi/2 + 0.15, 'i+', fontsize=14, ha='center', fontweight='bold')
-    ax.text(0, -np.pi/2 - 0.15, 'i-', fontsize=14, ha='center', va='top', fontweight='bold')
-    ax.text(np.pi/2 + 0.1, 0, 'i0', fontsize=12, va='center')
+    ax.text(0, np.pi/2 + 0.15, 'i⁺ (future timelike infinity)', fontsize=12, ha='center', fontweight='bold')
+    ax.text(0, -np.pi/2 - 0.15, 'i⁻ (past timelike infinity)', fontsize=12, ha='center', va='top', fontweight='bold')
+    ax.text(np.pi/2 + 0.1, 0, 'i⁰ (spatial infinity)', fontsize=11, va='center')
 
     # ===== SCHWARZSCHILD =====
     ax = axes[1]
@@ -2605,10 +2609,10 @@ def plot_penrose_comparison(
     ax.plot([0, -np.pi/2], [np.pi/2, 0], 'k--', linewidth=2, alpha=0.5)
 
     # Region labels
-    ax.text(0.5, -0.3, 'I', fontsize=16, fontweight='bold')
-    ax.text(-0.5, -0.3, 'III', fontsize=16, fontweight='bold', alpha=0.5)
-    ax.text(0, 0.2, 'II', fontsize=16, fontweight='bold')
-    ax.text(0, -0.6, 'IV', fontsize=16, fontweight='bold', alpha=0.5)
+    ax.text(0.5, -0.3, 'I (exterior)', fontsize=14, fontweight='bold')
+    ax.text(-0.5, -0.3, 'III (other exterior)', fontsize=12, fontweight='bold', alpha=0.5)
+    ax.text(0, 0.2, 'II (inside BH)', fontsize=14, fontweight='bold')
+    ax.text(0, -0.6, 'IV (white hole)', fontsize=12, fontweight='bold', alpha=0.5)
 
     # ===== STELLAR COLLAPSE =====
     ax = axes[2]
@@ -2638,9 +2642,9 @@ def plot_penrose_comparison(
     # Outer boundary
     ax.plot([np.pi/2, np.pi/2], [-np.pi/2, np.pi/2], 'k-', linewidth=2)
 
-    ax.text(0, np.pi/2 + 0.15, 'r = 0', fontsize=10, ha='center', color=COLORS['relativistic'])
-    ax.text(0.5, -0.5, 'I', fontsize=16, fontweight='bold')
-    ax.text(0, 0.3, 'II', fontsize=16, fontweight='bold')
+    ax.text(0, np.pi/2 + 0.15, 'r = 0 (singularity)', fontsize=12, ha='center', color=COLORS['relativistic'], fontweight='bold')
+    ax.text(0.5, -0.5, 'I (exterior)', fontsize=14, fontweight='bold')
+    ax.text(0, 0.3, 'II (inside BH)', fontsize=14, fontweight='bold')
 
     # Common legend at bottom for all three plots
     from matplotlib.lines import Line2D
@@ -2659,11 +2663,16 @@ def plot_penrose_comparison(
         Line2D([0], [0], color=COLORS['highlight'], linewidth=2,
                label='Star surface' if language == 'en' else 'Sternoberfläche'),
     ]
-    fig.legend(handles=legend_elements, loc='lower center', bbox_to_anchor=(0.5, -0.02),
-               fontsize=9, ncol=6, framealpha=0.7)
+    fig.legend(handles=legend_elements, loc='upper center', bbox_to_anchor=(0.5, 0.02),
+               fontsize=11, ncol=3, framealpha=0.9)
 
-    plt.tight_layout()
-    plt.subplots_adjust(bottom=0.12)  # Make room for legend
+    # Main title
+    if language == 'de':
+        fig.suptitle('Penrose-Carter Diagramme: Vergleich verschiedener Raumzeiten',
+                    fontsize=16, fontweight='bold', y=0.98)
+    else:
+        fig.suptitle('Penrose-Carter Diagrams: Comparison of Different Spacetimes',
+                    fontsize=16, fontweight='bold', y=0.98)
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)
