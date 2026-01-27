@@ -227,7 +227,8 @@ def plot_earth_structural_effects(
     if constants is None:
         constants = get_constants()
 
-    fig, axes = plt.subplots(2, 2, figsize=(14, 12))
+    fig, axes = plt.subplots(4, 1, figsize=(12, 32))
+    fig.subplots_adjust(hspace=0.5, top=0.95, bottom=0.04)
 
     # Earth parameters
     M_earth = constants.M_earth
@@ -235,7 +236,7 @@ def plot_earth_structural_effects(
     T_core = 5500  # Core temperature in K
 
     # Plot 1: Earth radius vs G scaling
-    ax1 = axes[0, 0]
+    ax1 = axes[0]
     G_scales = np.logspace(0, 10, 50)
 
     radii = []
@@ -263,19 +264,20 @@ def plot_earth_structural_effects(
 
     ax1.set_ylim(0, 1.2)
     if language == 'de':
-        ax1.set_xlabel('G-Skalierungsfaktor', fontsize=11)
-        ax1.set_ylabel('Erdradius / Standard-Radius', fontsize=11)
-        ax1.set_title('1. Erdradius vs. Gravitationsstärke', fontsize=12, fontweight='bold')
+        ax1.set_xlabel('G-Skalierungsfaktor', fontsize=12)
+        ax1.set_ylabel('Erdradius / Standard-Radius', fontsize=12)
+        ax1.set_title('1. Erdradius vs. Gravitationsstärke', fontsize=14, fontweight='bold')
     else:
-        ax1.set_xlabel('G scaling factor', fontsize=11)
-        ax1.set_ylabel('Earth radius / standard radius', fontsize=11)
-        ax1.set_title('1. Earth Radius vs. Gravity Strength', fontsize=12, fontweight='bold')
+        ax1.set_xlabel('G scaling factor', fontsize=12)
+        ax1.set_ylabel('Earth radius / standard radius', fontsize=12)
+        ax1.set_title('1. Earth Radius vs. Gravity Strength', fontsize=14, fontweight='bold')
 
-    ax1.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=3)
+    ax1.legend(fontsize=11, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3)
     ax1.grid(True, alpha=0.3)
+    ax1.tick_params(axis='both', labelsize=11)
 
     # Plot 2: Pressure components vs G
-    ax2 = axes[0, 1]
+    ax2 = axes[1]
 
     P_grav_list = []
     P_thermal_list = []
@@ -297,19 +299,20 @@ def plot_earth_structural_effects(
     ax2.axvline(x=1, color=COLORS['standard'], linestyle=':', linewidth=1, alpha=0.5)
 
     if language == 'de':
-        ax2.set_xlabel('G-Skalierungsfaktor', fontsize=11)
-        ax2.set_ylabel('Druck (Pa)', fontsize=11)
-        ax2.set_title('2. Druckkomponenten im Erdkern', fontsize=12, fontweight='bold')
+        ax2.set_xlabel('G-Skalierungsfaktor', fontsize=12)
+        ax2.set_ylabel('Druck (Pa)', fontsize=12)
+        ax2.set_title('2. Druckkomponenten im Erdkern', fontsize=14, fontweight='bold')
     else:
-        ax2.set_xlabel('G scaling factor', fontsize=11)
-        ax2.set_ylabel('Pressure (Pa)', fontsize=11)
-        ax2.set_title('2. Pressure Components in Earth\'s Core', fontsize=12, fontweight='bold')
+        ax2.set_xlabel('G scaling factor', fontsize=12)
+        ax2.set_ylabel('Pressure (Pa)', fontsize=12)
+        ax2.set_title('2. Pressure Components in Earth\'s Core', fontsize=14, fontweight='bold')
 
-    ax2.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=3)
+    ax2.legend(fontsize=11, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3)
     ax2.grid(True, alpha=0.3, which='both')
+    ax2.tick_params(axis='both', labelsize=11)
 
     # Plot 3: Effect of ℏ scaling on degeneracy pressure
-    ax3 = axes[1, 0]
+    ax3 = axes[2]
 
     hbar_scales = np.logspace(-1, 1, 50)
     G_fixed = 1e6  # Fix G at high value to see ℏ effect
@@ -342,19 +345,20 @@ def plot_earth_structural_effects(
                        label=f'Stability restored (ℏ × {hbar_crossover:.1f})')
 
     if language == 'de':
-        ax3.set_xlabel('ℏ-Skalierungsfaktor', fontsize=11)
-        ax3.set_ylabel('Druck (Pa)', fontsize=11)
-        ax3.set_title(f'3. Entartungsdruck vs. ℏ (G × {G_fixed:.0e})', fontsize=12, fontweight='bold')
+        ax3.set_xlabel('ℏ-Skalierungsfaktor', fontsize=12)
+        ax3.set_ylabel('Druck (Pa)', fontsize=12)
+        ax3.set_title(f'3. Entartungsdruck vs. ℏ (G × {G_fixed:.0e})', fontsize=14, fontweight='bold')
     else:
-        ax3.set_xlabel('ℏ scaling factor', fontsize=11)
-        ax3.set_ylabel('Pressure (Pa)', fontsize=11)
-        ax3.set_title(f'3. Degeneracy Pressure vs. ℏ (G × {G_fixed:.0e})', fontsize=12, fontweight='bold')
+        ax3.set_xlabel('ℏ scaling factor', fontsize=12)
+        ax3.set_ylabel('Pressure (Pa)', fontsize=12)
+        ax3.set_title(f'3. Degeneracy Pressure vs. ℏ (G × {G_fixed:.0e})', fontsize=14, fontweight='bold')
 
-    ax3.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=3)
+    ax3.legend(fontsize=11, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3)
     ax3.grid(True, alpha=0.3, which='both')
+    ax3.tick_params(axis='both', labelsize=11)
 
     # Plot 4: Stability map in G-ℏ space
-    ax4 = axes[1, 1]
+    ax4 = axes[3]
 
     G_range = np.logspace(0, 12, 30)
     hbar_range = np.logspace(-1, 2, 30)
@@ -375,19 +379,25 @@ def plot_earth_structural_effects(
     ax4.plot(0, 0, 'o', color=COLORS['standard'], markersize=15, label='Standard universe')
 
     if language == 'de':
-        ax4.set_xlabel('log₁₀(G/G₀)', fontsize=11)
-        ax4.set_ylabel('log₁₀(ℏ/ℏ₀)', fontsize=11)
-        ax4.set_title('4. Stabilitätskarte der Erde im G-ℏ-Raum\n(Blau = stabil, Rot = Kollaps)', fontsize=12, fontweight='bold')
+        ax4.set_xlabel('log₁₀(G/G₀)', fontsize=12)
+        ax4.set_ylabel('log₁₀(ℏ/ℏ₀)', fontsize=12)
+        ax4.set_title('4. Stabilitätskarte der Erde im G-ℏ-Raum\n(Blau = stabil, Rot = Kollaps)', fontsize=14, fontweight='bold')
     else:
-        ax4.set_xlabel('log₁₀(G/G₀)', fontsize=11)
-        ax4.set_ylabel('log₁₀(ℏ/ℏ₀)', fontsize=11)
-        ax4.set_title('4. Earth Stability Map in G-ℏ Space\n(Blue = stable, Red = collapse)', fontsize=12, fontweight='bold')
+        ax4.set_xlabel('log₁₀(G/G₀)', fontsize=12)
+        ax4.set_ylabel('log₁₀(ℏ/ℏ₀)', fontsize=12)
+        ax4.set_title('4. Earth Stability Map in G-ℏ Space\n(Blue = stable, Red = collapse)', fontsize=14, fontweight='bold')
 
-    ax4.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=2)
+    ax4.legend(fontsize=11, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=2)
     ax4.grid(True, alpha=0.3)
+    ax4.tick_params(axis='both', labelsize=11)
 
-    plt.tight_layout()
-    plt.subplots_adjust(bottom=0.12)
+    # Main title
+    if language == 'de':
+        fig.suptitle('Erdstruktur unter veränderten Konstanten',
+                    fontsize=16, fontweight='bold', y=0.98)
+    else:
+        fig.suptitle('Earth Structure Under Modified Constants',
+                    fontsize=16, fontweight='bold', y=0.98)
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)
@@ -426,11 +436,11 @@ def plot_gravity_vs_pauli(
     if constants is None:
         constants = get_constants()
 
-    fig = plt.figure(figsize=(14, 12))
-    gs = fig.add_gridspec(2, 2, hspace=0.35, wspace=0.3)
+    fig, axes = plt.subplots(4, 1, figsize=(12, 32))
+    fig.subplots_adjust(hspace=0.5, top=0.95, bottom=0.04)
 
     # Plot 1: Pressure vs density comparison
-    ax1 = fig.add_subplot(gs[0, 0])
+    ax1 = axes[0]
 
     densities = np.logspace(3, 18, 100)  # From rock to nuclear density
 
@@ -465,19 +475,20 @@ def plot_gravity_vs_pauli(
     ax1.axvline(x=rho_ns, color='red', linestyle=':', alpha=0.7, label='Neutron star')
 
     if language == 'de':
-        ax1.set_xlabel('Dichte ρ (kg/m³)', fontsize=11)
-        ax1.set_ylabel('Druck P (Pa)', fontsize=11)
-        ax1.set_title('1. Gravitationsdruck vs. Pauli-Druck', fontsize=12, fontweight='bold')
+        ax1.set_xlabel('Dichte ρ (kg/m³)', fontsize=12)
+        ax1.set_ylabel('Druck P (Pa)', fontsize=12)
+        ax1.set_title('1. Gravitationsdruck vs. Pauli-Druck', fontsize=14, fontweight='bold')
     else:
-        ax1.set_xlabel('Density ρ (kg/m³)', fontsize=11)
-        ax1.set_ylabel('Pressure P (Pa)', fontsize=11)
-        ax1.set_title('1. Gravitational Pressure vs. Pauli Pressure', fontsize=12, fontweight='bold')
+        ax1.set_xlabel('Density ρ (kg/m³)', fontsize=12)
+        ax1.set_ylabel('Pressure P (Pa)', fontsize=12)
+        ax1.set_title('1. Gravitational Pressure vs. Pauli Pressure', fontsize=14, fontweight='bold')
 
-    ax1.legend(fontsize=8, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=3)
+    ax1.legend(fontsize=11, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3)
     ax1.grid(True, alpha=0.3, which='both')
+    ax1.tick_params(axis='both', labelsize=11)
 
     # Plot 2: Pressure ratio vs mass
-    ax2 = fig.add_subplot(gs[0, 1])
+    ax2 = axes[1]
 
     masses = np.logspace(23, 32, 50)  # From asteroids to stellar masses
     M_sun = constants.M_sun
@@ -507,19 +518,20 @@ def plot_gravity_vs_pauli(
                label='Earth')
 
     if language == 'de':
-        ax2.set_xlabel('Masse (M☉)', fontsize=11)
-        ax2.set_ylabel('P_grav / P_Pauli', fontsize=11)
-        ax2.set_title('2. Druckverhältnis vs. Masse (bei WD-Dichte)', fontsize=12, fontweight='bold')
+        ax2.set_xlabel('Masse (M☉)', fontsize=12)
+        ax2.set_ylabel('P_grav / P_Pauli', fontsize=12)
+        ax2.set_title('2. Druckverhältnis vs. Masse (bei WD-Dichte)', fontsize=14, fontweight='bold')
     else:
-        ax2.set_xlabel('Mass (M☉)', fontsize=11)
-        ax2.set_ylabel('P_gravity / P_Pauli', fontsize=11)
-        ax2.set_title('2. Pressure Ratio vs. Mass (at WD density)', fontsize=12, fontweight='bold')
+        ax2.set_xlabel('Mass (M☉)', fontsize=12)
+        ax2.set_ylabel('P_gravity / P_Pauli', fontsize=12)
+        ax2.set_title('2. Pressure Ratio vs. Mass (at WD density)', fontsize=14, fontweight='bold')
 
-    ax2.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=2)
+    ax2.legend(fontsize=11, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=2)
     ax2.grid(True, alpha=0.3, which='both')
+    ax2.tick_params(axis='both', labelsize=11)
 
     # Plot 3: Effect of G scaling on balance
-    ax3 = fig.add_subplot(gs[1, 0])
+    ax3 = axes[2]
 
     G_scales = np.logspace(0, 40, 100)
 
@@ -546,19 +558,20 @@ def plot_gravity_vs_pauli(
     ax3.axvline(x=1, color=COLORS['standard'], linestyle=':', linewidth=1, alpha=0.5)
 
     if language == 'de':
-        ax3.set_xlabel('G-Skalierungsfaktor', fontsize=11)
-        ax3.set_ylabel('P_grav / P_Pauli', fontsize=11)
-        ax3.set_title('3. Druckverhältnis vs. G-Skalierung', fontsize=12, fontweight='bold')
+        ax3.set_xlabel('G-Skalierungsfaktor', fontsize=12)
+        ax3.set_ylabel('P_grav / P_Pauli', fontsize=12)
+        ax3.set_title('3. Druckverhältnis vs. G-Skalierung', fontsize=14, fontweight='bold')
     else:
-        ax3.set_xlabel('G scaling factor', fontsize=11)
-        ax3.set_ylabel('P_gravity / P_Pauli', fontsize=11)
-        ax3.set_title('3. Pressure Ratio vs. G Scaling', fontsize=12, fontweight='bold')
+        ax3.set_xlabel('G scaling factor', fontsize=12)
+        ax3.set_ylabel('P_gravity / P_Pauli', fontsize=12)
+        ax3.set_title('3. Pressure Ratio vs. G Scaling', fontsize=14, fontweight='bold')
 
-    ax3.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=3)
+    ax3.legend(fontsize=11, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3)
     ax3.grid(True, alpha=0.3, which='both')
+    ax3.tick_params(axis='both', labelsize=11)
 
     # Plot 4: ℏ scaling to restore balance
-    ax4 = fig.add_subplot(gs[1, 1])
+    ax4 = axes[3]
 
     # For G × 10^36 (essay value), what ℏ scaling restores balance?
     G_essay = 1e36
@@ -588,16 +601,17 @@ def plot_gravity_vs_pauli(
                label='ℏ × 10¹⁸ (essay)')
 
     if language == 'de':
-        ax4.set_xlabel('ℏ-Skalierungsfaktor', fontsize=11)
-        ax4.set_ylabel('P_grav / P_Pauli', fontsize=11)
-        ax4.set_title(f'4. Gleichgewicht bei G × 10³⁶', fontsize=12, fontweight='bold')
+        ax4.set_xlabel('ℏ-Skalierungsfaktor', fontsize=12)
+        ax4.set_ylabel('P_grav / P_Pauli', fontsize=12)
+        ax4.set_title(f'4. Gleichgewicht bei G × 10³⁶', fontsize=14, fontweight='bold')
     else:
-        ax4.set_xlabel('ℏ scaling factor', fontsize=11)
-        ax4.set_ylabel('P_gravity / P_Pauli', fontsize=11)
-        ax4.set_title(f'4. Balance at G × 10³⁶', fontsize=12, fontweight='bold')
+        ax4.set_xlabel('ℏ scaling factor', fontsize=12)
+        ax4.set_ylabel('P_gravity / P_Pauli', fontsize=12)
+        ax4.set_title(f'4. Balance at G × 10³⁶', fontsize=14, fontweight='bold')
 
-    ax4.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=3)
+    ax4.legend(fontsize=11, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3)
     ax4.grid(True, alpha=0.3, which='both')
+    ax4.tick_params(axis='both', labelsize=11)
 
     # Overall title
     if language == 'de':
@@ -606,9 +620,6 @@ def plot_gravity_vs_pauli(
     else:
         fig.suptitle('Gravity vs. Pauli: The Core Question of the Essay',
                     fontsize=16, fontweight='bold', y=0.98)
-
-    plt.tight_layout()
-    plt.subplots_adjust(bottom=0.12, top=0.93)
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)
@@ -645,13 +656,13 @@ def plot_hypothesis_summary(
     if constants is None:
         constants = get_constants()
 
-    fig = plt.figure(figsize=(14, 16))
-    gs = fig.add_gridspec(3, 2, height_ratios=[1, 1, 0.6], hspace=0.4, wspace=0.3)
+    fig, axes = plt.subplots(4, 1, figsize=(12, 32))
+    fig.subplots_adjust(hspace=0.5, top=0.95, bottom=0.04)
 
     M_sun = constants.M_sun
 
     # Plot 1: Object stability under standard physics
-    ax1 = fig.add_subplot(gs[0, 0])
+    ax1 = axes[0]
 
     objects_data = [
         ('Earth', constants.M_earth, 5500, 'Stable (thermal)'),
@@ -676,18 +687,19 @@ def plot_hypothesis_summary(
     ax1.set_yscale('log')
 
     if language == 'de':
-        ax1.set_xlabel('Masse (M☉)', fontsize=11)
-        ax1.set_ylabel('Dichte (kg/m³)', fontsize=11)
-        ax1.set_title('1. Objektstabilität (Standardphysik)', fontsize=12, fontweight='bold')
+        ax1.set_xlabel('Masse (M☉)', fontsize=12)
+        ax1.set_ylabel('Dichte (kg/m³)', fontsize=12)
+        ax1.set_title('1. Objektstabilität (Standardphysik)', fontsize=14, fontweight='bold')
     else:
-        ax1.set_xlabel('Mass (M☉)', fontsize=11)
-        ax1.set_ylabel('Density (kg/m³)', fontsize=11)
-        ax1.set_title('1. Object Stability (Standard Physics)', fontsize=12, fontweight='bold')
+        ax1.set_xlabel('Mass (M☉)', fontsize=12)
+        ax1.set_ylabel('Density (kg/m³)', fontsize=12)
+        ax1.set_title('1. Object Stability (Standard Physics)', fontsize=14, fontweight='bold')
 
     ax1.grid(True, alpha=0.3, which='both')
+    ax1.tick_params(axis='both', labelsize=11)
 
     # Plot 2: Pressure scaling with G
-    ax2 = fig.add_subplot(gs[0, 1])
+    ax2 = axes[1]
 
     G_scales = np.logspace(0, 40, 100)
 
@@ -708,19 +720,20 @@ def plot_hypothesis_summary(
     ax2.axhline(y=1e36, color=COLORS['primary_amber'], linestyle=':', alpha=0.5)
 
     if language == 'de':
-        ax2.set_xlabel('G-Skalierung', fontsize=11)
-        ax2.set_ylabel('Relative Druckskalierung', fontsize=11)
-        ax2.set_title('2. Druckskalierung mit G (ℏ konstant)', fontsize=12, fontweight='bold')
+        ax2.set_xlabel('G-Skalierung', fontsize=12)
+        ax2.set_ylabel('Relative Druckskalierung', fontsize=12)
+        ax2.set_title('2. Druckskalierung mit G (ℏ konstant)', fontsize=14, fontweight='bold')
     else:
-        ax2.set_xlabel('G scaling', fontsize=11)
-        ax2.set_ylabel('Relative pressure scaling', fontsize=11)
-        ax2.set_title('2. Pressure Scaling with G (ℏ constant)', fontsize=12, fontweight='bold')
+        ax2.set_xlabel('G scaling', fontsize=12)
+        ax2.set_ylabel('Relative pressure scaling', fontsize=12)
+        ax2.set_title('2. Pressure Scaling with G (ℏ constant)', fontsize=14, fontweight='bold')
 
-    ax2.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=2)
+    ax2.legend(fontsize=11, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=2)
     ax2.grid(True, alpha=0.3, which='both')
+    ax2.tick_params(axis='both', labelsize=11)
 
     # Plot 3: Stability ratio vs G for different ℏ scalings
-    ax3 = fig.add_subplot(gs[1, 0])
+    ax3 = axes[2]
 
     hbar_scalings = [1, 1e9, 1e18]
     labels_en = ['Standard ℏ', 'ℏ × 10⁹', 'ℏ × 10¹⁸']
@@ -738,19 +751,20 @@ def plot_hypothesis_summary(
     ax3.axvline(x=1e36, color='gray', linestyle=':', alpha=0.5, label='G × 10³⁶')
 
     if language == 'de':
-        ax3.set_xlabel('G-Skalierung', fontsize=11)
-        ax3.set_ylabel('P_grav / P_Pauli', fontsize=11)
-        ax3.set_title('3. Stabilitätsverhältnis vs G', fontsize=12, fontweight='bold')
+        ax3.set_xlabel('G-Skalierung', fontsize=12)
+        ax3.set_ylabel('P_grav / P_Pauli', fontsize=12)
+        ax3.set_title('3. Stabilitätsverhältnis vs G', fontsize=14, fontweight='bold')
     else:
-        ax3.set_xlabel('G scaling', fontsize=11)
-        ax3.set_ylabel('P_gravity / P_Pauli', fontsize=11)
-        ax3.set_title('3. Stability Ratio vs G', fontsize=12, fontweight='bold')
+        ax3.set_xlabel('G scaling', fontsize=12)
+        ax3.set_ylabel('P_gravity / P_Pauli', fontsize=12)
+        ax3.set_title('3. Stability Ratio vs G', fontsize=14, fontweight='bold')
 
-    ax3.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=3)
+    ax3.legend(fontsize=11, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3)
     ax3.grid(True, alpha=0.3, which='both')
+    ax3.tick_params(axis='both', labelsize=11)
 
     # Plot 4: Required ℏ scaling for stability at different G
-    ax4 = fig.add_subplot(gs[1, 1])
+    ax4 = axes[3]
 
     G_values = np.logspace(0, 40, 50)
     # For stability: P_grav = P_Pauli → G_scaled = ℏ_scaled²
@@ -771,74 +785,25 @@ def plot_hypothesis_summary(
     ax4.fill_between(G_values, 1e-5, hbar_needed, alpha=0.2, color=COLORS['scaled'])
 
     if language == 'de':
-        ax4.set_xlabel('G-Skalierung', fontsize=11)
-        ax4.set_ylabel('Erforderliche ℏ-Skalierung', fontsize=11)
-        ax4.set_title('4. ℏ erforderlich für Gleichgewicht: ℏ ∝ √G', fontsize=12, fontweight='bold')
+        ax4.set_xlabel('G-Skalierung', fontsize=12)
+        ax4.set_ylabel('Erforderliche ℏ-Skalierung', fontsize=12)
+        ax4.set_title('4. ℏ erforderlich für Gleichgewicht: ℏ ∝ √G', fontsize=14, fontweight='bold')
     else:
-        ax4.set_xlabel('G scaling', fontsize=11)
-        ax4.set_ylabel('Required ℏ scaling', fontsize=11)
-        ax4.set_title('4. ℏ Required for Balance: ℏ ∝ √G', fontsize=12, fontweight='bold')
+        ax4.set_xlabel('G scaling', fontsize=12)
+        ax4.set_ylabel('Required ℏ scaling', fontsize=12)
+        ax4.set_title('4. ℏ Required for Balance: ℏ ∝ √G', fontsize=14, fontweight='bold')
 
-    ax4.legend(fontsize=9, loc='upper center', bbox_to_anchor=(0.5, -0.12), ncol=2)
+    ax4.legend(fontsize=11, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=2)
     ax4.grid(True, alpha=0.3, which='both')
+    ax4.tick_params(axis='both', labelsize=11)
     ax4.set_xlim(1, 1e42)
     ax4.set_ylim(1e-2, 1e25)
 
-    # Summary text panel (spans both columns)
-    ax5 = fig.add_subplot(gs[2, :])
-    ax5.axis('off')
-
+    # Main title
     if language == 'de':
-        summary_text = """
-                  GRAVITATION vs. PAULI-DRUCK - Zusammenfassung
-        ─────────────────────────────────────────────────────────────────
-
-        KERNFORMELN:    P_grav ∝ G·M²/R⁴       P_Pauli ∝ ℏ²·ρ^(5/3)/m
-
-                                STABILITÄTSBEDINGUNG:
-                        P_Pauli ≥ P_grav  →  ℏ² ∝ G  →  ℏ ∝ √G
-
-                            SCHLÜSSELAUSSAGE AUS DEM ESSAY:
-        "Um bei einer um 10³⁶ erhöhten Gravitation das Gleichgewicht zu
-         erhalten, müsste ℏ um den Faktor 10¹⁸ erhöht werden."
-
-                                IMPLIKATIONEN:
-            • In unserem Universum: G/ℏ² ist winzig → Gravitation auf
-              atomarer Skala vernachlässigbar
-            • Bei G × 10³⁶ (ohne ℏ-Änderung): Materie kollabiert bei
-              viel größeren Skalen als in unserem Universum
-            • Balance ℏ ∝ √G: Sternstruktur und Chemie bleiben möglich
-        """
+        fig.suptitle('Essay-Hypothese: Zusammenfassung', fontsize=16, fontweight='bold', y=0.98)
     else:
-        summary_text = """
-                    GRAVITY vs. PAULI PRESSURE - Summary
-        ─────────────────────────────────────────────────────────────────
-
-        CORE FORMULAS:  P_gravity ∝ G·M²/R⁴     P_Pauli ∝ ℏ²·ρ^(5/3)/m
-
-                                STABILITY CONDITION:
-                        P_Pauli ≥ P_gravity  →  ℏ² ∝ G  →  ℏ ∝ √G
-
-                            KEY STATEMENT FROM ESSAY:
-        "To maintain equilibrium with gravity increased by 10³⁶,
-         ℏ would need to increase by a factor of 10¹⁸."
-
-                                IMPLICATIONS:
-            • In our universe: G/ℏ² is tiny → gravity negligible at
-              atomic scales
-            • With G × 10³⁶ (no ℏ change): matter collapses at much
-              larger scales than in our universe
-            • Balance ℏ ∝ √G: stellar structure and chemistry remain possible
-        """
-
-    ax5.text(0.5, 0.5, summary_text, transform=ax5.transAxes, fontsize=11,
-             verticalalignment='center', horizontalalignment='center',
-             fontfamily='monospace',
-             bbox=dict(boxstyle='round', facecolor='white', alpha=0.95,
-                      edgecolor=COLORS['primary_blue'], linewidth=2))
-
-    plt.tight_layout()
-    plt.subplots_adjust(bottom=0.05, top=0.95)
+        fig.suptitle('Essay Hypothesis: Summary', fontsize=16, fontweight='bold', y=0.98)
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)
