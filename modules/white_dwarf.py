@@ -298,8 +298,9 @@ def plot_pressure_vs_density(
         ax.set_title('Electron Degeneracy Pressure: Non-relativistic vs. Relativistic', fontsize=14, fontweight='bold', pad=15)
 
     # Legend at bottom right, outside graph
-    ax.legend(fontsize=10, loc='upper right', bbox_to_anchor=(1.0, -0.08), framealpha=0.7)
+    ax.legend(fontsize=11, loc='upper right', bbox_to_anchor=(1.0, -0.15), framealpha=0.7)
     ax.grid(True, alpha=0.3, which='both')
+    ax.tick_params(axis='both', labelsize=11)
     ax.set_xlim(1e6, 1e12)
 
     if save:
@@ -409,9 +410,10 @@ def plot_mass_radius_relation(
     ax.set_xlim(0, 1.5)
     ax.set_ylim(0, 0.025)
     ax.grid(True, alpha=0.3)
+    ax.tick_params(axis='both', labelsize=11)
 
     # Legend at bottom right, outside graph
-    ax.legend(fontsize=9, loc='upper right', bbox_to_anchor=(1.0, -0.08), framealpha=0.7)
+    ax.legend(fontsize=11, loc='upper right', bbox_to_anchor=(1.0, -0.15), framealpha=0.7)
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)
@@ -482,8 +484,9 @@ def plot_chandrasekhar_limit(
         ax1.set_ylabel('Pressure P (Pa)', fontsize=12)
         ax1.set_title('1. Equilibrium: Degeneracy Pressure vs. Gravitational Pressure', fontsize=14, fontweight='bold', pad=15)
 
-    ax1.legend(fontsize=9, loc='upper right', bbox_to_anchor=(1.0, -0.08), framealpha=0.7)
+    ax1.legend(fontsize=11, loc='upper right', bbox_to_anchor=(1.0, -0.15), framealpha=0.7)
     ax1.grid(True, alpha=0.3, which='both')
+    ax1.tick_params(axis='both', labelsize=11)
 
     # Right plot: Stability diagram
     mass_range = np.linspace(0.1, 1.6, 100)
@@ -525,8 +528,9 @@ def plot_chandrasekhar_limit(
 
     ax2.set_xlim(0, 1.6)
     ax2.set_ylim(-0.5, 1.5)
-    ax2.legend(fontsize=9, loc='upper right', bbox_to_anchor=(1.0, -0.08), framealpha=0.7)
+    ax2.legend(fontsize=11, loc='upper right', bbox_to_anchor=(1.0, -0.15), framealpha=0.7)
     ax2.grid(True, alpha=0.3)
+    ax2.tick_params(axis='both', labelsize=11)
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)
@@ -582,11 +586,12 @@ def plot_white_dwarf_summary(
 
     ax1.loglog(rho, P_nr, '-', color=COLORS['non_relativistic'], linewidth=2, label='Non-rel: P ∝ ρ^(5/3)')
     ax1.loglog(rho, P_r, '-', color=COLORS['relativistic'], linewidth=2, label='Rel: P ∝ ρ^(4/3)')
-    ax1.set_xlabel('Density (kg/m³)' if language == 'en' else 'Dichte (kg/m³)', fontsize=11)
-    ax1.set_ylabel('Pressure (Pa)' if language == 'en' else 'Druck (Pa)', fontsize=11)
+    ax1.set_xlabel('Density (kg/m³)' if language == 'en' else 'Dichte (kg/m³)', fontsize=12)
+    ax1.set_ylabel('Pressure (Pa)' if language == 'en' else 'Druck (Pa)', fontsize=12)
     ax1.set_title('1. Degeneracy Pressure' if language == 'en' else '1. Entartungsdruck', fontsize=14, fontweight='bold', pad=15)
-    ax1.legend(fontsize=9, loc='upper right', bbox_to_anchor=(1.0, -0.08), framealpha=0.7)
+    ax1.legend(fontsize=11, loc='upper right', bbox_to_anchor=(1.0, -0.15), framealpha=0.7)
     ax1.grid(True, alpha=0.3)
+    ax1.tick_params(axis='both', labelsize=11)
 
     # 2. Mass-Radius (top middle)
     masses = np.linspace(0.2, 1.38, 50)
@@ -594,11 +599,12 @@ def plot_white_dwarf_summary(
 
     ax2.plot(masses, radii, '-', color=COLORS['white_dwarf'], linewidth=2, label='R ∝ M^(-1/3)')
     ax2.axvline(x=M_ch, color=COLORS['scaled'], linestyle='--', linewidth=1.5, label=f'M_Ch ≈ {M_ch:.1f} M☉')
-    ax2.set_xlabel('Mass (M☉)' if language == 'en' else 'Masse (M☉)', fontsize=11)
-    ax2.set_ylabel('Radius (R☉)' if language == 'en' else 'Radius (R☉)', fontsize=11)
+    ax2.set_xlabel('Mass (M☉)' if language == 'en' else 'Masse (M☉)', fontsize=12)
+    ax2.set_ylabel('Radius (R☉)' if language == 'en' else 'Radius (R☉)', fontsize=12)
     ax2.set_title('2. Mass-Radius Relation' if language == 'en' else '2. Masse-Radius', fontsize=14, fontweight='bold', pad=15)
-    ax2.legend(fontsize=9, loc='upper right', bbox_to_anchor=(1.0, -0.08), framealpha=0.7)
+    ax2.legend(fontsize=11, loc='upper right', bbox_to_anchor=(1.0, -0.15), framealpha=0.7)
     ax2.grid(True, alpha=0.3)
+    ax2.tick_params(axis='both', labelsize=11)
 
     # 3. Comparison chart (top right)
     objects = ['Earth', 'White\nDwarf', 'Neutron\nStar']
@@ -613,7 +619,7 @@ def plot_white_dwarf_summary(
         ax3.bar(obj, density, color=color, edgecolor='black', label=lbl)
 
     ax3.set_yscale('log')
-    ax3.set_ylabel('Density (kg/m³)' if language == 'en' else 'Dichte (kg/m³)', fontsize=11)
+    ax3.set_ylabel('Density (kg/m³)' if language == 'en' else 'Dichte (kg/m³)', fontsize=12)
     ax3.set_title('3. Density Comparison' if language == 'en' else '3. Dichtevergleich', fontsize=14, fontweight='bold', pad=15)
 
     # Add value labels on bars
@@ -622,8 +628,9 @@ def plot_white_dwarf_summary(
 
     # Set y-axis limit to give space for the label above the tallest bar
     ax3.set_ylim(1e3, 1e19)
-    ax3.legend(fontsize=9, loc='upper right', bbox_to_anchor=(1.0, -0.08), ncol=3, framealpha=0.7)
+    ax3.legend(fontsize=11, loc='upper right', bbox_to_anchor=(1.0, -0.15), ncol=3, framealpha=0.7)
     ax3.grid(True, alpha=0.3, axis='y')
+    ax3.tick_params(axis='both', labelsize=11)
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)

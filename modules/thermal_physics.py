@@ -313,8 +313,9 @@ def plot_temperature_atmosphere(
         ax1.set_ylabel('Temperature [K]', fontsize=12)
         ax1.set_title('1. Atmospheric Temperature vs. Altitude', fontsize=14, fontweight='bold', pad=15)
 
-    ax1.legend(fontsize=9, loc='upper right', bbox_to_anchor=(1.0, -0.08), ncol=4, framealpha=0.7)
+    ax1.legend(fontsize=11, loc='upper right', bbox_to_anchor=(1.0, -0.15), ncol=4, framealpha=0.7)
     ax1.grid(True, alpha=0.3)
+    ax1.tick_params(axis='both', labelsize=11)
     ax1.set_xlim(0, 50)
     ax1.set_ylim(0, 350)
 
@@ -341,8 +342,9 @@ def plot_temperature_atmosphere(
         ax2.set_ylabel('Scale Height H [km]', fontsize=12)
         ax2.set_title('2. Atmospheric Scale Height vs. Gravity', fontsize=14, fontweight='bold', pad=15)
 
-    ax2.legend(fontsize=9, loc='upper right', bbox_to_anchor=(1.0, -0.08), framealpha=0.7)
+    ax2.legend(fontsize=11, loc='upper right', bbox_to_anchor=(1.0, -0.15), framealpha=0.7)
     ax2.grid(True, alpha=0.3, which='both')
+    ax2.tick_params(axis='both', labelsize=11)
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)
@@ -421,8 +423,9 @@ def plot_temperature_degeneracy(
         ax1.set_ylabel('Fermi Temperature T_F [K]', fontsize=12)
         ax1.set_title('1. Fermi Temperature vs. Electron Density', fontsize=14, fontweight='bold', pad=15)
 
-    ax1.legend(fontsize=9, loc='upper right', bbox_to_anchor=(1.0, -0.08), ncol=3, framealpha=0.7)
+    ax1.legend(fontsize=11, loc='upper right', bbox_to_anchor=(1.0, -0.15), ncol=3, framealpha=0.7)
     ax1.grid(True, alpha=0.3, which='both')
+    ax1.tick_params(axis='both', labelsize=11)
 
     # --- Bottom plot: Pressure crossover ---
     n_e_range2 = np.logspace(30, 36, 100)
@@ -448,8 +451,9 @@ def plot_temperature_degeneracy(
         ax2.set_ylabel('Pressure [Pa]', fontsize=12)
         ax2.set_title('2. Thermal vs. Degeneracy Pressure', fontsize=14, fontweight='bold', pad=15)
 
-    ax2.legend(fontsize=9, loc='upper right', bbox_to_anchor=(1.0, -0.08), ncol=2, framealpha=0.7)
+    ax2.legend(fontsize=11, loc='upper right', bbox_to_anchor=(1.0, -0.15), ncol=2, framealpha=0.7)
     ax2.grid(True, alpha=0.3, which='both')
+    ax2.tick_params(axis='both', labelsize=11)
     ax2.set_ylim(1e10, 1e35)
 
     if save:
@@ -519,8 +523,9 @@ def plot_temperature_summary(
         ax1.set_ylabel('Scale Height H [km]', fontsize=12)
         ax1.set_title('1. Atmospheric Compression with Increasing Gravity', fontsize=14, fontweight='bold', pad=15)
 
-    ax1.legend(fontsize=9, loc='upper right', bbox_to_anchor=(1.0, -0.08), ncol=4, framealpha=0.7)
+    ax1.legend(fontsize=11, loc='upper right', bbox_to_anchor=(1.0, -0.15), ncol=4, framealpha=0.7)
     ax1.grid(True, alpha=0.3, axis='y')
+    ax1.tick_params(axis='both', labelsize=11)
 
     # --- Plot 2: T vs T_F threshold ---
     objects = [
@@ -561,8 +566,9 @@ def plot_temperature_summary(
         ax2.set_ylabel('Temperature [K]', fontsize=12)
         ax2.set_title('2. Actual Temperature vs. Fermi Temperature', fontsize=14, fontweight='bold', pad=15)
 
-    ax2.legend(fontsize=9, loc='upper right', bbox_to_anchor=(1.0, -0.08), ncol=2, framealpha=0.7)
+    ax2.legend(fontsize=11, loc='upper right', bbox_to_anchor=(1.0, -0.15), ncol=2, framealpha=0.7)
     ax2.grid(True, alpha=0.3, axis='y')
+    ax2.tick_params(axis='both', labelsize=11)
 
     # --- Plot 3: Core temperature with gravity ---
     g_scales_core = np.linspace(1, 100, 50)
@@ -587,8 +593,9 @@ def plot_temperature_summary(
         ax3.set_ylabel('Estimated Core Temperature [K]', fontsize=12)
         ax3.set_title('3. Core Temperature from Gravitational Compression', fontsize=14, fontweight='bold', pad=15)
 
-    ax3.legend(fontsize=9, loc='upper right', bbox_to_anchor=(1.0, -0.08), framealpha=0.7)
+    ax3.legend(fontsize=11, loc='upper right', bbox_to_anchor=(1.0, -0.15), framealpha=0.7)
     ax3.grid(True, alpha=0.3)
+    ax3.tick_params(axis='both', labelsize=11)
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)

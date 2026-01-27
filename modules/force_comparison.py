@@ -189,7 +189,8 @@ def plot_force_comparison_bar(
         ax.set_title('Gravitational vs. Electromagnetic Force (Two protons, distance 1 fm)', fontsize=14, fontweight='bold', pad=15)
 
     ax.grid(True, alpha=0.3, axis='y')
-    ax.legend(fontsize=9, loc='upper right', bbox_to_anchor=(1.0, -0.08), ncol=2, framealpha=0.7)
+    ax.tick_params(axis='both', labelsize=11)
+    ax.legend(fontsize=11, loc='upper right', bbox_to_anchor=(1.0, -0.15), ncol=2, framealpha=0.7)
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)
@@ -251,8 +252,9 @@ def plot_force_vs_distance(
         ax1.set_ylabel('Force (N)', fontsize=12)
         ax1.set_title('1. Forces vs. Distance (Proton-Proton)', fontsize=14, fontweight='bold', pad=15)
 
-    ax1.legend(fontsize=9, loc='upper right', bbox_to_anchor=(1.0, -0.08), ncol=2, framealpha=0.7)
+    ax1.legend(fontsize=11, loc='upper right', bbox_to_anchor=(1.0, -0.15), ncol=2, framealpha=0.7)
     ax1.grid(True, alpha=0.3)
+    ax1.tick_params(axis='both', labelsize=11)
     ax1.set_xlim(1, 1e6)
 
     # Bottom plot: Force ratio vs distance (should be constant)
@@ -268,8 +270,9 @@ def plot_force_vs_distance(
         ax2.set_ylabel('F_Coulomb / F_Gravitational', fontsize=12)
         ax2.set_title('2. Force Ratio vs. Distance', fontsize=14, fontweight='bold', pad=15)
 
-    ax2.legend(fontsize=9, loc='upper right', bbox_to_anchor=(1.0, -0.08), framealpha=0.7)
+    ax2.legend(fontsize=11, loc='upper right', bbox_to_anchor=(1.0, -0.15), framealpha=0.7)
     ax2.grid(True, alpha=0.3)
+    ax2.tick_params(axis='both', labelsize=11)
     ax2.set_xlim(1, 1e6)
 
     if save:
@@ -384,8 +387,9 @@ def plot_force_across_scales(
         ax.set_ylabel('Force (N) - logarithmic scale', fontsize=12)
         ax.set_title('Force Comparison Across Different Scales', fontsize=14, fontweight='bold', pad=15)
 
-    ax.legend(fontsize=9, loc='upper right', bbox_to_anchor=(1.0, -0.08), ncol=2, framealpha=0.7)
+    ax.legend(fontsize=11, loc='upper right', bbox_to_anchor=(1.0, -0.15), ncol=2, framealpha=0.7)
     ax.grid(True, alpha=0.3, axis='y')
+    ax.tick_params(axis='both', labelsize=11)
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)
@@ -468,7 +472,8 @@ def plot_scaled_universe_comparison(
         ax1.set_ylabel('Force (N)', fontsize=12)
 
     ax1.grid(True, alpha=0.3, axis='y')
-    ax1.legend(fontsize=9, loc='upper right', bbox_to_anchor=(1.0, -0.08), ncol=2, framealpha=0.7)
+    ax1.tick_params(axis='both', labelsize=11)
+    ax1.legend(fontsize=11, loc='upper right', bbox_to_anchor=(1.0, -0.15), ncol=2, framealpha=0.7)
 
     # Bottom: Alternative Universe
     forces_alt = [F_grav_alt, F_coul_alt]
@@ -486,7 +491,8 @@ def plot_scaled_universe_comparison(
         ax2.set_ylabel('Force (N)', fontsize=12)
 
     ax2.grid(True, alpha=0.3, axis='y')
-    ax2.legend(fontsize=9, loc='upper right', bbox_to_anchor=(1.0, -0.08), ncol=2, framealpha=0.7)
+    ax2.tick_params(axis='both', labelsize=11)
+    ax2.legend(fontsize=11, loc='upper right', bbox_to_anchor=(1.0, -0.15), ncol=2, framealpha=0.7)
 
     # Make y-axis limits the same for comparison
     all_forces = forces_std + forces_alt

@@ -176,8 +176,9 @@ def plot_bohr_radius_scaling(
         ax1.set_ylabel('Bohr radius (pm)', fontsize=12)
         ax1.set_title('1. Bohr Radius vs. ℏ Scaling (a_0 ∝ ℏ²)', fontsize=14, fontweight='bold', pad=15)
 
-    ax1.legend(fontsize=9, loc='upper right', bbox_to_anchor=(1.0, -0.08), framealpha=0.7)
+    ax1.legend(fontsize=11, loc='upper right', bbox_to_anchor=(1.0, -0.15), framealpha=0.7)
     ax1.grid(True, alpha=0.3, which='both')
+    ax1.tick_params(axis='both', labelsize=11)
 
     # Bottom plot: Gravitational coupling constant vs hbar scaling
     ax2.loglog(hbar_scales, alpha_G_scaled, '-', color=COLORS['scaled'], linewidth=2.5,
@@ -199,10 +200,10 @@ def plot_bohr_radius_scaling(
         ax2.set_ylabel('Gravitational coupling constant α_G', fontsize=12)
         ax2.set_title('2. Gravitational Coupling vs. ℏ (α_G ∝ 1/ℏ)', fontsize=14, fontweight='bold', pad=15)
 
-    ax2.legend(fontsize=9, loc='upper right', bbox_to_anchor=(1.0, -0.08), framealpha=0.7)
+    ax2.legend(fontsize=11, loc='upper right', bbox_to_anchor=(1.0, -0.15), framealpha=0.7)
     ax2.grid(True, alpha=0.3, which='both')
+    ax2.tick_params(axis='both', labelsize=11)
 
-    plt.tight_layout()
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)
@@ -311,7 +312,7 @@ def plot_atom_size_comparison(
     ax.plot([], [], '-', color=COLORS['standard'], linewidth=3,
             label='Bohr orbit' if language == 'en' else 'Bohr-Bahn')
 
-    ax.legend(fontsize=10, loc='upper right', bbox_to_anchor=(1.0, -0.02), framealpha=0.9)
+    ax.legend(fontsize=11, loc='upper right', bbox_to_anchor=(1.0, -0.15), framealpha=0.9)
 
     # Title
     if language == 'de':
@@ -327,7 +328,6 @@ def plot_atom_size_comparison(
     ax.set_aspect('equal')
     ax.axis('off')
 
-    plt.tight_layout()
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)
@@ -409,7 +409,7 @@ def plot_energy_levels(
     legend_elements = [Line2D([0], [0], color=c, marker='>', linestyle='-',
                               markersize=5, label=name, linewidth=1.5)
                       for c, name in zip(colors_trans, series_names)]
-    ax1.legend(handles=legend_elements, fontsize=9, loc='upper right', bbox_to_anchor=(1.0, -0.08),
+    ax1.legend(handles=legend_elements, fontsize=11, loc='upper right', bbox_to_anchor=(1.0, -0.15),
               framealpha=0.7, ncol=2, title='Transitions' if language == 'en' else 'Übergänge')
 
     # Add ionization level
@@ -428,6 +428,7 @@ def plot_energy_levels(
     ax1.set_ylim(-15, 2)
     ax1.set_xticks([])
     ax1.grid(True, alpha=0.3, axis='y')
+    ax1.tick_params(axis='both', labelsize=11)
 
     # Bottom plot: Orbital radii
     radii = [orbital_radius(n, constants) for n in range(1, n_levels + 1)]
@@ -451,8 +452,8 @@ def plot_energy_levels(
         ax2.set_title('2. Orbital Radii r_n = n² × a_0 (Bohr model)', fontsize=14, fontweight='bold', pad=15)
 
     ax2.grid(True, alpha=0.3, axis='y')
+    ax2.tick_params(axis='both', labelsize=11)
 
-    plt.tight_layout()
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)
@@ -518,16 +519,17 @@ def plot_quantum_gravity_connection(
              label='Standard' if language == 'en' else 'Standard')
 
     if language == 'de':
-        ax1.set_xlabel('ℏ-Skalierung', fontsize=11)
-        ax1.set_ylabel('Bohr-Radius (pm)', fontsize=11)
-        ax1.set_title('1. Atomgroesse: a_0 ∝ ℏ²', fontsize=13, fontweight='bold', pad=15)
+        ax1.set_xlabel('ℏ-Skalierung', fontsize=12)
+        ax1.set_ylabel('Bohr-Radius (pm)', fontsize=12)
+        ax1.set_title('1. Atomgroesse: a_0 ∝ ℏ²', fontsize=14, fontweight='bold', pad=15)
     else:
-        ax1.set_xlabel('ℏ scaling', fontsize=11)
-        ax1.set_ylabel('Bohr radius (pm)', fontsize=11)
-        ax1.set_title('1. Atom Size: a_0 ∝ ℏ²', fontsize=13, fontweight='bold', pad=15)
+        ax1.set_xlabel('ℏ scaling', fontsize=12)
+        ax1.set_ylabel('Bohr radius (pm)', fontsize=12)
+        ax1.set_title('1. Atom Size: a_0 ∝ ℏ²', fontsize=14, fontweight='bold', pad=15)
 
-    ax1.legend(fontsize=9, loc='upper right', bbox_to_anchor=(1.0, -0.08), framealpha=0.7)
+    ax1.legend(fontsize=11, loc='upper right', bbox_to_anchor=(1.0, -0.15), framealpha=0.7)
     ax1.grid(True, alpha=0.3, which='both')
+    ax1.tick_params(axis='both', labelsize=11)
 
     # 2. Gravitational coupling
     ax2.loglog(hbar_scales, alpha_G_scaled, '-', color=COLORS['scaled'], linewidth=2.5, label='α_G(ℏ)')
@@ -536,16 +538,17 @@ def plot_quantum_gravity_connection(
     ax2.plot(1, alpha_G_std, 'o', color=COLORS['standard'], markersize=10, label='Standard')
 
     if language == 'de':
-        ax2.set_xlabel('ℏ-Skalierung', fontsize=11)
-        ax2.set_ylabel('α_G', fontsize=11)
-        ax2.set_title('2. Gravitations-Kopplung: α_G ∝ 1/ℏ', fontsize=13, fontweight='bold', pad=15)
+        ax2.set_xlabel('ℏ-Skalierung', fontsize=12)
+        ax2.set_ylabel('α_G', fontsize=12)
+        ax2.set_title('2. Gravitations-Kopplung: α_G ∝ 1/ℏ', fontsize=14, fontweight='bold', pad=15)
     else:
-        ax2.set_xlabel('ℏ scaling', fontsize=11)
-        ax2.set_ylabel('α_G', fontsize=11)
-        ax2.set_title('2. Gravity Coupling: α_G ∝ 1/ℏ', fontsize=13, fontweight='bold', pad=15)
+        ax2.set_xlabel('ℏ scaling', fontsize=12)
+        ax2.set_ylabel('α_G', fontsize=12)
+        ax2.set_title('2. Gravity Coupling: α_G ∝ 1/ℏ', fontsize=14, fontweight='bold', pad=15)
 
-    ax2.legend(fontsize=9, loc='upper right', bbox_to_anchor=(1.0, -0.08), framealpha=0.7)
+    ax2.legend(fontsize=11, loc='upper right', bbox_to_anchor=(1.0, -0.15), framealpha=0.7)
     ax2.grid(True, alpha=0.3, which='both')
+    ax2.tick_params(axis='both', labelsize=11)
 
     # 3. Matter density (∝ 1/a_0³ ∝ 1/ℏ⁶)
     density_ratio = 1 / hbar_scales**6
@@ -554,16 +557,17 @@ def plot_quantum_gravity_connection(
     ax3.plot(1, 1, 'o', color=COLORS['standard'], markersize=10, label='Standard')
 
     if language == 'de':
-        ax3.set_xlabel('ℏ-Skalierung', fontsize=11)
-        ax3.set_ylabel('Dichte / Standard-Dichte', fontsize=11)
-        ax3.set_title('3. Materiedichte: ρ ∝ 1/a_0³ ∝ 1/ℏ⁶', fontsize=13, fontweight='bold', pad=15)
+        ax3.set_xlabel('ℏ-Skalierung', fontsize=12)
+        ax3.set_ylabel('Dichte / Standard-Dichte', fontsize=12)
+        ax3.set_title('3. Materiedichte: ρ ∝ 1/a_0³ ∝ 1/ℏ⁶', fontsize=14, fontweight='bold', pad=15)
     else:
-        ax3.set_xlabel('ℏ scaling', fontsize=11)
-        ax3.set_ylabel('Density / Standard density', fontsize=11)
-        ax3.set_title('3. Matter Density: ρ ∝ 1/a_0³ ∝ 1/ℏ⁶', fontsize=13, fontweight='bold', pad=15)
+        ax3.set_xlabel('ℏ scaling', fontsize=12)
+        ax3.set_ylabel('Density / Standard density', fontsize=12)
+        ax3.set_title('3. Matter Density: ρ ∝ 1/a_0³ ∝ 1/ℏ⁶', fontsize=14, fontweight='bold', pad=15)
 
-    ax3.legend(fontsize=9, loc='upper right', bbox_to_anchor=(1.0, -0.08), framealpha=0.7)
+    ax3.legend(fontsize=11, loc='upper right', bbox_to_anchor=(1.0, -0.15), framealpha=0.7)
     ax3.grid(True, alpha=0.3, which='both')
+    ax3.tick_params(axis='both', labelsize=11)
 
     # 4. Summary: alpha_G × density (gravity importance)
     # Gravitational effect ∝ α_G × ρ ∝ (1/ℏ) × (1/ℏ⁶) = 1/ℏ⁷
@@ -573,18 +577,18 @@ def plot_quantum_gravity_connection(
     ax4.plot(1, 1, 'o', color=COLORS['standard'], markersize=10, label='Standard')
 
     if language == 'de':
-        ax4.set_xlabel('ℏ-Skalierung', fontsize=11)
-        ax4.set_ylabel('Gravitations-Bedeutung (relativ)', fontsize=11)
-        ax4.set_title('4. Gravitations-Relevanz: ∝ α_G × ρ ∝ 1/ℏ⁷', fontsize=13, fontweight='bold', pad=15)
+        ax4.set_xlabel('ℏ-Skalierung', fontsize=12)
+        ax4.set_ylabel('Gravitations-Bedeutung (relativ)', fontsize=12)
+        ax4.set_title('4. Gravitations-Relevanz: ∝ α_G × ρ ∝ 1/ℏ⁷', fontsize=14, fontweight='bold', pad=15)
     else:
-        ax4.set_xlabel('ℏ scaling', fontsize=11)
-        ax4.set_ylabel('Gravity importance (relative)', fontsize=11)
-        ax4.set_title('4. Gravity Relevance: ∝ α_G × ρ ∝ 1/ℏ⁷', fontsize=13, fontweight='bold', pad=15)
+        ax4.set_xlabel('ℏ scaling', fontsize=12)
+        ax4.set_ylabel('Gravity importance (relative)', fontsize=12)
+        ax4.set_title('4. Gravity Relevance: ∝ α_G × ρ ∝ 1/ℏ⁷', fontsize=14, fontweight='bold', pad=15)
 
-    ax4.legend(fontsize=9, loc='upper right', bbox_to_anchor=(1.0, -0.08), framealpha=0.7)
+    ax4.legend(fontsize=11, loc='upper right', bbox_to_anchor=(1.0, -0.15), framealpha=0.7)
     ax4.grid(True, alpha=0.3, which='both')
+    ax4.tick_params(axis='both', labelsize=11)
 
-    plt.tight_layout()
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)
@@ -634,16 +638,17 @@ def plot_atomic_summary(
 
     ax1.axhline(y=0, color=COLORS['scaled'], linestyle='--', alpha=0.7, label='Ionization' if language == 'en' else 'Ionisation')
     if language == 'de':
-        ax1.set_ylabel('Energie (eV)', fontsize=11)
+        ax1.set_ylabel('Energie (eV)', fontsize=12)
         ax1.set_title('1. H-Energieniveaus (E_n = -13.6/n² eV)', fontsize=14, fontweight='bold', pad=15)
     else:
-        ax1.set_ylabel('Energy (eV)', fontsize=11)
+        ax1.set_ylabel('Energy (eV)', fontsize=12)
         ax1.set_title('1. H Energy Levels (E_n = -13.6/n² eV)', fontsize=14, fontweight='bold', pad=15)
     ax1.set_xlim(0, 1)
     ax1.set_ylim(-15, 2)
     ax1.set_xticks([])
     ax1.grid(True, alpha=0.3, axis='y')
-    ax1.legend(fontsize=9, loc='upper right', bbox_to_anchor=(1.0, -0.08), ncol=4, framealpha=0.7)
+    ax1.tick_params(axis='both', labelsize=11)
+    ax1.legend(fontsize=11, loc='upper right', bbox_to_anchor=(1.0, -0.15), ncol=4, framealpha=0.7)
 
     # 2. Bohr radius scaling
     hbar_scales = np.logspace(-1, 0.5, 50)
@@ -655,16 +660,17 @@ def plot_atomic_summary(
     ax2.plot(1, a_0_std * 1e12, 'o', color=COLORS['standard'], markersize=8, label='Standard')
 
     if language == 'de':
-        ax2.set_xlabel('ℏ-Skalierung', fontsize=11)
-        ax2.set_ylabel('Bohr-Radius (pm)', fontsize=11)
+        ax2.set_xlabel('ℏ-Skalierung', fontsize=12)
+        ax2.set_ylabel('Bohr-Radius (pm)', fontsize=12)
         ax2.set_title('2. Atomgroesse (a_0 ∝ ℏ²)', fontsize=14, fontweight='bold', pad=15)
     else:
-        ax2.set_xlabel('ℏ scaling', fontsize=11)
-        ax2.set_ylabel('Bohr radius (pm)', fontsize=11)
+        ax2.set_xlabel('ℏ scaling', fontsize=12)
+        ax2.set_ylabel('Bohr radius (pm)', fontsize=12)
         ax2.set_title('2. Atom Size (a_0 ∝ ℏ²)', fontsize=14, fontweight='bold', pad=15)
 
-    ax2.legend(fontsize=9, loc='upper right', bbox_to_anchor=(1.0, -0.08), framealpha=0.7)
+    ax2.legend(fontsize=11, loc='upper right', bbox_to_anchor=(1.0, -0.15), framealpha=0.7)
     ax2.grid(True, alpha=0.3, which='both')
+    ax2.tick_params(axis='both', labelsize=11)
 
     # 3. Key constants comparison
     props = calculate_atomic_properties(constants)
@@ -695,7 +701,8 @@ def plot_atomic_summary(
     else:
         ax3.set_title('3. Key Atomic Constants (Hydrogen)', fontsize=14, fontweight='bold', pad=15)
 
-    ax3.legend(fontsize=9, loc='upper right', bbox_to_anchor=(1.0, -0.08), ncol=2, framealpha=0.7)
+    ax3.legend(fontsize=11, loc='upper right', bbox_to_anchor=(1.0, -0.15), ncol=2, framealpha=0.7)
+    ax3.tick_params(axis='both', labelsize=11)
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)
