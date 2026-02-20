@@ -324,8 +324,8 @@ def plot_planetary_comparison(
         thresholds.append(collapse_threshold(M, R, T_c, constants))
     de = language == 'de'
     nd = planet_names_de if de else planet_names
-    fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1, figsize=(12, 32))
-    fig.subplots_adjust(hspace=0.35)
+    fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1, figsize=(12, 38))
+    fig.subplots_adjust(hspace=0.55, top=0.96, bottom=0.04)
     st = ('Planeteneigenschaften bei ver\u00e4nderter Gravitation'
          if de else 'Planetary Properties Under Modified Gravity')
     fig.suptitle(st, fontsize=18, fontweight='bold', y=0.99)
@@ -401,8 +401,8 @@ def plot_solar_system_positioning(
     orbits_std = np.array([b[4] for b in bodies])
     colors = [b[5] for b in bodies]
     nd = planet_names_de if de else planet_names
-    fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1, figsize=(12, 32))
-    fig.subplots_adjust(hspace=0.40)
+    fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1, figsize=(12, 38))
+    fig.subplots_adjust(hspace=0.55, top=0.96, bottom=0.04)
     st = 'Sonnensystem-Positionierung' if de else 'Solar System Positioning'
     fig.suptitle(st, fontsize=18, fontweight='bold', y=0.99)
     angles = np.linspace(0, 2 * np.pi, len(bodies), endpoint=False)
@@ -489,8 +489,8 @@ def plot_celestial_summary(
     orbits_std = np.array([b[4] for b in bodies])
     colors = [b[5] for b in bodies]
     nd = planet_names_de if de else planet_names
-    fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1, figsize=(12, 32))
-    fig.subplots_adjust(hspace=0.40)
+    fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1, figsize=(12, 38))
+    fig.subplots_adjust(hspace=0.55, top=0.96, bottom=0.04)
     st = 'Himmelskörper-Zusammenfassung' if de else 'Celestial Bodies Summary'
     fig.suptitle(st, fontsize=18, fontweight='bold', y=0.99)
     radii_10 = np.array([body_radius_scaled(R, 10.0) for R in radii_std])
