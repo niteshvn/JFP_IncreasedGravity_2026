@@ -1580,6 +1580,642 @@ def plot_gravity_pauli_3d_interactive(
     return fig
 
 
+def plot_solar_system_3d_interactive(
+    constants: Optional[PhysicalConstants] = None,
+    language: str = 'en',
+    save: bool = True
+) -> 'go.Figure':
+    """
+    Interactive 3D solar system with orbits that scale with G.
+    Interaktives 3D-Sonnensystem mit Orbits, die mit G skalieren.
+    """
+    check_plotly()
+    if constants is None:
+        constants = get_constants()
+
+    fig = go.Figure()
+
+    # Planet data: name_en, name_de, orbital_radius_AU, color, size
+    planets = [
+        ('Mercury', 'Merkur', 0.387, '#A0A0A0', 4),
+        ('Venus', 'Venus', 0.723, '#E8B86D', 6),
+        ('Earth', 'Erde', 1.0, '#4B8BBE', 7),
+        ('Mars', 'Mars', 1.524, '#C1440E', 5),
+        ('Jupiter', 'Jupiter', 5.203, '#C88B3A', 14),
+        ('Saturn', 'Saturn', 9.537, '#E8D191', 12),
+        ('Uranus', 'Uranus', 19.19, '#73C2FB', 9),
+        ('Neptune', 'Neptun', 30.07, '#3454D1', 9),
+    ]
+
+    # G scaling factors for frames
+    g_scales = np.linspace(0.5, 3.0, 26)
+
+    # Draw orbits and planets for default G=1
+    theta = np.linspace(0, 2 * np.pi, 200)
+
+    # Sun
+    fig.add_trace(go.Scatter3d(
+        x=[0], y=[0], z=[0],
+        mode='markers',
+        marker=dict(size=18, color='#FFD700'),
+        name='Sun' if language == 'en' else 'Sonne',
+        showlegend=True
+    ))
+
+    for name_en, name_de, r_au, color, sz in planets:
+        name = name_en if language == 'en' else name_de
+        # Orbit scales as r ∝ 1/G (from Kepler: a = GM/v², but v set by energy, so a ∝ 1/G for fixed energy)
+        x_orb = r_au * np.cos(theta)
+        y_orb = r_au * np.sin(theta)
+        z_orb = np.zeros_like(theta)
+
+        # Orbit line
+        fig.add_trace(go.Scatter3d(
+            x=x_orb, y=y_orb, z=z_orb,
+            mode='lines',
+            line=dict(color=color, width=2),
+            name=f'{name} ({r_au:.1f} AU)',
+            showlegend=True,
+            hoverinfo='name'
+        ))
+
+        # Planet marker
+        fig.add_trace(go.Scatter3d(
+            x=[r_au], y=[0], z=[0],
+            mode='markers',
+            marker=dict(size=sz, color=color),
+            showlegend=False,
+            hovertext=name
+        ))
+
+    # Create frames for G slider
+    frames = []
+    for g_s in g_scales:
+        frame_data = [go.Scatter3d(x=[0], y=[0], z=[0],
+                                    mode='markers',
+                                    marker=dict(size=18, color='#FFD700'))]
+        for name_en, name_de, r_au, color, sz in planets:
+            r_scaled = r_au / g_s
+            x_orb = r_scaled * np.cos(theta)
+            y_orb = r_scaled * np.sin(theta)
+            z_orb = np.zeros_like(theta)
+            frame_data.append(go.Scatter3d(
+                x=x_orb, y=y_orb, z=z_orb,
+                mode='lines', line=dict(color=color, width=2)))
+            frame_data.append(go.Scatter3d(
+                x=[r_scaled], y=[0], z=[0],
+                mode='markers', marker=dict(size=sz, color=color)))
+        frames.append(go.Frame(data=frame_data, name=f'{g_s:.2f}'))
+
+    fig.frames = frames
+
+    # Slider
+    sliders = [dict(
+        active=5,
+        currentvalue=dict(prefix='G/G₀ = ', suffix=''),
+        pad=dict(t=50),
+        steps=[dict(args=[[f'{g_s:.2f}'], dict(frame=dict(duration=50, redraw=True), mode='immediate')],
+                     label=f'{g_s:.1f}', method='animate')
+               for g_s in g_scales]
+    )]
+
+    title = ('Solar System Orbits vs Gravitational Strength<br><sup>Orbital radius ∝ 1/G</sup>'
+             if language == 'en' else
+             'Planetenbahnen vs Gravitationsstärke<br><sup>Bahnradius ∝ 1/G</sup>')
+
+    fig.update_layout(
+        title=dict(text=title, x=0.5),
+        scene=dict(
+            xaxis_title='x (AU)', yaxis_title='y (AU)', zaxis_title='z (AU)',
+            camera=dict(eye=dict(x=0.8, y=0.8, z=1.5)),
+            aspectmode='cube',
+            domain=dict(x=[0, 1], y=[0.2, 1])
+        ),
+        sliders=sliders,
+        height=900,
+        margin=dict(l=0, r=0, t=50, b=10),
+        template='plotly_white',
+        showlegend=True,
+        legend=dict(
+            x=0.5, y=0.15, xanchor='center', yanchor='top',
+            bgcolor='rgba(255,255,255,0.95)',
+            bordercolor='rgba(180,180,180,0.8)',
+            borderwidth=1, font=dict(size=11), orientation='h'
+        )
+    )
+
+    if save:
+        os.makedirs(VIS_DIR, exist_ok=True)
+        suffix = '_de' if language == 'de' else ''
+        filepath = os.path.join(VIS_DIR, f'solar_system_3d_interactive{suffix}.html')
+        fig.write_html(filepath, config={'displaylogo': False, 'displayModeBar': True})
+        print(f"Saved: {filepath}")
+
+    return fig
+
+
+def plot_solar_luminosity_3d_interactive(
+    constants: Optional[PhysicalConstants] = None,
+    language: str = 'en',
+    save: bool = True
+) -> 'go.Figure':
+    """
+    Interactive 3D surface of stellar luminosity L(hbar_scale, G_scale).
+    Interaktive 3D-Oberfläche der Sternleuchtkraft L(hbar_scale, G_scale).
+    """
+    check_plotly()
+    if constants is None:
+        constants = get_constants()
+
+    hbar_vals = np.linspace(0.3, 2.0, 60)
+    g_vals = np.linspace(0.3, 3.0, 60)
+    H, G_arr = np.meshgrid(hbar_vals, g_vals)
+
+    # L ∝ G^4 * hbar^0 for mass-luminosity (at fixed mass)
+    # More precisely: L_sun depends on G through fusion rate
+    # Simplified: L/L_sun ≈ (G/G0)^4
+    # Also hbar affects opacity and tunneling: L ∝ 1/hbar^2 (Gamow tunneling)
+    L_ratio = G_arr**4 / H**2
+    L_log = np.log10(L_ratio)
+
+    fig = go.Figure()
+    fig.add_trace(go.Surface(
+        x=H, y=G_arr, z=L_log,
+        colorscale='Hot',
+        showscale=True,
+        colorbar=dict(
+            title=dict(text='log₁₀(L/L☉)', side='bottom', font=dict(size=13)),
+            orientation='h', x=0.5, y=0.02, xanchor='center', yanchor='top',
+            len=0.5, thickness=18, tickformat='.1f'
+        )
+    ))
+
+    # Mark standard universe
+    fig.add_trace(go.Scatter3d(
+        x=[1.0], y=[1.0], z=[0.0],
+        mode='markers+text',
+        marker=dict(size=8, color=COLORS['standard'], symbol='diamond'),
+        text=['Standard' if language == 'en' else 'Standard'],
+        textposition='top center',
+        name='Standard Universe' if language == 'en' else 'Standarduniversum',
+        showlegend=True
+    ))
+
+    title = ('Stellar Luminosity L(ℏ, G)<br><sup>L ∝ G⁴/ℏ² — Surface Plot</sup>'
+             if language == 'en' else
+             'Sternleuchtkraft L(ℏ, G)<br><sup>L ∝ G⁴/ℏ² — Oberflächendiagramm</sup>')
+
+    fig.update_layout(
+        title=dict(text=title, x=0.5),
+        scene=dict(
+            xaxis_title='ℏ/ℏ₀',
+            yaxis_title='G/G₀',
+            zaxis_title='log₁₀(L/L☉)',
+            camera=dict(eye=dict(x=1.5, y=1.5, z=1.2)),
+            aspectmode='manual',
+            aspectratio=dict(x=1, y=1, z=0.6),
+            domain=dict(x=[0, 1], y=[0.18, 1])
+        ),
+        height=900,
+        margin=dict(l=0, r=0, t=50, b=10),
+        template='plotly_white',
+        legend=dict(
+            x=0.5, y=0.12, xanchor='center', yanchor='top',
+            bgcolor='rgba(255,255,255,0.95)',
+            bordercolor='rgba(180,180,180,0.8)',
+            borderwidth=1, font=dict(size=12), orientation='h'
+        )
+    )
+
+    if save:
+        os.makedirs(VIS_DIR, exist_ok=True)
+        suffix = '_de' if language == 'de' else ''
+        filepath = os.path.join(VIS_DIR, f'solar_luminosity_3d_interactive{suffix}.html')
+        fig.write_html(filepath, config={'displaylogo': False, 'displayModeBar': True})
+        print(f"Saved: {filepath}")
+
+    return fig
+
+
+def plot_hydrostatic_3d_interactive(
+    constants: Optional[PhysicalConstants] = None,
+    language: str = 'en',
+    save: bool = True
+) -> 'go.Figure':
+    """
+    Interactive 3D surface of hydrostatic pressure P(r, G_scale).
+    Interaktive 3D-Oberfläche des hydrostatischen Drucks P(r, G_scale).
+    """
+    check_plotly()
+    if constants is None:
+        constants = get_constants()
+
+    # Normalized radius for polytrope n=3/2
+    r_norm = np.linspace(0.01, 1.0, 60)
+    g_vals = np.linspace(0.5, 5.0, 60)
+    R, G_arr = np.meshgrid(r_norm, g_vals)
+
+    # For polytrope n=3/2: P(r) ∝ (1 - (r/R)^2)^(5/2) approximately
+    # Central pressure scales as P_c ∝ G^2
+    P_norm = G_arr**2 * (1 - R**2)**2.5
+    P_norm = np.clip(P_norm, 0, None)
+
+    fig = go.Figure()
+    fig.add_trace(go.Surface(
+        x=R, y=G_arr, z=P_norm,
+        colorscale='Viridis',
+        showscale=True,
+        colorbar=dict(
+            title=dict(text='P/P₀', side='bottom', font=dict(size=13)),
+            orientation='h', x=0.5, y=0.02, xanchor='center', yanchor='top',
+            len=0.5, thickness=18, tickformat='.1f'
+        )
+    ))
+
+    # Mark standard at surface (r=0, G=1)
+    fig.add_trace(go.Scatter3d(
+        x=[0.01], y=[1.0], z=[1.0],
+        mode='markers+text',
+        marker=dict(size=8, color=COLORS['standard'], symbol='diamond'),
+        text=['Standard'],
+        textposition='top center',
+        name='Standard (G=G₀, r=0)',
+        showlegend=True
+    ))
+
+    title = ('Hydrostatic Pressure P(r, G)<br><sup>P_c ∝ G² — Polytrope n=3/2</sup>'
+             if language == 'en' else
+             'Hydrostatischer Druck P(r, G)<br><sup>P_c ∝ G² — Polytrope n=3/2</sup>')
+
+    fig.update_layout(
+        title=dict(text=title, x=0.5),
+        scene=dict(
+            xaxis_title='r/R' if language == 'en' else 'r/R',
+            yaxis_title='G/G₀',
+            zaxis_title='P/P₀ (normalized)' if language == 'en' else 'P/P₀ (normiert)',
+            camera=dict(eye=dict(x=1.5, y=1.5, z=1.2)),
+            aspectmode='manual',
+            aspectratio=dict(x=1, y=1, z=0.6),
+            domain=dict(x=[0, 1], y=[0.18, 1])
+        ),
+        height=900,
+        margin=dict(l=0, r=0, t=50, b=10),
+        template='plotly_white',
+        legend=dict(
+            x=0.5, y=0.12, xanchor='center', yanchor='top',
+            bgcolor='rgba(255,255,255,0.95)',
+            bordercolor='rgba(180,180,180,0.8)',
+            borderwidth=1, font=dict(size=12), orientation='h'
+        )
+    )
+
+    if save:
+        os.makedirs(VIS_DIR, exist_ok=True)
+        suffix = '_de' if language == 'de' else ''
+        filepath = os.path.join(VIS_DIR, f'hydrostatic_3d_interactive{suffix}.html')
+        fig.write_html(filepath, config={'displaylogo': False, 'displayModeBar': True})
+        print(f"Saved: {filepath}")
+
+    return fig
+
+
+def plot_fine_structure_3d_interactive(
+    constants: Optional[PhysicalConstants] = None,
+    language: str = 'en',
+    save: bool = True
+) -> 'go.Figure':
+    """
+    Interactive 3D surface of fine structure consequences: binding energy E(hbar, G).
+    Interaktive 3D-Oberfläche der Feinstruktur-Konsequenzen: Bindungsenergie E(hbar, G).
+    """
+    check_plotly()
+    if constants is None:
+        constants = get_constants()
+
+    hbar_vals = np.linspace(0.1, 2.0, 60)
+    g_vals = np.linspace(0.3, 3.0, 60)
+    H, G_arr = np.meshgrid(hbar_vals, g_vals)
+
+    # Alpha ∝ 1/hbar, binding energy ∝ alpha^2 ∝ 1/hbar^2
+    # Also include gravitational coupling alpha_G ∝ G/hbar
+    # Binding energy of hydrogen: E_bind = 0.5 * alpha^2 * m_e * c^2
+    # E_bind/E_bind_0 = (alpha/alpha_0)^2 = 1/hbar_scale^2
+    E_ratio = 1.0 / H**2
+
+    # Fine structure splitting ∝ alpha^4 ∝ 1/hbar^4
+    split_ratio = 1.0 / H**4
+
+    fig = go.Figure()
+
+    # Binding energy surface
+    fig.add_trace(go.Surface(
+        x=H, y=G_arr, z=np.log10(E_ratio),
+        colorscale='Plasma',
+        showscale=True,
+        name='Binding Energy' if language == 'en' else 'Bindungsenergie',
+        colorbar=dict(
+            title=dict(text='log₁₀(E/E₀)', side='bottom', font=dict(size=13)),
+            orientation='h', x=0.5, y=0.02, xanchor='center', yanchor='top',
+            len=0.5, thickness=18, tickformat='.1f'
+        )
+    ))
+
+    # Mark standard
+    fig.add_trace(go.Scatter3d(
+        x=[1.0], y=[1.0], z=[0.0],
+        mode='markers+text',
+        marker=dict(size=8, color=COLORS['standard'], symbol='diamond'),
+        text=['Standard'],
+        textposition='top center',
+        name='α = 1/137',
+        showlegend=True
+    ))
+
+    # Mark chemical instability threshold (alpha > 1 when hbar < alpha_0)
+    alpha_0 = 1.0 / 137.036
+    hbar_crit = alpha_0  # alpha = alpha_0/hbar_scale > 1 when hbar_scale < alpha_0
+    fig.add_trace(go.Scatter3d(
+        x=[alpha_0] * 20,
+        y=np.linspace(0.3, 3.0, 20).tolist(),
+        z=np.log10(np.full(20, 1.0 / alpha_0**2)).tolist(),
+        mode='lines',
+        line=dict(color='red', width=4),
+        name='α > 1 (unstable)' if language == 'en' else 'α > 1 (instabil)',
+        showlegend=True
+    ))
+
+    title = ('Fine Structure: Binding Energy E(ℏ)<br><sup>E ∝ α² ∝ 1/ℏ² — Interactive Surface</sup>'
+             if language == 'en' else
+             'Feinstruktur: Bindungsenergie E(ℏ)<br><sup>E ∝ α² ∝ 1/ℏ² — Interaktive Oberfläche</sup>')
+
+    fig.update_layout(
+        title=dict(text=title, x=0.5),
+        scene=dict(
+            xaxis_title='ℏ/ℏ₀',
+            yaxis_title='G/G₀',
+            zaxis_title='log₁₀(E/E₀)',
+            camera=dict(eye=dict(x=1.5, y=1.5, z=1.2)),
+            aspectmode='manual',
+            aspectratio=dict(x=1, y=1, z=0.6),
+            domain=dict(x=[0, 1], y=[0.18, 1])
+        ),
+        height=900,
+        margin=dict(l=0, r=0, t=50, b=10),
+        template='plotly_white',
+        legend=dict(
+            x=0.5, y=0.12, xanchor='center', yanchor='top',
+            bgcolor='rgba(255,255,255,0.95)',
+            bordercolor='rgba(180,180,180,0.8)',
+            borderwidth=1, font=dict(size=12), orientation='h'
+        )
+    )
+
+    if save:
+        os.makedirs(VIS_DIR, exist_ok=True)
+        suffix = '_de' if language == 'de' else ''
+        filepath = os.path.join(VIS_DIR, f'fine_structure_3d_interactive{suffix}.html')
+        fig.write_html(filepath, config={'displaylogo': False, 'displayModeBar': True})
+        print(f"Saved: {filepath}")
+
+    return fig
+
+
+def plot_earth_evolution_3d_interactive(
+    constants: Optional[PhysicalConstants] = None,
+    language: str = 'en',
+    save: bool = True
+) -> 'go.Figure':
+    """
+    Interactive 3D parametric trajectory of Earth properties (R, rho, g) as hbar decreases.
+    Interaktive 3D-Trajektorie der Erdeigenschaften (R, rho, g) bei abnehmendem hbar.
+    """
+    check_plotly()
+    if constants is None:
+        constants = get_constants()
+
+    # hbar scaling from 1.0 down to 0.1
+    hbar_scales = np.linspace(1.0, 0.1, 200)
+
+    # Scaling relations:
+    # R ∝ hbar^2 (Bohr radius scaling → matter size)
+    # rho ∝ 1/hbar^6 (mass/volume, volume ∝ R^3 ∝ hbar^6)
+    # g ∝ 1/hbar^4 (g = GM/R^2, R ∝ hbar^2 → g ∝ 1/hbar^4)
+    R_rel = hbar_scales**2
+    rho_rel = 1.0 / hbar_scales**6
+    g_rel = 1.0 / hbar_scales**4
+
+    # Use log scale for visualization
+    log_R = np.log10(R_rel)
+    log_rho = np.log10(rho_rel)
+    log_g = np.log10(g_rel)
+
+    fig = go.Figure()
+
+    # Color by hbar_scale
+    fig.add_trace(go.Scatter3d(
+        x=log_R, y=log_rho, z=log_g,
+        mode='lines',
+        line=dict(
+            color=hbar_scales,
+            colorscale='Turbo',
+            width=6,
+            showscale=True,
+            colorbar=dict(
+                title=dict(text='ℏ/ℏ₀', side='bottom', font=dict(size=13)),
+                orientation='h', x=0.5, y=0.02, xanchor='center', yanchor='top',
+                len=0.5, thickness=18, tickformat='.2f'
+            )
+        ),
+        name='Evolution Track' if language == 'en' else 'Entwicklungspfad',
+        showlegend=True,
+        hovertext=[f'ℏ/ℏ₀={h:.2f}<br>R/R₀={R_rel[i]:.3f}<br>ρ/ρ₀={rho_rel[i]:.0f}<br>g/g₀={g_rel[i]:.0f}'
+                   for i, h in enumerate(hbar_scales)]
+    ))
+
+    # Mark standard
+    fig.add_trace(go.Scatter3d(
+        x=[0], y=[0], z=[0],
+        mode='markers+text',
+        marker=dict(size=10, color=COLORS['standard'], symbol='diamond'),
+        text=['ℏ = ℏ₀'],
+        textposition='top center',
+        name='Standard Earth' if language == 'en' else 'Standard-Erde',
+        showlegend=True
+    ))
+
+    # Mark critical points
+    # White dwarf density (~10^9 kg/m^3, rho_rel ~ 180 → hbar ~ 0.43)
+    h_wd = 0.43
+    fig.add_trace(go.Scatter3d(
+        x=[np.log10(h_wd**2)],
+        y=[np.log10(1.0 / h_wd**6)],
+        z=[np.log10(1.0 / h_wd**4)],
+        mode='markers+text',
+        marker=dict(size=8, color='orange', symbol='cross'),
+        text=['WD density' if language == 'en' else 'WD-Dichte'],
+        textposition='top center',
+        name='White Dwarf Regime' if language == 'en' else 'Weißer-Zwerg-Regime',
+        showlegend=True
+    ))
+
+    title = ('Earth Evolution: (R, ρ, g) Trajectory<br><sup>R∝ℏ², ρ∝1/ℏ⁶, g∝1/ℏ⁴</sup>'
+             if language == 'en' else
+             'Erdentwicklung: (R, ρ, g) Trajektorie<br><sup>R∝ℏ², ρ∝1/ℏ⁶, g∝1/ℏ⁴</sup>')
+
+    fig.update_layout(
+        title=dict(text=title, x=0.5),
+        scene=dict(
+            xaxis_title='log₁₀(R/R₀)',
+            yaxis_title='log₁₀(ρ/ρ₀)',
+            zaxis_title='log₁₀(g/g₀)',
+            camera=dict(eye=dict(x=1.5, y=1.5, z=1.2)),
+            aspectmode='manual',
+            aspectratio=dict(x=1, y=1, z=0.8),
+            domain=dict(x=[0, 1], y=[0.18, 1])
+        ),
+        height=900,
+        margin=dict(l=0, r=0, t=50, b=10),
+        template='plotly_white',
+        legend=dict(
+            x=0.5, y=0.12, xanchor='center', yanchor='top',
+            bgcolor='rgba(255,255,255,0.95)',
+            bordercolor='rgba(180,180,180,0.8)',
+            borderwidth=1, font=dict(size=12), orientation='h'
+        )
+    )
+
+    if save:
+        os.makedirs(VIS_DIR, exist_ok=True)
+        suffix = '_de' if language == 'de' else ''
+        filepath = os.path.join(VIS_DIR, f'earth_evolution_3d_interactive{suffix}.html')
+        fig.write_html(filepath, config={'displaylogo': False, 'displayModeBar': True})
+        print(f"Saved: {filepath}")
+
+    return fig
+
+
+def plot_cosmic_scales_3d_interactive(
+    constants: Optional[PhysicalConstants] = None,
+    language: str = 'en',
+    save: bool = True
+) -> 'go.Figure':
+    """
+    Interactive 3D surface of Planck mass m_P(hbar, G).
+    Interaktive 3D-Oberfläche der Planck-Masse m_P(hbar, G).
+    """
+    check_plotly()
+    if constants is None:
+        constants = get_constants()
+
+    hbar_vals = np.linspace(0.2, 3.0, 60)
+    g_vals = np.linspace(0.2, 3.0, 60)
+    H, G_arr = np.meshgrid(hbar_vals, g_vals)
+
+    # Planck mass: m_P = sqrt(hbar * c / G)
+    # m_P/m_P0 = sqrt(hbar_scale / G_scale)
+    mp_ratio = np.sqrt(H / G_arr)
+    mp_log = np.log10(mp_ratio)
+
+    # Planck length: l_P = sqrt(hbar * G / c^3)
+    # l_P/l_P0 = sqrt(hbar_scale * G_scale)
+    lp_ratio = np.sqrt(H * G_arr)
+    lp_log = np.log10(lp_ratio)
+
+    fig = go.Figure()
+
+    # Planck mass surface
+    fig.add_trace(go.Surface(
+        x=H, y=G_arr, z=mp_log,
+        colorscale='Viridis',
+        showscale=True,
+        name='Planck Mass' if language == 'en' else 'Planck-Masse',
+        colorbar=dict(
+            title=dict(text='log₁₀(m_P/m_P₀)', side='bottom', font=dict(size=13)),
+            orientation='h', x=0.5, y=0.02, xanchor='center', yanchor='top',
+            len=0.5, thickness=18, tickformat='.2f'
+        ),
+        visible=True
+    ))
+
+    # Planck length surface (initially hidden, toggled via buttons)
+    fig.add_trace(go.Surface(
+        x=H, y=G_arr, z=lp_log,
+        colorscale='Plasma',
+        showscale=True,
+        name='Planck Length' if language == 'en' else 'Planck-Länge',
+        colorbar=dict(
+            title=dict(text='log₁₀(l_P/l_P₀)', side='bottom', font=dict(size=13)),
+            orientation='h', x=0.5, y=0.02, xanchor='center', yanchor='top',
+            len=0.5, thickness=18, tickformat='.2f'
+        ),
+        visible=False
+    ))
+
+    # Mark standard
+    fig.add_trace(go.Scatter3d(
+        x=[1.0], y=[1.0], z=[0.0],
+        mode='markers+text',
+        marker=dict(size=8, color=COLORS['standard'], symbol='diamond'),
+        text=['Standard'],
+        textposition='top center',
+        name='Standard',
+        showlegend=True
+    ))
+
+    # Toggle buttons
+    mass_label = 'Planck Mass' if language == 'en' else 'Planck-Masse'
+    length_label = 'Planck Length' if language == 'en' else 'Planck-Länge'
+    updatemenus = [dict(
+        type='buttons',
+        direction='left',
+        x=0.5, y=1.08, xanchor='center',
+        buttons=[
+            dict(label=mass_label, method='update',
+                 args=[{'visible': [True, False, True]},
+                       {'scene.zaxis.title': 'log₁₀(m_P/m_P₀)'}]),
+            dict(label=length_label, method='update',
+                 args=[{'visible': [False, True, True]},
+                       {'scene.zaxis.title': 'log₁₀(l_P/l_P₀)'}])
+        ]
+    )]
+
+    title = ('Planck Scales: m_P(ℏ, G) and l_P(ℏ, G)<br><sup>m_P = √(ℏc/G), l_P = √(ℏG/c³)</sup>'
+             if language == 'en' else
+             'Planck-Skalen: m_P(ℏ, G) und l_P(ℏ, G)<br><sup>m_P = √(ℏc/G), l_P = √(ℏG/c³)</sup>')
+
+    fig.update_layout(
+        title=dict(text=title, x=0.5),
+        scene=dict(
+            xaxis_title='ℏ/ℏ₀',
+            yaxis_title='G/G₀',
+            zaxis_title='log₁₀(m_P/m_P₀)',
+            camera=dict(eye=dict(x=1.5, y=1.5, z=1.2)),
+            aspectmode='manual',
+            aspectratio=dict(x=1, y=1, z=0.6),
+            domain=dict(x=[0, 1], y=[0.18, 1])
+        ),
+        updatemenus=updatemenus,
+        height=900,
+        margin=dict(l=0, r=0, t=80, b=10),
+        template='plotly_white',
+        legend=dict(
+            x=0.5, y=0.12, xanchor='center', yanchor='top',
+            bgcolor='rgba(255,255,255,0.95)',
+            bordercolor='rgba(180,180,180,0.8)',
+            borderwidth=1, font=dict(size=12), orientation='h'
+        )
+    )
+
+    if save:
+        os.makedirs(VIS_DIR, exist_ok=True)
+        suffix = '_de' if language == 'de' else ''
+        filepath = os.path.join(VIS_DIR, f'cosmic_scales_3d_interactive{suffix}.html')
+        fig.write_html(filepath, config={'displaylogo': False, 'displayModeBar': True})
+        print(f"Saved: {filepath}")
+
+    return fig
+
+
 def generate_all_interactive_plots(language: str = 'en') -> List['go.Figure']:
     """
     Generate all interactive 3D visualizations.
@@ -1627,6 +2263,24 @@ def generate_all_interactive_plots(language: str = 'en') -> List['go.Figure']:
 
     print("10. Gravity vs Pauli 3D...")
     figures.append(plot_gravity_pauli_3d_interactive(language=language))
+
+    print("11. Solar system orbits 3D...")
+    figures.append(plot_solar_system_3d_interactive(language=language))
+
+    print("12. Solar luminosity 3D surface...")
+    figures.append(plot_solar_luminosity_3d_interactive(language=language))
+
+    print("13. Hydrostatic pressure 3D...")
+    figures.append(plot_hydrostatic_3d_interactive(language=language))
+
+    print("14. Fine structure 3D surface...")
+    figures.append(plot_fine_structure_3d_interactive(language=language))
+
+    print("15. Earth evolution 3D trajectory...")
+    figures.append(plot_earth_evolution_3d_interactive(language=language))
+
+    print("16. Cosmic scales 3D surface...")
+    figures.append(plot_cosmic_scales_3d_interactive(language=language))
 
     print("=" * 50)
     print(f"Generated {len(figures)} interactive visualizations")

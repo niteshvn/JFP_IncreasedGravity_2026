@@ -47,6 +47,21 @@ COLORS = {
     'temp_hot': '#DC2626',          # Red for hot
     'temp_extreme': '#7C2D12',      # Dark red for extreme
 
+    # Planets and solar system
+    'moon': '#9CA3AF',              # Gray
+    'mercury': '#6B7280',           # Dark gray
+    'venus': '#10B981',             # Green
+    'mars': '#DC2626',              # Red
+    'jupiter': '#D97706',           # Orange
+    'saturn': '#F59E0B',            # Gold
+    'uranus': '#06B6D4',            # Cyan
+    'neptune': '#3B82F6',           # Blue
+
+    # Module categories
+    'cosmic': '#4F46E5',            # Indigo for cosmic effects
+    'equilibrium': '#059669',       # Green for equilibrium
+    'collapse': '#991B1B',          # Dark red for collapse
+
     # Backgrounds and boxes
     'box_info': '#DBEAFE',          # Light blue
     'box_warning': '#FEF3C7',       # Light amber
@@ -117,3 +132,19 @@ TEMPERATURE_COLORS = [
 def get_temperature_colors() -> list:
     """Get the temperature color sequence (cold to hot)."""
     return TEMPERATURE_COLORS.copy()
+
+# Planet color sequence (Mercury to Neptune)
+PLANET_COLORS = [
+    '#6B7280',  # Mercury - dark gray
+    '#10B981',  # Venus - green
+    '#059669',  # Earth - deeper green
+    '#DC2626',  # Mars - red
+    '#D97706',  # Jupiter - orange
+    '#F59E0B',  # Saturn - gold
+    '#06B6D4',  # Uranus - cyan
+    '#3B82F6',  # Neptune - blue
+]
+
+def get_planet_colors() -> list:
+    """Get the planet color sequence (Mercury to Neptune)."""
+    return PLANET_COLORS.copy()

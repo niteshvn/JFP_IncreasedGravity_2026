@@ -45,6 +45,39 @@ from modules import (
     # Atomic scale
     generate_all_atomic_plots,
     calculate_atomic_properties,
+    # Thermal physics
+    generate_all_thermal_plots,
+    verify_thermal_physics,
+    # Neutron star
+    generate_all_neutron_star_plots,
+    verify_neutron_star_physics,
+    # Heisenberg uncertainty
+    generate_all_heisenberg_plots,
+    verify_heisenberg_physics,
+    # Gravity vs Pauli balance
+    generate_all_gravity_pauli_plots,
+    verify_gravity_pauli_physics,
+    # Solar physics (NEW)
+    generate_all_solar_plots,
+    verify_solar_physics,
+    # Orbital mechanics (NEW)
+    generate_all_orbital_plots,
+    verify_orbital_physics,
+    # Celestial bodies (NEW)
+    generate_all_celestial_plots,
+    verify_celestial_physics,
+    # Hydrostatic equilibrium (NEW)
+    generate_all_hydrostatic_plots,
+    verify_hydrostatic_physics,
+    # Fine structure (NEW)
+    generate_all_fine_structure_plots,
+    verify_fine_structure_physics,
+    # Cosmological effects (NEW)
+    generate_all_cosmic_plots,
+    verify_cosmic_physics,
+    # Earth collapse (NEW)
+    generate_all_earth_collapse_plots,
+    verify_earth_collapse_physics,
     # Interactive 3D (optional)
     PLOTLY_AVAILABLE
 )
@@ -163,6 +196,86 @@ def verify_physics():
     print(f"    Status: [{status}]")
     all_passed = all_passed and passed
 
+    # 9. Module-specific verifications
+    print("\n[9] Module Verifications:")
+
+    try:
+        verify_thermal_physics()
+        print("    Thermal physics: [PASS]")
+    except Exception as e:
+        print(f"    Thermal physics: [FAIL] {e}")
+        all_passed = False
+
+    try:
+        verify_neutron_star_physics()
+        print("    Neutron star: [PASS]")
+    except Exception as e:
+        print(f"    Neutron star: [FAIL] {e}")
+        all_passed = False
+
+    try:
+        verify_heisenberg_physics()
+        print("    Heisenberg: [PASS]")
+    except Exception as e:
+        print(f"    Heisenberg: [FAIL] {e}")
+        all_passed = False
+
+    try:
+        verify_gravity_pauli_physics()
+        print("    Gravity vs Pauli: [PASS]")
+    except Exception as e:
+        print(f"    Gravity vs Pauli: [FAIL] {e}")
+        all_passed = False
+
+    try:
+        verify_solar_physics()
+        print("    Solar physics: [PASS]")
+    except Exception as e:
+        print(f"    Solar physics: [FAIL] {e}")
+        all_passed = False
+
+    try:
+        verify_orbital_physics()
+        print("    Orbital mechanics: [PASS]")
+    except Exception as e:
+        print(f"    Orbital mechanics: [FAIL] {e}")
+        all_passed = False
+
+    try:
+        verify_celestial_physics()
+        print("    Celestial bodies: [PASS]")
+    except Exception as e:
+        print(f"    Celestial bodies: [FAIL] {e}")
+        all_passed = False
+
+    try:
+        verify_hydrostatic_physics()
+        print("    Hydrostatic equilibrium: [PASS]")
+    except Exception as e:
+        print(f"    Hydrostatic equilibrium: [FAIL] {e}")
+        all_passed = False
+
+    try:
+        verify_fine_structure_physics()
+        print("    Fine structure: [PASS]")
+    except Exception as e:
+        print(f"    Fine structure: [FAIL] {e}")
+        all_passed = False
+
+    try:
+        verify_cosmic_physics()
+        print("    Cosmological effects: [PASS]")
+    except Exception as e:
+        print(f"    Cosmological effects: [FAIL] {e}")
+        all_passed = False
+
+    try:
+        verify_earth_collapse_physics()
+        print("    Earth collapse: [PASS]")
+    except Exception as e:
+        print(f"    Earth collapse: [FAIL] {e}")
+        all_passed = False
+
     # Summary
     print("\n" + "-" * 70)
     if all_passed:
@@ -271,18 +384,106 @@ def generate_all_visualizations(language: str = 'en', verbose: bool = True,
     if verbose:
         print(f"    Generated {len(figures)} plots")
 
+    # Thermal physics plots
+    if verbose:
+        print("\n[5] Thermal Physics Module:")
+    figures = generate_all_thermal_plots(language=language, show=False)
+    total_plots += len(figures)
+    if verbose:
+        print(f"    Generated {len(figures)} plots")
+
+    # Neutron star plots
+    if verbose:
+        print("\n[6] Neutron Star Module:")
+    figures = generate_all_neutron_star_plots(language=language, show=False)
+    total_plots += len(figures)
+    if verbose:
+        print(f"    Generated {len(figures)} plots")
+
+    # Heisenberg uncertainty plots
+    if verbose:
+        print("\n[7] Heisenberg Uncertainty Module:")
+    figures = generate_all_heisenberg_plots(language=language, show=False)
+    total_plots += len(figures)
+    if verbose:
+        print(f"    Generated {len(figures)} plots")
+
+    # Gravity vs Pauli balance plots
+    if verbose:
+        print("\n[8] Gravity vs Pauli Balance Module:")
+    figures = generate_all_gravity_pauli_plots(language=language, show=False)
+    total_plots += len(figures)
+    if verbose:
+        print(f"    Generated {len(figures)} plots")
+
+    # Solar physics plots
+    if verbose:
+        print("\n[9] Solar Physics Module:")
+    figures = generate_all_solar_plots(language=language, show=False)
+    total_plots += len(figures)
+    if verbose:
+        print(f"    Generated {len(figures)} plots")
+
+    # Orbital mechanics plots
+    if verbose:
+        print("\n[10] Orbital Mechanics Module:")
+    figures = generate_all_orbital_plots(language=language, show=False)
+    total_plots += len(figures)
+    if verbose:
+        print(f"    Generated {len(figures)} plots")
+
+    # Celestial bodies plots
+    if verbose:
+        print("\n[11] Celestial Bodies Module:")
+    figures = generate_all_celestial_plots(language=language, show=False)
+    total_plots += len(figures)
+    if verbose:
+        print(f"    Generated {len(figures)} plots")
+
+    # Hydrostatic equilibrium plots
+    if verbose:
+        print("\n[12] Hydrostatic Equilibrium Module:")
+    figures = generate_all_hydrostatic_plots(language=language, show=False)
+    total_plots += len(figures)
+    if verbose:
+        print(f"    Generated {len(figures)} plots")
+
+    # Fine structure plots
+    if verbose:
+        print("\n[13] Fine Structure Module:")
+    figures = generate_all_fine_structure_plots(language=language, show=False)
+    total_plots += len(figures)
+    if verbose:
+        print(f"    Generated {len(figures)} plots")
+
+    # Cosmological effects plots
+    if verbose:
+        print("\n[14] Cosmological Effects Module:")
+    figures = generate_all_cosmic_plots(show=False)
+    total_plots += len(figures)
+    if verbose:
+        print(f"    Generated {len(figures)} plots")
+
+    # Earth collapse plots
+    if verbose:
+        print("\n[15] Earth Collapse Module:")
+    figures = generate_all_earth_collapse_plots(language=language, show=False)
+    total_plots += len(figures)
+    if verbose:
+        print(f"    Generated {len(figures)} plots")
+
     # Interactive 3D plots (optional)
     if interactive:
         if PLOTLY_AVAILABLE:
             if verbose:
-                print("\n[5] Interactive 3D Module:")
+                print("\n[16] Interactive 3D Module:")
             figures = generate_all_interactive_plots(language=language)
             total_plots += len(figures)
             if verbose:
                 print(f"    Generated {len(figures)} interactive HTML files")
         else:
             if verbose:
-                print("\n[5] Interactive 3D Module: SKIPPED (plotly not installed)")
+                print("\n[16] Interactive 3D Module: SKIPPED (plotly not installed)")
                 print("    Install with: pip install plotly")
 
     if verbose:

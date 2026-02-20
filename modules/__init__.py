@@ -145,6 +145,117 @@ from .gravity_pauli_balance import (
     verify_gravity_pauli_physics
 )
 
+from .celestial_bodies import (
+    CelestialBodyProperties,
+    get_solar_system_bodies,
+    body_radius_scaled,
+    body_surface_gravity,
+    body_escape_velocity,
+    body_compactness,
+    collapse_threshold,
+    jeans_mass_at_scale,
+    calculate_body_properties,
+    plot_planetary_comparison,
+    plot_solar_system_positioning,
+    plot_celestial_summary,
+    generate_all_celestial_plots,
+    verify_celestial_physics
+)
+
+from .orbital_mechanics import (
+    OrbitalProperties,
+    orbital_period,
+    orbital_velocity,
+    tidal_force,
+    roche_limit,
+    hill_sphere,
+    gr_precession,
+    orbital_energy,
+    scaled_orbit_radius,
+    calculate_moon_orbit,
+    calculate_earth_orbit,
+    plot_moon_tidal_effects,
+    plot_earth_orbit,
+    plot_orbital_summary,
+    generate_all_orbital_plots,
+    verify_orbital_physics
+)
+
+from .earth_collapse import (
+    EarthEvolutionState,
+    chandrasekhar_mass_at_scale,
+    earth_state_at_scale,
+    earth_evolution_track,
+    plot_earth_change_diagram,
+    plot_earth_combined,
+    plot_earth_collapse_summary,
+    generate_all_earth_collapse_plots,
+    verify_earth_collapse_physics
+)
+
+from .solar_physics import (
+    SolarProperties,
+    solar_luminosity,
+    solar_radius,
+    solar_core_temperature,
+    solar_surface_temperature,
+    gamow_fusion_factor,
+    eddington_luminosity,
+    solar_lifetime,
+    solar_central_pressure,
+    calculate_solar_properties,
+    plot_solar_structure,
+    plot_solar_lifetime,
+    plot_solar_summary,
+    generate_all_solar_plots,
+    verify_solar_physics
+)
+
+from .hydrostatic_equilibrium import (
+    HydrostaticProfile,
+    lane_emden_solve,
+    polytropic_pressure_profile,
+    tov_correction_factor,
+    hydrostatic_central_pressure,
+    plot_hydrostatic_profiles,
+    plot_hydrostatic_comparison,
+    plot_hydrostatic_summary,
+    generate_all_hydrostatic_plots,
+    verify_hydrostatic_physics
+)
+
+from .fine_structure import (
+    FineStructureProperties,
+    sommerfeld_alpha,
+    binding_energy_hydrogen,
+    fine_structure_splitting,
+    rydberg_energy,
+    radiative_lifetime_factor,
+    calculate_fine_structure,
+    plot_alpha_scaling,
+    plot_alpha_consequences,
+    plot_alpha_summary,
+    generate_all_fine_structure_plots,
+    verify_fine_structure_physics
+)
+
+from .cosmological_effects import (
+    CosmicProperties,
+    planck_mass,
+    planck_length,
+    planck_temperature,
+    planck_time,
+    jeans_mass,
+    jeans_length,
+    friedmann_rate,
+    critical_density,
+    calculate_cosmic_properties,
+    plot_cosmic_scales,
+    plot_cosmic_summary,
+    generate_all_cosmic_plots,
+    verify_cosmic_physics
+)
+
 # Interactive 3D visualizations (requires plotly)
 try:
     from .interactive_3d import (
@@ -158,6 +269,12 @@ try:
         plot_heisenberg_3d_interactive,
         plot_time_dilation_3d_interactive,
         plot_gravity_pauli_3d_interactive,
+        plot_solar_system_3d_interactive,
+        plot_solar_luminosity_3d_interactive,
+        plot_hydrostatic_3d_interactive,
+        plot_fine_structure_3d_interactive,
+        plot_earth_evolution_3d_interactive,
+        plot_cosmic_scales_3d_interactive,
         generate_all_interactive_plots,
         PLOTLY_AVAILABLE
     )
@@ -286,6 +403,103 @@ __all__ = [
     'plot_hypothesis_summary',
     'generate_all_gravity_pauli_plots',
     'verify_gravity_pauli_physics',
+    # Celestial bodies
+    'CelestialBodyProperties',
+    'get_solar_system_bodies',
+    'body_radius_scaled',
+    'body_surface_gravity',
+    'body_escape_velocity',
+    'body_compactness',
+    'collapse_threshold',
+    'jeans_mass_at_scale',
+    'calculate_body_properties',
+    'plot_planetary_comparison',
+    'plot_solar_system_positioning',
+    'plot_celestial_summary',
+    'generate_all_celestial_plots',
+    'verify_celestial_physics',
+    # Orbital mechanics
+    'OrbitalProperties',
+    'orbital_period',
+    'orbital_velocity',
+    'tidal_force',
+    'roche_limit',
+    'hill_sphere',
+    'gr_precession',
+    'orbital_energy',
+    'scaled_orbit_radius',
+    'calculate_moon_orbit',
+    'calculate_earth_orbit',
+    'plot_moon_tidal_effects',
+    'plot_earth_orbit',
+    'plot_orbital_summary',
+    'generate_all_orbital_plots',
+    'verify_orbital_physics',
+    # Earth collapse
+    'EarthEvolutionState',
+    'chandrasekhar_mass_at_scale',
+    'earth_state_at_scale',
+    'earth_evolution_track',
+    'plot_earth_change_diagram',
+    'plot_earth_combined',
+    'plot_earth_collapse_summary',
+    'generate_all_earth_collapse_plots',
+    'verify_earth_collapse_physics',
+    # Solar physics
+    'SolarProperties',
+    'solar_luminosity',
+    'solar_radius',
+    'solar_core_temperature',
+    'solar_surface_temperature',
+    'gamow_fusion_factor',
+    'eddington_luminosity',
+    'solar_lifetime',
+    'solar_central_pressure',
+    'calculate_solar_properties',
+    'plot_solar_structure',
+    'plot_solar_lifetime',
+    'plot_solar_summary',
+    'generate_all_solar_plots',
+    'verify_solar_physics',
+    # Hydrostatic equilibrium
+    'HydrostaticProfile',
+    'lane_emden_solve',
+    'polytropic_pressure_profile',
+    'tov_correction_factor',
+    'hydrostatic_central_pressure',
+    'plot_hydrostatic_profiles',
+    'plot_hydrostatic_comparison',
+    'plot_hydrostatic_summary',
+    'generate_all_hydrostatic_plots',
+    'verify_hydrostatic_physics',
+    # Fine structure
+    'FineStructureProperties',
+    'sommerfeld_alpha',
+    'binding_energy_hydrogen',
+    'fine_structure_splitting',
+    'rydberg_energy',
+    'radiative_lifetime_factor',
+    'calculate_fine_structure',
+    'plot_alpha_scaling',
+    'plot_alpha_consequences',
+    'plot_alpha_summary',
+    'generate_all_fine_structure_plots',
+    'verify_fine_structure_physics',
+    # Cosmological effects
+    'CosmicProperties',
+    'planck_mass',
+    'planck_length',
+    'planck_temperature',
+    'planck_time',
+    'jeans_mass',
+    'jeans_length',
+    'friedmann_rate',
+    'critical_density',
+    'calculate_cosmic_properties',
+    'plot_cosmic_scales',
+    'plot_cosmic_summary',
+    'generate_all_cosmic_plots',
+    'verify_cosmic_physics',
     # Interactive 3D (optional, requires plotly)
     'plot_spacetime_curvature_3d_interactive',
     'plot_multiple_masses_3d_interactive',
@@ -297,6 +511,12 @@ __all__ = [
     'plot_heisenberg_3d_interactive',
     'plot_time_dilation_3d_interactive',
     'plot_gravity_pauli_3d_interactive',
+    'plot_solar_system_3d_interactive',
+    'plot_solar_luminosity_3d_interactive',
+    'plot_hydrostatic_3d_interactive',
+    'plot_fine_structure_3d_interactive',
+    'plot_earth_evolution_3d_interactive',
+    'plot_cosmic_scales_3d_interactive',
     'generate_all_interactive_plots',
     'PLOTLY_AVAILABLE'
 ]

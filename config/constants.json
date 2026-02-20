@@ -181,6 +181,187 @@
             "name": "Chandrasekhar limit",
             "name_de": "Chandrasekhar-Grenze",
             "note": "Maximum mass of a stable white dwarf"
+        },
+        "L_sun": {
+            "value": 3.828e26,
+            "unit": "W",
+            "name": "Solar luminosity",
+            "name_de": "Sonnenleuchtkraft",
+            "symbol": "L☉"
+        },
+        "T_core_sun": {
+            "value": 1.57e7,
+            "unit": "K",
+            "name": "Solar core temperature",
+            "name_de": "Sonnenkerntemperatur",
+            "symbol": "T_c☉"
+        },
+        "sigma": {
+            "value": 5.670374419e-8,
+            "unit": "W·m⁻²·K⁻⁴",
+            "name": "Stefan-Boltzmann constant",
+            "name_de": "Stefan-Boltzmann-Konstante",
+            "symbol": "σ"
+        },
+        "AU": {
+            "value": 1.496e11,
+            "unit": "m",
+            "name": "Astronomical unit",
+            "name_de": "Astronomische Einheit",
+            "symbol": "AU"
+        },
+        "M_moon": {
+            "value": 7.342e22,
+            "unit": "kg",
+            "name": "Lunar mass",
+            "name_de": "Mondmasse",
+            "symbol": "M_moon"
+        },
+        "R_moon": {
+            "value": 1.7374e6,
+            "unit": "m",
+            "name": "Lunar radius",
+            "name_de": "Mondradius",
+            "symbol": "R_moon"
+        },
+        "d_earth_moon": {
+            "value": 3.844e8,
+            "unit": "m",
+            "name": "Earth-Moon distance",
+            "name_de": "Erde-Mond-Abstand",
+            "symbol": "d_EM"
+        },
+        "M_mercury": {
+            "value": 3.301e23,
+            "unit": "kg",
+            "name": "Mercury mass",
+            "name_de": "Merkurmasse"
+        },
+        "R_mercury": {
+            "value": 2.4397e6,
+            "unit": "m",
+            "name": "Mercury radius",
+            "name_de": "Merkurradius"
+        },
+        "a_mercury": {
+            "value": 5.791e10,
+            "unit": "m",
+            "name": "Mercury orbital radius",
+            "name_de": "Merkur-Bahnradius"
+        },
+        "M_venus": {
+            "value": 4.867e24,
+            "unit": "kg",
+            "name": "Venus mass",
+            "name_de": "Venusmasse"
+        },
+        "R_venus": {
+            "value": 6.0518e6,
+            "unit": "m",
+            "name": "Venus radius",
+            "name_de": "Venusradius"
+        },
+        "a_venus": {
+            "value": 1.082e11,
+            "unit": "m",
+            "name": "Venus orbital radius",
+            "name_de": "Venus-Bahnradius"
+        },
+        "a_earth": {
+            "value": 1.496e11,
+            "unit": "m",
+            "name": "Earth orbital radius",
+            "name_de": "Erde-Bahnradius"
+        },
+        "M_mars": {
+            "value": 6.417e23,
+            "unit": "kg",
+            "name": "Mars mass",
+            "name_de": "Marsmasse"
+        },
+        "R_mars": {
+            "value": 3.3895e6,
+            "unit": "m",
+            "name": "Mars radius",
+            "name_de": "Marsradius"
+        },
+        "a_mars": {
+            "value": 2.279e11,
+            "unit": "m",
+            "name": "Mars orbital radius",
+            "name_de": "Mars-Bahnradius"
+        },
+        "M_jupiter": {
+            "value": 1.898e27,
+            "unit": "kg",
+            "name": "Jupiter mass",
+            "name_de": "Jupitermasse"
+        },
+        "R_jupiter": {
+            "value": 6.9911e7,
+            "unit": "m",
+            "name": "Jupiter radius",
+            "name_de": "Jupiterradius"
+        },
+        "a_jupiter": {
+            "value": 7.786e11,
+            "unit": "m",
+            "name": "Jupiter orbital radius",
+            "name_de": "Jupiter-Bahnradius"
+        },
+        "M_saturn": {
+            "value": 5.683e26,
+            "unit": "kg",
+            "name": "Saturn mass",
+            "name_de": "Saturnmasse"
+        },
+        "R_saturn": {
+            "value": 5.8232e7,
+            "unit": "m",
+            "name": "Saturn radius",
+            "name_de": "Saturnradius"
+        },
+        "a_saturn": {
+            "value": 1.434e12,
+            "unit": "m",
+            "name": "Saturn orbital radius",
+            "name_de": "Saturn-Bahnradius"
+        },
+        "M_uranus": {
+            "value": 8.681e25,
+            "unit": "kg",
+            "name": "Uranus mass",
+            "name_de": "Uranusmasse"
+        },
+        "R_uranus": {
+            "value": 2.5362e7,
+            "unit": "m",
+            "name": "Uranus radius",
+            "name_de": "Uranusradius"
+        },
+        "a_uranus": {
+            "value": 2.871e12,
+            "unit": "m",
+            "name": "Uranus orbital radius",
+            "name_de": "Uranus-Bahnradius"
+        },
+        "M_neptune": {
+            "value": 1.024e26,
+            "unit": "kg",
+            "name": "Neptune mass",
+            "name_de": "Neptunmasse"
+        },
+        "R_neptune": {
+            "value": 2.4622e7,
+            "unit": "m",
+            "name": "Neptune radius",
+            "name_de": "Neptunradius"
+        },
+        "a_neptune": {
+            "value": 4.495e12,
+            "unit": "m",
+            "name": "Neptune orbital radius",
+            "name_de": "Neptun-Bahnradius"
         }
     },
     

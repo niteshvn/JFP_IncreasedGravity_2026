@@ -308,6 +308,9 @@
         <a class="nav-tab" onclick="showSection('forces')" data-en="Fundamental Forces" data-de="Fundamentalkraefte">Fundamental Forces</a>
         <a class="nav-tab" onclick="showSection('temperature')" data-en="Thermal Physics" data-de="Thermophysik">Thermal Physics</a>
         <a class="nav-tab" onclick="showSection('stellar')" data-en="Compact Stars" data-de="Kompakte Sterne">Compact Stars</a>
+        <a class="nav-tab" onclick="showSection('solarsystem')" data-en="Solar System" data-de="Sonnensystem">Solar System</a>
+        <a class="nav-tab" onclick="showSection('equilibrium')" data-en="Equilibrium" data-de="Gleichgewicht">Equilibrium</a>
+        <a class="nav-tab" onclick="showSection('earthevolution')" data-en="Earth Evolution" data-de="Erdevolution">Earth Evolution</a>
     </nav>
 
     <div class="content">
@@ -325,6 +328,12 @@
                 <button class="interactive-tab" onclick="loadInteractive('heisenberg_3d_interactive.html', this)" data-en="Heisenberg" data-de="Heisenberg">Heisenberg</button>
                 <button class="interactive-tab" onclick="loadInteractive('time_dilation_3d_interactive.html', this)" data-en="Time Dilation" data-de="Zeitdilatation">Time Dilation</button>
                 <button class="interactive-tab" onclick="loadInteractive('gravity_pauli_3d_interactive.html', this)" data-en="Gravity vs Pauli" data-de="Gravitation vs Pauli">Gravity vs Pauli</button>
+                <button class="interactive-tab" onclick="loadInteractive('solar_system_3d_interactive.html', this)" data-en="Solar System" data-de="Sonnensystem">Solar System</button>
+                <button class="interactive-tab" onclick="loadInteractive('solar_luminosity_3d_interactive.html', this)" data-en="Solar Luminosity" data-de="Sonnenleuchtkraft">Solar Luminosity</button>
+                <button class="interactive-tab" onclick="loadInteractive('hydrostatic_3d_interactive.html', this)" data-en="Hydrostatic" data-de="Hydrostatisch">Hydrostatic</button>
+                <button class="interactive-tab" onclick="loadInteractive('fine_structure_3d_interactive.html', this)" data-en="Fine Structure" data-de="Feinstruktur">Fine Structure</button>
+                <button class="interactive-tab" onclick="loadInteractive('earth_evolution_3d_interactive.html', this)" data-en="Earth Evolution" data-de="Erdevolution">Earth Evolution</button>
+                <button class="interactive-tab" onclick="loadInteractive('cosmic_scales_3d_interactive.html', this)" data-en="Cosmic Scales" data-de="Kosmische Skalen">Cosmic Scales</button>
             </div>
             <div class="interactive-container">
                 <iframe id="interactive-frame" src="visualizations/spacetime_3d_interactive.html"></iframe>
@@ -1137,6 +1146,278 @@
                 </div>
             </div>
         </div>
+
+        <!-- Solar System Section -->
+        <div id="solarsystem" class="section">
+            <h2 data-en="Solar System" data-de="Sonnensystem">Solar System</h2>
+
+            <div class="subsection-tabs">
+                <button class="subsection-tab active" onclick="showSubsection('solarsystem', 'sun', this)" data-en="Sun" data-de="Sonne">Sun</button>
+                <button class="subsection-tab" onclick="showSubsection('solarsystem', 'moontides', this)" data-en="Moon and Tides" data-de="Mond und Gezeiten">Moon and Tides</button>
+                <button class="subsection-tab" onclick="showSubsection('solarsystem', 'orbits', this)" data-en="Orbits" data-de="Umlaufbahnen">Orbits</button>
+                <button class="subsection-tab" onclick="showSubsection('solarsystem', 'celestial', this)" data-en="Celestial Bodies" data-de="Himmelskoerper">Celestial Bodies</button>
+            </div>
+
+            <div id="solarsystem-sun" class="subsection-content active">
+                <div class="viz-item">
+                    <div class="viz-image"><img src="visualizations/solar_structure.png" data-img-base="solar_structure" alt="Solar Structure Under Modified Gravity"></div>
+                    <div class="viz-details">
+                        <h3 data-en="Solar Structure Under Modified Gravity" data-de="Sonnenstruktur bei modifizierter Gravitation">Solar Structure Under Modified Gravity</h3>
+                        <p class="description" data-en="How the Sun internal structure changes when G is varied. Luminosity scales as G^4, stellar radius as 1/G." data-de="Wie sich die Sonnenstruktur bei variiertem G aendert. Leuchtkraft skaliert mit G^4, Radius mit 1/G.">How the Sun internal structure changes when G is varied. Luminosity scales as G^4, stellar radius as 1/G.</p>
+                        <div class="formulas"><h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-luminosity"></div>
+                            <div class="formula" id="formula-solar-radius"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="viz-separator"></div>
+
+                <div class="viz-item">
+                    <div class="viz-image"><img src="visualizations/solar_lifetime.png" data-img-base="solar_lifetime" alt="Stellar Lifetime and Stability"></div>
+                    <div class="viz-details">
+                        <h3 data-en="Stellar Lifetime and Stability" data-de="Sternlebensdauer und Stabilitaet">Stellar Lifetime and Stability</h3>
+                        <p class="description" data-en="Main-sequence lifetime depends on fuel supply vs luminosity. Modified gravity shifts the Eddington limit." data-de="Hauptreihenlebensdauer haengt von Brennstoff vs Leuchtkraft ab.">Main-sequence lifetime depends on fuel supply vs luminosity. Modified gravity shifts the Eddington limit.</p>
+                        <div class="formulas"><h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-virial-temp"></div>
+                            <div class="formula" id="formula-eddington"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="viz-separator"></div>
+
+                <div class="viz-item">
+                    <div class="viz-image"><img src="visualizations/solar_summary.png" data-img-base="solar_summary" alt="Solar Physics Summary"></div>
+                    <div class="viz-details">
+                        <h3 data-en="Solar Physics Summary" data-de="Sonnenphysik Zusammenfassung">Solar Physics Summary</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div id="solarsystem-moontides" class="subsection-content">
+                <div class="viz-item">
+                    <div class="viz-image"><img src="visualizations/moon_tidal_effects.png" data-img-base="moon_tidal_effects" alt="Moon and Tidal Effects"></div>
+                    <div class="viz-details">
+                        <h3 data-en="Moon and Tidal Effects" data-de="Mond- und Gezeiteneffekte">Moon and Tidal Effects</h3>
+                        <p class="description" data-en="Tidal forces from gravity gradient. Roche limit defines closest approach before disruption." data-de="Gezeitenkraefte aus Gravitationsgradient. Roche-Grenze definiert minimale Annaeherung.">Tidal forces from gravity gradient. Roche limit defines closest approach before disruption.</p>
+                        <div class="formulas"><h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-tidal-force"></div>
+                            <div class="formula" id="formula-roche"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="solarsystem-orbits" class="subsection-content">
+                <div class="viz-item">
+                    <div class="viz-image"><img src="visualizations/earth_orbit.png" data-img-base="earth_orbit" alt="Earth Orbit Under Modified Gravity"></div>
+                    <div class="viz-details">
+                        <h3 data-en="Earth Orbit Under Modified Gravity" data-de="Erdumlaufbahn bei modifizierter Gravitation">Earth Orbit Under Modified Gravity</h3>
+                        <p class="description" data-en="Kepler third law, orbital periods, and precession under modified gravity." data-de="Keplers drittes Gesetz und Praezession bei modifizierter Gravitation.">Kepler third law, orbital periods, and precession under modified gravity.</p>
+                        <div class="formulas"><h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-kepler-3"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="viz-separator"></div>
+
+                <div class="viz-item">
+                    <div class="viz-image"><img src="visualizations/orbital_summary.png" data-img-base="orbital_summary" alt="Orbital Mechanics Summary"></div>
+                    <div class="viz-details">
+                        <h3 data-en="Orbital Mechanics Summary" data-de="Bahnmechanik Zusammenfassung">Orbital Mechanics Summary</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div id="solarsystem-celestial" class="subsection-content">
+                <div class="viz-item">
+                    <div class="viz-image"><img src="visualizations/planetary_comparison.png" data-img-base="planetary_comparison" alt="Planetary Comparison"></div>
+                    <div class="viz-details">
+                        <h3 data-en="Planetary Comparison" data-de="Planetenvergleich">Planetary Comparison</h3>
+                        <p class="description" data-en="Planetary radius, gravity, escape velocity scaling across solar system bodies." data-de="Planetenradius, Gravitation, Fluchtgeschwindigkeit verschiedener Koerper.">Planetary radius, gravity, escape velocity scaling across solar system bodies.</p>
+                        <div class="formulas"><h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-escape-vel-solar"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="viz-separator"></div>
+
+                <div class="viz-item">
+                    <div class="viz-image"><img src="visualizations/solar_system_positioning.png" data-img-base="solar_system_positioning" alt="Solar System Positioning"></div>
+                    <div class="viz-details">
+                        <h3 data-en="Solar System Positioning" data-de="Sonnensystem-Positionierung">Solar System Positioning</h3>
+                        <p class="description" data-en="Orbital positions and Hill spheres under modified gravity." data-de="Orbitalpositionen und Hill-Sphaeren bei modifizierter Gravitation.">Orbital positions and Hill spheres under modified gravity.</p>
+                        <div class="formulas"><h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-kepler-3-celestial"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="viz-separator"></div>
+
+                <div class="viz-item">
+                    <div class="viz-image"><img src="visualizations/celestial_summary.png" data-img-base="celestial_summary" alt="Celestial Bodies Summary"></div>
+                    <div class="viz-details">
+                        <h3 data-en="Celestial Bodies Summary" data-de="Himmelskoerper Zusammenfassung">Celestial Bodies Summary</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Equilibrium Section -->
+        <div id="equilibrium" class="section">
+            <h2 data-en="Equilibrium" data-de="Gleichgewicht">Equilibrium</h2>
+
+            <div class="subsection-tabs">
+                <button class="subsection-tab active" onclick="showSubsection('equilibrium', 'hydrostatic', this)" data-en="Hydrostatic" data-de="Hydrostatisch">Hydrostatic</button>
+                <button class="subsection-tab" onclick="showSubsection('equilibrium', 'finestructure', this)" data-en="Fine Structure" data-de="Feinstruktur">Fine Structure</button>
+                <button class="subsection-tab" onclick="showSubsection('equilibrium', 'cosmic', this)" data-en="Cosmic Effects" data-de="Kosmische Effekte">Cosmic Effects</button>
+            </div>
+
+            <div id="equilibrium-hydrostatic" class="subsection-content active">
+                <div class="viz-item">
+                    <div class="viz-image"><img src="visualizations/hydrostatic_profiles.png" data-img-base="hydrostatic_profiles" alt="Hydrostatic Pressure Profiles"></div>
+                    <div class="viz-details">
+                        <h3 data-en="Hydrostatic Pressure Profiles" data-de="Hydrostatische Druckprofile">Hydrostatic Pressure Profiles</h3>
+                        <p class="description" data-en="Lane-Emden equation governs polytropic stellar structure." data-de="Lane-Emden-Gleichung bestimmt polytropische Sternmodelle.">Lane-Emden equation governs polytropic stellar structure.</p>
+                        <div class="formulas"><h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-lane-emden"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="viz-separator"></div>
+
+                <div class="viz-item">
+                    <div class="viz-image"><img src="visualizations/hydrostatic_comparison.png" data-img-base="hydrostatic_comparison" alt="Hydrostatic Comparison"></div>
+                    <div class="viz-details">
+                        <h3 data-en="Hydrostatic Comparison" data-de="Hydrostatischer Vergleich">Hydrostatic Comparison</h3>
+                        <p class="description" data-en="How central pressure, radius, density change with G." data-de="Wie sich Zentraldruck, Radius und Dichte mit G aendern.">How central pressure, radius, density change with G.</p>
+                        <div class="formulas"><h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-tov-eq"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="viz-separator"></div>
+
+                <div class="viz-item">
+                    <div class="viz-image"><img src="visualizations/hydrostatic_summary.png" data-img-base="hydrostatic_summary" alt="Hydrostatic Summary"></div>
+                    <div class="viz-details">
+                        <h3 data-en="Hydrostatic Summary" data-de="Hydrostatische Zusammenfassung">Hydrostatic Summary</h3>
+                        <p class="description" data-en="Phase diagram, stability map, Lane-Emden and TOV results." data-de="Phasendiagramm, Stabilitaetskarte, Lane-Emden und TOV.">Phase diagram, stability map, Lane-Emden and TOV results.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="equilibrium-finestructure" class="subsection-content">
+                <div class="viz-item">
+                    <div class="viz-image"><img src="visualizations/alpha_scaling.png" data-img-base="alpha_scaling" alt="Fine-Structure Constant Scaling"></div>
+                    <div class="viz-details">
+                        <h3 data-en="Fine-Structure Constant Scaling" data-de="Feinstrukturkonstanten-Skalierung">Fine-Structure Constant Scaling</h3>
+                        <p class="description" data-en="Fine-structure constant alpha varies inversely with hbar." data-de="Feinstrukturkonstante alpha variiert invers mit hbar.">Fine-structure constant alpha varies inversely with hbar.</p>
+                        <div class="formulas"><h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-sommerfeld"></div>
+                            <div class="formula" id="formula-alpha-scaling"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="viz-separator"></div>
+
+                <div class="viz-item">
+                    <div class="viz-image"><img src="visualizations/alpha_consequences.png" data-img-base="alpha_consequences" alt="Consequences of Alpha Variation"></div>
+                    <div class="viz-details">
+                        <h3 data-en="Consequences of Alpha Variation" data-de="Konsequenzen der Alpha-Variation">Consequences of Alpha Variation</h3>
+                        <p class="description" data-en="Alpha variation affects Rydberg energy, chemistry, radiative lifetimes." data-de="Alpha-Variation beeinflusst Rydberg-Energie, Stabilitaet, Lebensdauern.">Alpha variation affects Rydberg energy, chemistry, radiative lifetimes.</p>
+                        <div class="formulas"><h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-binding-alpha"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="viz-separator"></div>
+
+                <div class="viz-item">
+                    <div class="viz-image"><img src="visualizations/alpha_summary.png" data-img-base="alpha_summary" alt="Fine Structure Summary"></div>
+                    <div class="viz-details">
+                        <h3 data-en="Fine Structure Summary" data-de="Feinstruktur Zusammenfassung">Fine Structure Summary</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div id="equilibrium-cosmic" class="subsection-content">
+                <div class="viz-item">
+                    <div class="viz-image"><img src="visualizations/cosmic_scales.png" data-img-base="cosmic_scales" alt="Cosmic Scales"></div>
+                    <div class="viz-details">
+                        <h3 data-en="Cosmic Scales" data-de="Kosmische Skalen">Cosmic Scales</h3>
+                        <p class="description" data-en="Planck units, Jeans mass, Friedmann expansion rate." data-de="Planck-Einheiten, Jeans-Masse, Friedmann-Expansionsrate.">Planck units, Jeans mass, Friedmann expansion rate.</p>
+                        <div class="formulas"><h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-planck-mass"></div>
+                            <div class="formula" id="formula-jeans"></div>
+                            <div class="formula" id="formula-friedmann"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="viz-separator"></div>
+
+                <div class="viz-item">
+                    <div class="viz-image"><img src="visualizations/cosmic_summary.png" data-img-base="cosmic_summary" alt="Cosmological Summary"></div>
+                    <div class="viz-details">
+                        <h3 data-en="Cosmological Summary" data-de="Kosmologische Zusammenfassung">Cosmological Summary</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Earth Evolution Section -->
+        <div id="earthevolution" class="section">
+            <h2 data-en="Earth Evolution" data-de="Erdevolution">Earth Evolution</h2>
+
+            <div class="subsection-tabs">
+                <button class="subsection-tab active" onclick="showSubsection('earthevolution', 'change', this)" data-en="Change Diagram" data-de="Aenderungsdiagramm">Change Diagram</button>
+                <button class="subsection-tab" onclick="showSubsection('earthevolution', 'combined', this)" data-en="Combined View" data-de="Kombinierte Ansicht">Combined View</button>
+            </div>
+
+            <div id="earthevolution-change" class="subsection-content active">
+                <div class="viz-item">
+                    <div class="viz-image"><img src="visualizations/earth_change_diagram.png" data-img-base="earth_change_diagram" alt="Earth Parameter Change Diagram"></div>
+                    <div class="viz-details">
+                        <h3 data-en="Earth Parameter Change Diagram" data-de="Erd-Parameteraenderungsdiagramm">Earth Parameter Change Diagram</h3>
+                        <p class="description" data-en="How R, density, g, v_esc, H, M_Ch change with hbar_scale." data-de="Wie sich R, Dichte, g, v_esc, H, M_Ch mit hbar_scale aendern.">How R, density, g, v_esc, H, M_Ch change with hbar_scale.</p>
+                        <div class="formulas"><h4 data-en="Key Formulas" data-de="Wichtige Formeln">Key Formulas</h4>
+                            <div class="formula" id="formula-earth-density"></div>
+                            <div class="formula" id="formula-earth-radius"></div>
+                            <div class="formula" id="formula-earth-gravity"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="viz-separator"></div>
+
+                <div class="viz-item">
+                    <div class="viz-image"><img src="visualizations/earth_collapse_summary.png" data-img-base="earth_collapse_summary" alt="Earth Collapse Summary"></div>
+                    <div class="viz-details">
+                        <h3 data-en="Earth Collapse Summary" data-de="Erdkollaps-Zusammenfassung">Earth Collapse Summary</h3>
+                        <p class="description" data-en="Radar chart and M_Ch vs M_Earth crossing analysis." data-de="Radarchart und M_Ch vs M_Erde Kreuzungsanalyse.">Radar chart and M_Ch vs M_Earth crossing analysis.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="earthevolution-combined" class="subsection-content">
+                <div class="viz-item">
+                    <div class="viz-image"><img src="visualizations/earth_combined.png" data-img-base="earth_combined" alt="Combined Earth Visualization"></div>
+                    <div class="viz-details">
+                        <h3 data-en="Combined Earth Visualization" data-de="Kombinierte Erdvisualisierung">Combined Earth Visualization</h3>
+                        <p class="description" data-en="Cross-section at 4 hbar scales with pressures and parameter dashboard." data-de="Querschnitt bei 4 hbar-Skalen mit Druckbeitraegen und Dashboard.">Cross-section at 4 hbar scales with pressures and parameter dashboard.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="footer">
@@ -1283,7 +1564,33 @@
                 // Gravity vs Pauli formulas
                 'formula-central-pressure': 'P_c \\approx \\frac{GM^2}{R^4}',
                 'formula-balance': '\\frac{P_{grav}}{P_{Pauli}} \\propto \\frac{G}{\\hbar^2}',
-                'formula-hypothesis': '\\text{If } G \\times 10^{36} \\text{ or } \\hbar \\times 10^{-18}: \\text{ gravity dominates}'
+                'formula-hypothesis': '\\text{If } G \\times 10^{36} \\text{ or } \\hbar \\times 10^{-18}: \\text{ gravity dominates}',
+                // Solar physics
+                'formula-luminosity': 'L \\propto G^4 M^3',
+                'formula-solar-radius': 'R_\\star \\propto \\frac{1}{G}',
+                'formula-virial-temp': 'T_c = \\frac{GM\\mu m_p}{3k_B R}',
+                'formula-eddington': 'L_{Edd} = \\frac{4\\pi GMc}{\\kappa}',
+                'formula-escape-vel-solar': 'v_{esc} = \\sqrt{\\frac{2GM}{R}}',
+                'formula-kepler-3-celestial': 'T^2 = \\frac{4\\pi^2 a^3}{GM}',
+                // Orbital mechanics
+                'formula-kepler-3': 'T^2 = \\frac{4\\pi^2 a^3}{GM}',
+                'formula-tidal-force': 'F_{tidal} = \\frac{2GMR}{d^3}',
+                'formula-roche': 'd_{Roche} = 2.44 R \\left(\\frac{\\rho_1}{\\rho_2}\\right)^{1/3}',
+                // Hydrostatic equilibrium
+                'formula-lane-emden': '\\frac{1}{\\xi^2}\\frac{d}{d\\xi}\\left(\\xi^2 \\frac{d\\theta}{d\\xi}\\right) = -\\theta^n',
+                'formula-tov-eq': '\\frac{dP}{dr} = -\\frac{(\\rho + P/c^2)(m + 4\\pi r^3 P/c^2)}{r(r - 2Gm/c^2)}G',
+                // Fine structure
+                'formula-sommerfeld': '\\alpha = \\frac{e^2}{4\\pi\\varepsilon_0 \\hbar c} \\approx \\frac{1}{137}',
+                'formula-alpha-scaling': '\\alpha(\\hbar\\') = \\frac{\\alpha_0}{\\hbar_{scale}}',
+                'formula-binding-alpha': 'E_1 = -\\frac{1}{2}m_e c^2 \\alpha^2',
+                // Cosmological
+                'formula-planck-mass': 'm_P = \\sqrt{\\frac{\\hbar c}{G}}',
+                'formula-jeans': 'M_J \\propto G^{-3/2}',
+                'formula-friedmann': 'H^2 = \\frac{8\\pi G \\rho}{3}',
+                // Earth evolution
+                'formula-earth-density': '\\rho \\propto \\frac{1}{\\hbar^6}',
+                'formula-earth-radius': 'R \\propto \\hbar^2',
+                'formula-earth-gravity': 'g \\propto \\frac{1}{\\hbar^4}'
             };
 
             for (const [id, formula] of Object.entries(formulas)) {

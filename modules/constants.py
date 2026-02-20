@@ -54,7 +54,44 @@ class PhysicalConstants:
     M_earth: float       # Earth mass [kg]
     R_earth: float       # Earth radius [m]
     chandrasekhar_limit: float  # In solar masses
-    
+    L_sun: float = 3.828e26       # Solar luminosity [W]
+    T_core_sun: float = 1.57e7   # Solar core temperature [K]
+    sigma: float = 5.670374419e-8 # Stefan-Boltzmann constant [W·m⁻²·K⁻⁴]
+    AU: float = 1.496e11          # Astronomical unit [m]
+
+    # Moon data
+    M_moon: float = 7.342e22     # Lunar mass [kg]
+    R_moon: float = 1.7374e6    # Lunar radius [m]
+    d_earth_moon: float = 3.844e8  # Earth-Moon distance [m]
+
+    # Planet masses [kg]
+    M_mercury: float = 3.301e23
+    M_venus: float = 4.867e24
+    M_mars: float = 6.417e23
+    M_jupiter: float = 1.898e27
+    M_saturn: float = 5.683e26
+    M_uranus: float = 8.681e25
+    M_neptune: float = 1.024e26
+
+    # Planet radii [m]
+    R_mercury: float = 2.4397e6
+    R_venus: float = 6.0518e6
+    R_mars: float = 3.3895e6
+    R_jupiter: float = 6.9911e7
+    R_saturn: float = 5.8232e7
+    R_uranus: float = 2.5362e7
+    R_neptune: float = 2.4622e7
+
+    # Orbital semi-major axes [m]
+    a_mercury: float = 5.791e10
+    a_venus: float = 1.082e11
+    a_earth: float = 1.496e11
+    a_mars: float = 2.279e11
+    a_jupiter: float = 7.786e11
+    a_saturn: float = 1.434e12
+    a_uranus: float = 2.871e12
+    a_neptune: float = 4.495e12
+
     # Scaling factors applied
     hbar_scale: float = 1.0
     G_scale: float = 1.0
@@ -181,6 +218,26 @@ class PhysicalConstants:
         """
         return self.G * m1 * m2 / r**2
     
+    def planck_mass(self) -> float:
+        """Calculate the Planck mass: m_P = sqrt(hbar * c / G)."""
+        return math.sqrt(self.hbar * self.c / self.G)
+
+    def planck_length(self) -> float:
+        """Calculate the Planck length: l_P = sqrt(hbar * G / c^3)."""
+        return math.sqrt(self.hbar * self.G / self.c**3)
+
+    def planck_temperature(self) -> float:
+        """Calculate the Planck temperature: T_P = sqrt(hbar * c^5 / (G * k_B^2))."""
+        return math.sqrt(self.hbar * self.c**5 / (self.G * self.k_B**2))
+
+    def jeans_mass(self, temperature: float, density: float, mu: float = 2.0) -> float:
+        """
+        Calculate the Jeans mass for gravitational collapse.
+        M_J = (5 k_B T / (G mu m_p))^(3/2) * (3 / (4 pi rho))^(1/2)
+        """
+        return ((5 * self.k_B * temperature) / (self.G * mu * self.m_p))**1.5 * \
+               math.sqrt(3 / (4 * math.pi * density))
+
     def force_ratio_protons(self, r: float) -> float:
         """
         Calculate the ratio of gravitational to electromagnetic force between two protons.
@@ -363,6 +420,35 @@ def get_constants(
         M_earth=astro['M_earth']['value'],
         R_earth=astro['R_earth']['value'],
         chandrasekhar_limit=astro['chandrasekhar_limit']['value'],
+        L_sun=astro.get('L_sun', {}).get('value', 3.828e26),
+        T_core_sun=astro.get('T_core_sun', {}).get('value', 1.57e7),
+        sigma=astro.get('sigma', {}).get('value', 5.670374419e-8),
+        AU=astro.get('AU', {}).get('value', 1.496e11),
+        M_moon=astro.get('M_moon', {}).get('value', 7.342e22),
+        R_moon=astro.get('R_moon', {}).get('value', 1.7374e6),
+        d_earth_moon=astro.get('d_earth_moon', {}).get('value', 3.844e8),
+        M_mercury=astro.get('M_mercury', {}).get('value', 3.301e23),
+        M_venus=astro.get('M_venus', {}).get('value', 4.867e24),
+        M_mars=astro.get('M_mars', {}).get('value', 6.417e23),
+        M_jupiter=astro.get('M_jupiter', {}).get('value', 1.898e27),
+        M_saturn=astro.get('M_saturn', {}).get('value', 5.683e26),
+        M_uranus=astro.get('M_uranus', {}).get('value', 8.681e25),
+        M_neptune=astro.get('M_neptune', {}).get('value', 1.024e26),
+        R_mercury=astro.get('R_mercury', {}).get('value', 2.4397e6),
+        R_venus=astro.get('R_venus', {}).get('value', 6.0518e6),
+        R_mars=astro.get('R_mars', {}).get('value', 3.3895e6),
+        R_jupiter=astro.get('R_jupiter', {}).get('value', 6.9911e7),
+        R_saturn=astro.get('R_saturn', {}).get('value', 5.8232e7),
+        R_uranus=astro.get('R_uranus', {}).get('value', 2.5362e7),
+        R_neptune=astro.get('R_neptune', {}).get('value', 2.4622e7),
+        a_mercury=astro.get('a_mercury', {}).get('value', 5.791e10),
+        a_venus=astro.get('a_venus', {}).get('value', 1.082e11),
+        a_earth=astro.get('a_earth', {}).get('value', 1.496e11),
+        a_mars=astro.get('a_mars', {}).get('value', 2.279e11),
+        a_jupiter=astro.get('a_jupiter', {}).get('value', 7.786e11),
+        a_saturn=astro.get('a_saturn', {}).get('value', 1.434e12),
+        a_uranus=astro.get('a_uranus', {}).get('value', 2.871e12),
+        a_neptune=astro.get('a_neptune', {}).get('value', 4.495e12),
         hbar_scale=hbar_scale,
         G_scale=G_scale
     )
