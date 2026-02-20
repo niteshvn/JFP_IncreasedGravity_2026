@@ -2188,15 +2188,17 @@ def plot_cosmic_scales_3d_interactive(
     # Toggle buttons
     mass_label = 'Planck Mass' if language == 'en' else 'Planck-Masse'
     length_label = 'Planck Length' if language == 'en' else 'Planck-Länge'
+    show_label = 'Show:' if language == 'en' else 'Zeige:'
     updatemenus = [dict(
         type='buttons',
         direction='left',
-        x=0.5, y=1.08, xanchor='center',
+        x=0.02, y=0.98, xanchor='left', yanchor='top',
+        pad=dict(r=10, t=10),
         buttons=[
-            dict(label=mass_label, method='update',
+            dict(label=f'  {mass_label}  ', method='update',
                  args=[{'visible': [True, False, True]},
                        {'scene.zaxis.title': 'log₁₀(m_P/m_P₀)'}]),
-            dict(label=length_label, method='update',
+            dict(label=f'  {length_label}  ', method='update',
                  args=[{'visible': [False, True, True]},
                        {'scene.zaxis.title': 'log₁₀(l_P/l_P₀)'}])
         ]
@@ -2207,7 +2209,7 @@ def plot_cosmic_scales_3d_interactive(
              'Planck-Skalen: m_P(ℏ, G) und l_P(ℏ, G)<br><sup>m_P = √(ℏc/G), l_P = √(ℏG/c³)</sup>')
 
     fig.update_layout(
-        title=dict(text=title, x=0.5),
+        title=dict(text=title, x=0.5, y=0.97),
         scene=dict(
             xaxis_title='ℏ/ℏ₀',
             yaxis_title='G/G₀',
@@ -2219,7 +2221,7 @@ def plot_cosmic_scales_3d_interactive(
         ),
         updatemenus=updatemenus,
         height=900,
-        margin=dict(l=0, r=0, t=80, b=10),
+        margin=dict(l=0, r=0, t=60, b=10),
         template='plotly_white',
         legend=dict(
             x=0.5, y=0.12, xanchor='center', yanchor='top',
