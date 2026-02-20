@@ -1588,6 +1588,10 @@ def plot_solar_system_3d_interactive(
     """
     Interactive 3D solar system with orbits that scale with G.
     Interaktives 3D-Sonnensystem mit Orbits, die mit G skalieren.
+
+    Uses cube-root display scaling so inner planets (Mercury-Mars) are
+    visually distinguishable from outer planets (Jupiter-Neptune).
+    Hover text shows actual AU distances.
     """
     check_plotly()
     if constants is None:
@@ -1595,76 +1599,92 @@ def plot_solar_system_3d_interactive(
 
     fig = go.Figure()
 
-    # Planet data: name_en, name_de, orbital_radius_AU, color, size
+    # Planet data: name_en, name_de, orbital_radius_AU, color, marker_size
     planets = [
-        ('Mercury', 'Merkur', 0.387, '#A0A0A0', 4),
-        ('Venus', 'Venus', 0.723, '#E8B86D', 6),
-        ('Earth', 'Erde', 1.0, '#4B8BBE', 7),
-        ('Mars', 'Mars', 1.524, '#C1440E', 5),
+        ('Mercury', 'Merkur', 0.387, '#A0A0A0', 5),
+        ('Venus', 'Venus', 0.723, '#E8B86D', 7),
+        ('Earth', 'Erde', 1.0, '#4B8BBE', 8),
+        ('Mars', 'Mars', 1.524, '#C1440E', 6),
         ('Jupiter', 'Jupiter', 5.203, '#C88B3A', 14),
         ('Saturn', 'Saturn', 9.537, '#E8D191', 12),
-        ('Uranus', 'Uranus', 19.19, '#73C2FB', 9),
-        ('Neptune', 'Neptun', 30.07, '#3454D1', 9),
+        ('Uranus', 'Uranus', 19.19, '#73C2FB', 10),
+        ('Neptune', 'Neptun', 30.07, '#3454D1', 10),
     ]
 
-    # G scaling factors for frames
+    # Compressed display function: r_display = r^(1/3)
+    # This maps 0.39-30 AU to 0.73-3.11 (4.3x ratio instead of 78x)
+    def compress(r):
+        return np.cbrt(r)
+
+    # G scaling factors for slider frames
     g_scales = np.linspace(0.5, 3.0, 26)
 
-    # Draw orbits and planets for default G=1
-    theta = np.linspace(0, 2 * np.pi, 200)
+    theta = np.linspace(0, 2 * np.pi, 300)
 
-    # Sun
+    # Sun at center
     fig.add_trace(go.Scatter3d(
         x=[0], y=[0], z=[0],
         mode='markers',
-        marker=dict(size=18, color='#FFD700'),
+        marker=dict(size=16, color='#FFD700'),
         name='Sun' if language == 'en' else 'Sonne',
-        showlegend=True
+        showlegend=True,
+        hovertext='Sun (0 AU)' if language == 'en' else 'Sonne (0 AU)'
     ))
 
     for name_en, name_de, r_au, color, sz in planets:
         name = name_en if language == 'en' else name_de
-        # Orbit scales as r ∝ 1/G (from Kepler: a = GM/v², but v set by energy, so a ∝ 1/G for fixed energy)
-        x_orb = r_au * np.cos(theta)
-        y_orb = r_au * np.sin(theta)
+        r_disp = compress(r_au)
+
+        x_orb = r_disp * np.cos(theta)
+        y_orb = r_disp * np.sin(theta)
         z_orb = np.zeros_like(theta)
 
-        # Orbit line
+        # Orbit ring
         fig.add_trace(go.Scatter3d(
             x=x_orb, y=y_orb, z=z_orb,
             mode='lines',
-            line=dict(color=color, width=2),
-            name=f'{name} ({r_au:.1f} AU)',
+            line=dict(color=color, width=3),
+            name=f'{name} ({r_au:.2f} AU)',
             showlegend=True,
-            hoverinfo='name'
+            hovertext=f'{name}: {r_au:.2f} AU'
         ))
 
-        # Planet marker
+        # Planet marker at (r, 0, 0)
         fig.add_trace(go.Scatter3d(
-            x=[r_au], y=[0], z=[0],
-            mode='markers',
-            marker=dict(size=sz, color=color),
+            x=[r_disp], y=[0], z=[0],
+            mode='markers+text',
+            marker=dict(size=sz, color=color, line=dict(width=1, color='black')),
+            text=[name],
+            textposition='top center',
+            textfont=dict(size=10, color=color),
             showlegend=False,
-            hovertext=name
+            hovertext=f'{name}: {r_au:.2f} AU'
         ))
 
-    # Create frames for G slider
+    # Create animation frames for G slider
     frames = []
     for g_s in g_scales:
         frame_data = [go.Scatter3d(x=[0], y=[0], z=[0],
                                     mode='markers',
-                                    marker=dict(size=18, color='#FFD700'))]
+                                    marker=dict(size=16, color='#FFD700'))]
         for name_en, name_de, r_au, color, sz in planets:
-            r_scaled = r_au / g_s
-            x_orb = r_scaled * np.cos(theta)
-            y_orb = r_scaled * np.sin(theta)
+            name = name_en if language == 'en' else name_de
+            r_actual = r_au / g_s
+            r_disp = compress(r_actual)
+            x_orb = r_disp * np.cos(theta)
+            y_orb = r_disp * np.sin(theta)
             z_orb = np.zeros_like(theta)
             frame_data.append(go.Scatter3d(
                 x=x_orb, y=y_orb, z=z_orb,
-                mode='lines', line=dict(color=color, width=2)))
+                mode='lines', line=dict(color=color, width=3),
+                hovertext=f'{name}: {r_actual:.2f} AU'))
             frame_data.append(go.Scatter3d(
-                x=[r_scaled], y=[0], z=[0],
-                mode='markers', marker=dict(size=sz, color=color)))
+                x=[r_disp], y=[0], z=[0],
+                mode='markers+text',
+                marker=dict(size=sz, color=color, line=dict(width=1, color='black')),
+                text=[name], textposition='top center',
+                textfont=dict(size=10, color=color),
+                hovertext=f'{name}: {r_actual:.2f} AU'))
         frames.append(go.Frame(data=frame_data, name=f'{g_s:.2f}'))
 
     fig.frames = frames
@@ -1672,32 +1692,35 @@ def plot_solar_system_3d_interactive(
     # Slider
     sliders = [dict(
         active=5,
-        currentvalue=dict(prefix='G/G₀ = ', suffix=''),
+        currentvalue=dict(prefix='G/G\u2080 = ', suffix=''),
         pad=dict(t=50),
         steps=[dict(args=[[f'{g_s:.2f}'], dict(frame=dict(duration=50, redraw=True), mode='immediate')],
                      label=f'{g_s:.1f}', method='animate')
                for g_s in g_scales]
     )]
 
-    title = ('Solar System Orbits vs Gravitational Strength<br><sup>Orbital radius ∝ 1/G</sup>'
+    scale_note = 'radial scale \u221d r\u00b9\u0027\u00b3 for visibility' if language == 'en' else 'Radialskala \u221d r\u00b9\u0027\u00b3 zur Sichtbarkeit'
+    title = (f'Solar System Orbits vs Gravitational Strength<br><sup>Orbital radius \u221d 1/G \u2014 {scale_note}</sup>'
              if language == 'en' else
-             'Planetenbahnen vs Gravitationsstärke<br><sup>Bahnradius ∝ 1/G</sup>')
+             f'Planetenbahnen vs Gravitationsst\u00e4rke<br><sup>Bahnradius \u221d 1/G \u2014 {scale_note}</sup>')
 
     fig.update_layout(
         title=dict(text=title, x=0.5),
         scene=dict(
-            xaxis_title='x (AU)', yaxis_title='y (AU)', zaxis_title='z (AU)',
-            camera=dict(eye=dict(x=0.8, y=0.8, z=1.5)),
-            aspectmode='cube',
-            domain=dict(x=[0, 1], y=[0.2, 1])
+            xaxis_title='x (compressed)',
+            yaxis_title='y (compressed)',
+            zaxis_title='z',
+            camera=dict(eye=dict(x=0.0, y=0.0, z=2.5)),
+            aspectmode='data',
+            domain=dict(x=[0, 1], y=[0.22, 1])
         ),
         sliders=sliders,
         height=900,
-        margin=dict(l=0, r=0, t=50, b=10),
+        margin=dict(l=0, r=0, t=60, b=10),
         template='plotly_white',
         showlegend=True,
         legend=dict(
-            x=0.5, y=0.15, xanchor='center', yanchor='top',
+            x=0.5, y=0.16, xanchor='center', yanchor='top',
             bgcolor='rgba(255,255,255,0.95)',
             bordercolor='rgba(180,180,180,0.8)',
             borderwidth=1, font=dict(size=11), orientation='h'
