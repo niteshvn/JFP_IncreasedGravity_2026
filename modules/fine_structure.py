@@ -177,7 +177,8 @@ def plot_alpha_scaling(
     if constants is None:
         constants = get_constants()
 
-    hbar_scales = np.logspace(np.log10(0.01), np.log10(10), 500)
+    # Extended to 10^-20 to show hbar×10^-18 threshold (compensates G×10^36)
+    hbar_scales = np.logspace(-20, 1, 500)
     alpha_0 = constants.alpha
     eV = constants.e
 
@@ -213,6 +214,8 @@ def plot_alpha_scaling(
     ax1.axhline(y=0.5, color=COLORS['primary_amber'], linestyle='--', linewidth=1.5,
                 label=r'$\alpha=0.5$ (chemistry limit)')
     ax1.axvline(x=1.0, color=COLORS['standard'], linestyle=':', linewidth=1.5)
+    ax1.axvline(x=1e-18, color='red', linestyle='--', linewidth=2, alpha=0.8)
+    ax1.text(1e-18 * 1.5, alpha_vals.max() * 0.1, r'$\hbar \times 10^{-18}$', color='red', fontsize=10, rotation=90, va='bottom')
     ax1.fill_between(hbar_scales, alpha_vals, 1.0, where=alpha_vals > 1.0,
                      color=COLORS['relativistic'], alpha=0.15)
     ax1.set_xlabel(r'$\hbar / \hbar_0$', fontsize=12)
@@ -306,7 +309,8 @@ def plot_alpha_consequences(
         fig.suptitle('Consequences of Varying the Fine-Structure Constant',
                      fontsize=16, fontweight='bold', y=0.98)
 
-    hbar_scales = np.logspace(np.log10(0.01), np.log10(10), 500)
+    # Extended to 10^-20 to show hbar×10^-18 threshold (compensates G×10^36)
+    hbar_scales = np.logspace(-20, 1, 500)
     alpha_0 = constants.alpha
     eV = constants.e
     alpha_vals = alpha_0 / hbar_scales
@@ -427,7 +431,8 @@ def plot_alpha_summary(
 
     alpha_0 = constants.alpha
     eV = constants.e
-    hbar_scales = np.logspace(np.log10(0.01), np.log10(10), 500)
+    # Extended to 10^-20 to show hbar×10^-18 threshold (compensates G×10^36)
+    hbar_scales = np.logspace(-20, 1, 500)
     alpha_vals = alpha_0 / hbar_scales
 
     # --- Subplot 1: Bar chart ---
