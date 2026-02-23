@@ -332,10 +332,28 @@ def plot_atom_size_comparison(
 
     # Set axis limits
     ax.set_xlim(0, 1)
-    ax.set_ylim(0, 0.95)
+    ax.set_ylim(-0.15, 0.95)
     ax.set_aspect('equal')
     ax.axis('off')
 
+    # Add ESSAY SCENARIO annotation (G×10³⁶, ℏ×10⁻¹⁸)
+    # At ℏ×10⁻¹⁸: a₀ = a₀_std × (10⁻¹⁸)² = a₀_std × 10⁻³⁶
+    # Atoms would be 10³⁶ times smaller - impossible to visualize!
+    essay_a0 = a_0_std * (1e-18)**2  # = a_0_std × 10⁻³⁶
+    if language == 'de':
+        essay_text = (f'VERÄNDERTES UNIVERSUM (ℏ×10⁻¹⁸):\n'
+                     f'a₀ = {essay_a0:.2e} m = 10⁻³⁶ × Standard\n'
+                     f'Atome wären 10³⁶× kleiner (nicht darstellbar!)')
+    else:
+        essay_text = (f'ALTERED UNIVERSE (ℏ×10⁻¹⁸):\n'
+                     f'a₀ = {essay_a0:.2e} m = 10⁻³⁶ × Standard\n'
+                     f'Atoms would be 10³⁶× smaller (impossible to display!)')
+
+    ax.text(0.5, -0.08, essay_text, fontsize=11, va='top', ha='center',
+            transform=ax.transAxes,
+            bbox=dict(boxstyle='round,pad=0.5', facecolor='#FF0000', edgecolor='darkred',
+                     linewidth=3, alpha=0.9),
+            color='white', fontweight='bold')
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)
