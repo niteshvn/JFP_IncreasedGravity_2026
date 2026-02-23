@@ -1523,13 +1523,17 @@ def plot_gravity_pauli_3d_interactive(
         name='Standard universe' if language == 'en' else 'Standarduniversum'
     ))
 
-    # Mark essay scenario (G × 10^36, ℏ × 10^18)
+    # Mark essay scenario (G × 10^36, ℏ × 10^18) - HIGHLY VISIBLE
     fig.add_trace(go.Scatter3d(
         x=[18], y=[9], z=[0],  # log10(10^36)/2 and log10(10^18) to get ratio of 1
-        mode='markers',
-        marker=dict(size=12, color=COLORS['quantum'], symbol='cross'),
-        name='Essay scenario (G×10³⁶, ℏ×10¹⁸)' if language == 'en'
-             else 'Essay-Szenario (G×10³⁶, ℏ×10¹⁸)'
+        mode='markers+text',
+        marker=dict(size=20, color='#FF0000', symbol='diamond',
+                   line=dict(width=3, color='darkred')),
+        text=['G×10³⁶' if language == 'en' else 'G×10³⁶'],
+        textposition='top center',
+        textfont=dict(size=14, color='#FF0000', family='Arial Black'),
+        name='🔴 ALTERED UNIVERSE (G×10³⁶, ℏ×10¹⁸)' if language == 'en'
+             else '🔴 VERÄNDERTES UNIVERSUM (G×10³⁶, ℏ×10¹⁸)'
     ))
 
     if language == 'de':
@@ -1639,6 +1643,12 @@ def plot_solar_system_3d_interactive(
         y_orb = r_disp * np.sin(theta)
         z_orb = np.zeros_like(theta)
 
+        # Hover text for initial state (G=1, standard distances)
+        if language == 'en':
+            hover_std = f'{name}: {r_au:.2f} AU (standard)'
+        else:
+            hover_std = f'{name}: {r_au:.2f} AU (Standard)'
+
         # Orbit ring
         fig.add_trace(go.Scatter3d(
             x=x_orb, y=y_orb, z=z_orb,
@@ -1646,7 +1656,7 @@ def plot_solar_system_3d_interactive(
             line=dict(color=color, width=3),
             name=f'{name} ({r_au:.2f} AU)',
             showlegend=True,
-            hovertext=f'{name}: {r_au:.2f} AU'
+            hovertext=hover_std
         ))
 
         # Planet marker at (r, 0, 0)
@@ -1658,7 +1668,7 @@ def plot_solar_system_3d_interactive(
             textposition='top center',
             textfont=dict(size=10, color=color),
             showlegend=False,
-            hovertext=f'{name}: {r_au:.2f} AU'
+            hovertext=hover_std
         ))
 
     # Create animation frames for G slider
@@ -1674,17 +1684,22 @@ def plot_solar_system_3d_interactive(
             x_orb = r_disp * np.cos(theta)
             y_orb = r_disp * np.sin(theta)
             z_orb = np.zeros_like(theta)
+            # Hover text shows scaled AU with clear label
+            if language == 'en':
+                hover = f'{name}: {r_actual:.2f} AU (scaled from {r_au:.2f} AU)'
+            else:
+                hover = f'{name}: {r_actual:.2f} AU (skaliert von {r_au:.2f} AU)'
             frame_data.append(go.Scatter3d(
                 x=x_orb, y=y_orb, z=z_orb,
                 mode='lines', line=dict(color=color, width=3),
-                hovertext=f'{name}: {r_actual:.2f} AU'))
+                hovertext=hover))
             frame_data.append(go.Scatter3d(
                 x=[r_disp], y=[0], z=[0],
                 mode='markers+text',
                 marker=dict(size=sz, color=color, line=dict(width=1, color='black')),
                 text=[name], textposition='top center',
                 textfont=dict(size=10, color=color),
-                hovertext=f'{name}: {r_actual:.2f} AU'))
+                hovertext=hover))
         frames.append(go.Frame(data=frame_data, name=f'{g_s:.2f}'))
 
     fig.frames = frames
@@ -1750,57 +1765,76 @@ def plot_solar_luminosity_3d_interactive(
     if constants is None:
         constants = get_constants()
 
-    hbar_vals = np.linspace(0.3, 2.0, 60)
-    g_vals = np.linspace(0.3, 3.0, 60)
-    H, G_arr = np.meshgrid(hbar_vals, g_vals)
+    # Use LOG SCALES to show full range including essay scenario (G×10³⁶, ℏ×10¹⁸)
+    # G from 10⁰ to 10⁴⁰, ℏ from 10⁰ to 10²⁰ (ℏ INCREASES to compensate for stronger G)
+    log_g_vals = np.linspace(0, 40, 50)  # log₁₀(G/G₀) from 0 to 40
+    log_hbar_vals = np.linspace(0, 20, 50)  # log₁₀(ℏ/ℏ₀) from 0 to 20
+    LOG_H, LOG_G = np.meshgrid(log_hbar_vals, log_g_vals)
 
-    # L ∝ G^4 * hbar^0 for mass-luminosity (at fixed mass)
-    # More precisely: L_sun depends on G through fusion rate
-    # Simplified: L/L_sun ≈ (G/G0)^4
-    # Also hbar affects opacity and tunneling: L ∝ 1/hbar^2 (Gamow tunneling)
-    L_ratio = G_arr**4 / H**2
-    L_log = np.log10(L_ratio)
+    # L ∝ G^4 / ℏ^2
+    # log₁₀(L/L☉) = 4*log₁₀(G/G₀) - 2*log₁₀(ℏ/ℏ₀)
+    L_log = 4 * LOG_G - 2 * LOG_H
 
     fig = go.Figure()
     fig.add_trace(go.Surface(
-        x=H, y=G_arr, z=L_log,
+        x=LOG_H, y=LOG_G, z=L_log,
         colorscale='Hot',
         showscale=True,
         colorbar=dict(
             title=dict(text='log₁₀(L/L☉)', side='bottom', font=dict(size=13)),
             orientation='h', x=0.5, y=0.02, xanchor='center', yanchor='top',
-            len=0.5, thickness=18, tickformat='.1f'
+            len=0.5, thickness=18, tickformat='.0f'
         )
     ))
 
-    # Mark standard universe
+    # Mark standard universe (G=1, ℏ=1 → log values = 0, 0)
     fig.add_trace(go.Scatter3d(
-        x=[1.0], y=[1.0], z=[0.0],
+        x=[0], y=[0], z=[0],
         mode='markers+text',
-        marker=dict(size=8, color=COLORS['standard'], symbol='diamond'),
+        marker=dict(size=10, color=COLORS['standard'], symbol='diamond'),
         text=['Standard' if language == 'en' else 'Standard'],
         textposition='top center',
         name='Standard Universe' if language == 'en' else 'Standarduniversum',
         showlegend=True
     ))
 
-    title = ('Stellar Luminosity L(ℏ, G)<br><sup>L ∝ G⁴/ℏ² — Surface Plot</sup>'
-             if language == 'en' else
-             'Sternleuchtkraft L(ℏ, G)<br><sup>L ∝ G⁴/ℏ² — Oberflächendiagramm</sup>')
+    # Mark ESSAY SCENARIO: G×10³⁶, ℏ×10¹⁸ → log values = 36, 18
+    # L ∝ G⁴/ℏ², so log₁₀(L) = 4*36 - 2*18 = 144 - 36 = 108
+    essay_log_L = 4 * 36 - 2 * 18  # = 108
+    fig.add_trace(go.Scatter3d(
+        x=[18], y=[36], z=[essay_log_L],
+        mode='markers+text',
+        marker=dict(size=16, color='#FF0000', symbol='diamond',
+                   line=dict(width=3, color='darkred')),
+        text=['G×10³⁶, ℏ×10¹⁸' if language == 'en' else 'G×10³⁶, ℏ×10¹⁸'],
+        textposition='top center',
+        textfont=dict(size=14, color='#FF0000', family='Arial Black'),
+        name='ALTERED UNIVERSE (G×10³⁶, ℏ×10¹⁸)' if language == 'en'
+             else 'VERÄNDERTES UNIVERSUM (G×10³⁶, ℏ×10¹⁸)',
+        showlegend=True
+    ))
+
+    # Title - now showing the essay scenario ON the graph
+    if language == 'en':
+        title = ('Stellar Luminosity L(ℏ, G) — LOG SCALE<br>'
+                 '<sup>L ∝ G⁴/ℏ² — Red diamond shows Altered Universe at G×10³⁶, ℏ×10¹⁸</sup>')
+    else:
+        title = ('Sternleuchtkraft L(ℏ, G) — LOG-SKALA<br>'
+                 '<sup>L ∝ G⁴/ℏ² — Roter Diamant zeigt verändertes Universum bei G×10³⁶, ℏ×10¹⁸</sup>')
 
     fig.update_layout(
         title=dict(text=title, x=0.5),
         scene=dict(
-            xaxis_title='ℏ/ℏ₀',
-            yaxis_title='G/G₀',
+            xaxis_title='log₁₀(ℏ/ℏ₀)',
+            yaxis_title='log₁₀(G/G₀)',
             zaxis_title='log₁₀(L/L☉)',
             camera=dict(eye=dict(x=1.5, y=1.5, z=1.2)),
             aspectmode='manual',
-            aspectratio=dict(x=1, y=1, z=0.6),
+            aspectratio=dict(x=1, y=1, z=0.8),
             domain=dict(x=[0, 1], y=[0.18, 1])
         ),
         height=900,
-        margin=dict(l=0, r=0, t=50, b=10),
+        margin=dict(l=0, r=0, t=80, b=10),
         template='plotly_white',
         legend=dict(
             x=0.5, y=0.12, xanchor='center', yanchor='top',
@@ -1833,56 +1867,78 @@ def plot_hydrostatic_3d_interactive(
     if constants is None:
         constants = get_constants()
 
-    # Normalized radius for polytrope n=3/2
-    r_norm = np.linspace(0.01, 1.0, 60)
-    g_vals = np.linspace(0.5, 5.0, 60)
-    R, G_arr = np.meshgrid(r_norm, g_vals)
+    # Use LOG SCALE for G to show full range including essay scenario (G×10³⁶)
+    # G from 10⁰ to 10⁴⁰, r from 0 to 1
+    r_norm = np.linspace(0.01, 1.0, 50)
+    log_g_vals = np.linspace(0, 40, 50)  # log₁₀(G/G₀) from 0 to 40
+    R, LOG_G = np.meshgrid(r_norm, log_g_vals)
 
     # For polytrope n=3/2: P(r) ∝ (1 - (r/R)^2)^(5/2) approximately
     # Central pressure scales as P_c ∝ G^2
-    P_norm = G_arr**2 * (1 - R**2)**2.5
-    P_norm = np.clip(P_norm, 0, None)
+    # In log scale: log₁₀(P/P₀) = 2 * log₁₀(G/G₀) + log₁₀((1-r²)^2.5)
+    # At r=0: log₁₀(P_c/P₀) = 2 * log₁₀(G/G₀)
+    radial_factor = np.maximum((1 - R**2)**2.5, 1e-10)  # Avoid log(0)
+    P_log = 2 * LOG_G + np.log10(radial_factor)
 
     fig = go.Figure()
     fig.add_trace(go.Surface(
-        x=R, y=G_arr, z=P_norm,
+        x=R, y=LOG_G, z=P_log,
         colorscale='Viridis',
         showscale=True,
         colorbar=dict(
-            title=dict(text='P/P₀', side='bottom', font=dict(size=13)),
+            title=dict(text='log₁₀(P/P₀)', side='bottom', font=dict(size=13)),
             orientation='h', x=0.5, y=0.02, xanchor='center', yanchor='top',
-            len=0.5, thickness=18, tickformat='.1f'
+            len=0.5, thickness=18, tickformat='.0f'
         )
     ))
 
-    # Mark standard at surface (r=0, G=1)
+    # Mark standard at center (r=0, G=1 → log_G=0)
     fig.add_trace(go.Scatter3d(
-        x=[0.01], y=[1.0], z=[1.0],
+        x=[0.01], y=[0], z=[0],
         mode='markers+text',
-        marker=dict(size=8, color=COLORS['standard'], symbol='diamond'),
+        marker=dict(size=10, color=COLORS['standard'], symbol='diamond'),
         text=['Standard'],
         textposition='top center',
         name='Standard (G=G₀, r=0)',
         showlegend=True
     ))
 
-    title = ('Hydrostatic Pressure P(r, G)<br><sup>P_c ∝ G² — Polytrope n=3/2</sup>'
-             if language == 'en' else
-             'Hydrostatischer Druck P(r, G)<br><sup>P_c ∝ G² — Polytrope n=3/2</sup>')
+    # Mark ESSAY SCENARIO: G×10³⁶ → log_G = 36, at center r=0
+    # P/P₀ = (10³⁶)² = 10⁷² → log₁₀(P/P₀) = 72
+    fig.add_trace(go.Scatter3d(
+        x=[0.01], y=[36], z=[72],
+        mode='markers+text',
+        marker=dict(size=16, color='#FF0000', symbol='diamond',
+                   line=dict(width=3, color='darkred')),
+        text=['G×10³⁶' if language == 'en' else 'G×10³⁶'],
+        textposition='top center',
+        textfont=dict(size=14, color='#FF0000', family='Arial Black'),
+        name='🔴 ALTERED UNIVERSE (G×10³⁶)' if language == 'en'
+             else '🔴 VERÄNDERTES UNIVERSUM (G×10³⁶)',
+        showlegend=True
+    ))
+
+    # Title - now showing essay scenario ON the graph
+    if language == 'en':
+        title = ('Hydrostatic Pressure P(r, G) — LOG SCALE<br>'
+                 '<sup>P_c ∝ G² — Red diamond shows Altered Universe at G×10³⁶ (P/P₀ = 10⁷²)</sup>')
+    else:
+        title = ('Hydrostatischer Druck P(r, G) — LOG-SKALA<br>'
+                 '<sup>P_c ∝ G² — Roter Diamant zeigt verändertes Universum bei G×10³⁶ (P/P₀ = 10⁷²)</sup>')
 
     fig.update_layout(
         title=dict(text=title, x=0.5),
         scene=dict(
-            xaxis_title='r/R' if language == 'en' else 'r/R',
-            yaxis_title='G/G₀',
-            zaxis_title='P/P₀ (normalized)' if language == 'en' else 'P/P₀ (normiert)',
+            xaxis_title='r/R',
+            yaxis_title='log₁₀(G/G₀)',
+            zaxis_title='log₁₀(P/P₀)',
             camera=dict(eye=dict(x=1.5, y=1.5, z=1.2)),
             aspectmode='manual',
-            aspectratio=dict(x=1, y=1, z=0.6),
+            aspectratio=dict(x=1, y=1, z=0.8),
             domain=dict(x=[0, 1], y=[0.18, 1])
         ),
         height=900,
-        margin=dict(l=0, r=0, t=50, b=10),
+        margin=dict(l=0, r=0, t=80, b=10),
         template='plotly_white',
         legend=dict(
             x=0.5, y=0.12, xanchor='center', yanchor='top',
@@ -1915,75 +1971,92 @@ def plot_fine_structure_3d_interactive(
     if constants is None:
         constants = get_constants()
 
-    hbar_vals = np.linspace(0.1, 2.0, 60)
-    g_vals = np.linspace(0.3, 3.0, 60)
-    H, G_arr = np.meshgrid(hbar_vals, g_vals)
+    # Use LOG SCALES to show full range including essay scenario (ℏ×10¹⁸)
+    # ℏ from 10⁰ to 10²⁰ (ℏ INCREASES to compensate for stronger G), G from 10⁰ to 10⁴⁰
+    log_hbar_vals = np.linspace(0, 20, 50)  # log₁₀(ℏ/ℏ₀) from 0 to 20
+    log_g_vals = np.linspace(0, 40, 50)  # log₁₀(G/G₀) from 0 to 40
+    LOG_H, LOG_G = np.meshgrid(log_hbar_vals, log_g_vals)
 
     # Alpha ∝ 1/hbar, binding energy ∝ alpha^2 ∝ 1/hbar^2
-    # Also include gravitational coupling alpha_G ∝ G/hbar
-    # Binding energy of hydrogen: E_bind = 0.5 * alpha^2 * m_e * c^2
-    # E_bind/E_bind_0 = (alpha/alpha_0)^2 = 1/hbar_scale^2
-    E_ratio = 1.0 / H**2
-
-    # Fine structure splitting ∝ alpha^4 ∝ 1/hbar^4
-    split_ratio = 1.0 / H**4
+    # E/E₀ = 1/ℏ² → log₁₀(E/E₀) = -2 * log₁₀(ℏ/ℏ₀)
+    E_log = -2 * LOG_H
 
     fig = go.Figure()
 
     # Binding energy surface
     fig.add_trace(go.Surface(
-        x=H, y=G_arr, z=np.log10(E_ratio),
+        x=LOG_H, y=LOG_G, z=E_log,
         colorscale='Plasma',
         showscale=True,
         name='Binding Energy' if language == 'en' else 'Bindungsenergie',
         colorbar=dict(
             title=dict(text='log₁₀(E/E₀)', side='bottom', font=dict(size=13)),
             orientation='h', x=0.5, y=0.02, xanchor='center', yanchor='top',
-            len=0.5, thickness=18, tickformat='.1f'
+            len=0.5, thickness=18, tickformat='.0f'
         )
     ))
 
-    # Mark standard
+    # Mark standard (ℏ=1, G=1 → log values = 0, 0)
     fig.add_trace(go.Scatter3d(
-        x=[1.0], y=[1.0], z=[0.0],
+        x=[0], y=[0], z=[0],
         mode='markers+text',
-        marker=dict(size=8, color=COLORS['standard'], symbol='diamond'),
+        marker=dict(size=10, color=COLORS['standard'], symbol='diamond'),
         text=['Standard'],
         textposition='top center',
         name='α = 1/137',
         showlegend=True
     ))
 
-    # Mark chemical instability threshold (alpha > 1 when hbar < alpha_0)
+    # Mark chemical instability threshold (alpha > 1 when hbar < alpha_0 ≈ 1/137)
+    # log₁₀(1/137) ≈ -2.14
     alpha_0 = 1.0 / 137.036
-    hbar_crit = alpha_0  # alpha = alpha_0/hbar_scale > 1 when hbar_scale < alpha_0
+    log_hbar_crit = np.log10(alpha_0)  # ≈ -2.14
     fig.add_trace(go.Scatter3d(
-        x=[alpha_0] * 20,
-        y=np.linspace(0.3, 3.0, 20).tolist(),
-        z=np.log10(np.full(20, 1.0 / alpha_0**2)).tolist(),
+        x=[log_hbar_crit] * 20,
+        y=np.linspace(0, 40, 20).tolist(),
+        z=[-2 * log_hbar_crit] * 20,  # E at instability threshold
         mode='lines',
-        line=dict(color='red', width=4),
+        line=dict(color='orange', width=4),
         name='α > 1 (unstable)' if language == 'en' else 'α > 1 (instabil)',
         showlegend=True
     ))
 
-    title = ('Fine Structure: Binding Energy E(ℏ)<br><sup>E ∝ α² ∝ 1/ℏ² — Interactive Surface</sup>'
-             if language == 'en' else
-             'Feinstruktur: Bindungsenergie E(ℏ)<br><sup>E ∝ α² ∝ 1/ℏ² — Interaktive Oberfläche</sup>')
+    # Mark ESSAY SCENARIO: ℏ×10¹⁸ → log_ℏ = 18, G×10³⁶
+    # E/E₀ = (10¹⁸)⁻² = 10⁻³⁶ → log₁₀(E/E₀) = -36
+    fig.add_trace(go.Scatter3d(
+        x=[18], y=[36], z=[-36],
+        mode='markers+text',
+        marker=dict(size=16, color='#FF0000', symbol='diamond',
+                   line=dict(width=3, color='darkred')),
+        text=['G×10³⁶, ℏ×10¹⁸' if language == 'en' else 'G×10³⁶, ℏ×10¹⁸'],
+        textposition='top center',
+        textfont=dict(size=14, color='#FF0000', family='Arial Black'),
+        name='ALTERED UNIVERSE (G×10³⁶, ℏ×10¹⁸)' if language == 'en'
+             else 'VERÄNDERTES UNIVERSUM (G×10³⁶, ℏ×10¹⁸)',
+        showlegend=True
+    ))
+
+    # Title - now showing essay scenario ON the graph
+    if language == 'en':
+        title = ('Fine Structure: Binding Energy E(ℏ) — LOG SCALE<br>'
+                 '<sup>E ∝ 1/ℏ² — Red diamond shows Altered Universe at G×10³⁶, ℏ×10¹⁸ (E/E₀ = 10⁻³⁶)</sup>')
+    else:
+        title = ('Feinstruktur: Bindungsenergie E(ℏ) — LOG-SKALA<br>'
+                 '<sup>E ∝ 1/ℏ² — Roter Diamant zeigt verändertes Universum bei G×10³⁶, ℏ×10¹⁸ (E/E₀ = 10⁻³⁶)</sup>')
 
     fig.update_layout(
         title=dict(text=title, x=0.5),
         scene=dict(
-            xaxis_title='ℏ/ℏ₀',
-            yaxis_title='G/G₀',
+            xaxis_title='log₁₀(ℏ/ℏ₀)',
+            yaxis_title='log₁₀(G/G₀)',
             zaxis_title='log₁₀(E/E₀)',
             camera=dict(eye=dict(x=1.5, y=1.5, z=1.2)),
             aspectmode='manual',
-            aspectratio=dict(x=1, y=1, z=0.6),
+            aspectratio=dict(x=1, y=1, z=0.8),
             domain=dict(x=[0, 1], y=[0.18, 1])
         ),
         height=900,
-        margin=dict(l=0, r=0, t=50, b=10),
+        margin=dict(l=0, r=0, t=80, b=10),
         template='plotly_white',
         legend=dict(
             x=0.5, y=0.12, xanchor='center', yanchor='top',

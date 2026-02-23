@@ -137,8 +137,8 @@ def plot_bohr_radius_scaling(
     if constants is None:
         constants = get_constants()
 
-    # Range of hbar scaling factors - extended to show full range including 10^-18 threshold
-    hbar_scales = np.logspace(-20, 1, 300)  # 10^-20 to 10 (includes compensation scale)
+    # Range of hbar scaling factors - extended to show full range including 10^18 threshold (compensation for G×10³⁶)
+    hbar_scales = np.logspace(-1, 20, 300)  # 10⁻¹ to 10²⁰ (includes ℏ×10¹⁸ compensation)
 
     # Calculate Bohr radii for each scaling
     # a_0 ∝ ℏ², so a_0(scaled) = a_0(standard) × hbar_scale²
@@ -176,10 +176,10 @@ def plot_bohr_radius_scaling(
         ax1.set_ylabel('Bohr radius (pm)', fontsize=12)
         ax1.set_title('1. Bohr Radius vs. ℏ Scaling (a_0 ∝ ℏ²)', fontsize=14, fontweight='bold', pad=15)
 
-    # Add 10^-18 threshold marker (compensation for G×10^36)
-    ax1.axvline(x=1e-18, color='red', linestyle='--', linewidth=2, alpha=0.8)
-    threshold_lbl = 'ℏ × 10⁻¹⁸' if language == 'en' else 'ℏ × 10⁻¹⁸'
-    ax1.text(1e-18 * 2, a_0_scaled.max() * 0.01, threshold_lbl, color='red', fontsize=10, rotation=90, va='bottom')
+    # Add 10^18 threshold (compensation for G×10³⁶) marker (compensation for G×10^36)
+    ax1.axvline(x=1e18, color='red', linestyle='--', linewidth=2, alpha=0.8)
+    threshold_lbl = 'ℏ × 10¹⁸' if language == 'en' else 'ℏ × 10¹⁸'
+    ax1.text(1e18 * 0.5, a_0_scaled.max() * 0.01, threshold_lbl, color='red', fontsize=10, rotation=90, va='bottom')
 
     ax1.legend(fontsize=11, loc='upper right', bbox_to_anchor=(1.0, -0.15), framealpha=0.7)
     ax1.grid(True, alpha=0.3, which='both')
@@ -195,9 +195,9 @@ def plot_bohr_radius_scaling(
 
     ax2.plot(1, alpha_G_standard, 'o', color=COLORS['standard'], markersize=10)
 
-    # Add 10^-18 threshold marker
-    ax2.axvline(x=1e-18, color='red', linestyle='--', linewidth=2, alpha=0.8)
-    ax2.text(1e-18 * 2, alpha_G_scaled.max() * 0.01, 'ℏ × 10⁻¹⁸', color='red', fontsize=10, rotation=90, va='bottom')
+    # Add 10^18 threshold (compensation for G×10³⁶) marker
+    ax2.axvline(x=1e18, color='red', linestyle='--', linewidth=2, alpha=0.8)
+    ax2.text(1e18 * 0.5, alpha_G_scaled.max() * 0.01, 'ℏ × 10¹⁸', color='red', fontsize=10, rotation=90, va='bottom')
 
     if language == 'de':
         ax2.set_xlabel('hbar-Skalierungsfaktor', fontsize=12)
@@ -336,18 +336,18 @@ def plot_atom_size_comparison(
     ax.set_aspect('equal')
     ax.axis('off')
 
-    # Add ESSAY SCENARIO annotation (G×10³⁶, ℏ×10⁻¹⁸)
-    # At ℏ×10⁻¹⁸: a₀ = a₀_std × (10⁻¹⁸)² = a₀_std × 10⁻³⁶
-    # Atoms would be 10³⁶ times smaller - impossible to visualize!
-    essay_a0 = a_0_std * (1e-18)**2  # = a_0_std × 10⁻³⁶
+    # Add ESSAY SCENARIO annotation (G×10³⁶, ℏ×10¹⁸)
+    # At ℏ×10¹⁸: a₀ = a₀_std × (10¹⁸)² = a₀_std × 10³⁶
+    # Atoms would be 10³⁶ times LARGER - compensates for stronger gravity!
+    essay_a0 = a_0_std * (1e18)**2  # = a_0_std × 10³⁶
     if language == 'de':
-        essay_text = (f'VERÄNDERTES UNIVERSUM (ℏ×10⁻¹⁸):\n'
-                     f'a₀ = {essay_a0:.2e} m = 10⁻³⁶ × Standard\n'
-                     f'Atome wären 10³⁶× kleiner (nicht darstellbar!)')
+        essay_text = (f'VERÄNDERTES UNIVERSUM (G×10³⁶, ℏ×10¹⁸):\n'
+                     f'a₀ = {essay_a0:.2e} m = 10³⁶ × Standard\n'
+                     f'Größeres ℏ kompensiert stärkere Gravitation!')
     else:
-        essay_text = (f'ALTERED UNIVERSE (ℏ×10⁻¹⁸):\n'
-                     f'a₀ = {essay_a0:.2e} m = 10⁻³⁶ × Standard\n'
-                     f'Atoms would be 10³⁶× smaller (impossible to display!)')
+        essay_text = (f'ALTERED UNIVERSE (G×10³⁶, ℏ×10¹⁸):\n'
+                     f'a₀ = {essay_a0:.2e} m = 10³⁶ × Standard\n'
+                     f'Larger ℏ compensates for stronger gravity!')
 
     ax.text(0.5, -0.08, essay_text, fontsize=11, va='top', ha='center',
             transform=ax.transAxes,
@@ -520,8 +520,8 @@ def plot_quantum_gravity_connection(
     # Create figure with 4 subplots stacked vertically
     fig, (ax1, ax2, ax3, ax4) = plt.subplots(4, 1, figsize=(12, 20), gridspec_kw={'hspace': 0.5})
 
-    # Range of hbar scaling - extended to show full range including 10^-18 threshold
-    hbar_scales = np.logspace(-20, 1, 200)
+    # Range of hbar scaling - extended to show full range including 10^18 threshold (compensation for G×10³⁶)
+    hbar_scales = np.logspace(-1, 20, 200)  # 10⁻¹ to 10²⁰ (includes ℏ×10¹⁸ compensation)
 
     # Standard values
     a_0_std = constants.a_0
@@ -553,9 +553,9 @@ def plot_quantum_gravity_connection(
         ax1.set_ylabel('Bohr radius (pm)', fontsize=12)
         ax1.set_title('1. Atom Size: a_0 ∝ ℏ²', fontsize=14, fontweight='bold', pad=15)
 
-    # Add 10^-18 threshold marker
-    ax1.axvline(x=1e-18, color='red', linestyle='--', linewidth=2, alpha=0.8)
-    ax1.text(1e-18 * 2, a_0_scaled.max() * 0.01, 'ℏ × 10⁻¹⁸', color='red', fontsize=9, rotation=90, va='bottom')
+    # Add 10^18 threshold marker (ℏ INCREASES to compensate for stronger G)
+    ax1.axvline(x=1e18, color='red', linestyle='--', linewidth=2, alpha=0.8)
+    ax1.text(1e18 * 0.5, a_0_scaled.max() * 0.01, 'ℏ × 10¹⁸', color='red', fontsize=9, rotation=90, va='bottom')
 
     ax1.legend(fontsize=11, loc='upper right', bbox_to_anchor=(1.0, -0.15), framealpha=0.7)
     ax1.grid(True, alpha=0.3, which='both')
@@ -576,9 +576,9 @@ def plot_quantum_gravity_connection(
         ax2.set_ylabel('α_G', fontsize=12)
         ax2.set_title('2. Gravity Coupling: α_G ∝ 1/ℏ', fontsize=14, fontweight='bold', pad=15)
 
-    # Add 10^-18 threshold marker
-    ax2.axvline(x=1e-18, color='red', linestyle='--', linewidth=2, alpha=0.8)
-    ax2.text(1e-18 * 2, alpha_G_scaled.max() * 0.01, 'ℏ × 10⁻¹⁸', color='red', fontsize=9, rotation=90, va='bottom')
+    # Add 10^18 threshold (compensation for G×10³⁶) marker
+    ax2.axvline(x=1e18, color='red', linestyle='--', linewidth=2, alpha=0.8)
+    ax2.text(1e18 * 0.5, alpha_G_scaled.max() * 0.01, 'ℏ × 10¹⁸', color='red', fontsize=9, rotation=90, va='bottom')
 
     ax2.legend(fontsize=11, loc='upper right', bbox_to_anchor=(1.0, -0.15), framealpha=0.7)
     ax2.grid(True, alpha=0.3, which='both')
@@ -599,9 +599,9 @@ def plot_quantum_gravity_connection(
         ax3.set_ylabel('Density / Standard density', fontsize=12)
         ax3.set_title('3. Matter Density: ρ ∝ 1/a_0³ ∝ 1/ℏ⁶', fontsize=14, fontweight='bold', pad=15)
 
-    # Add 10^-18 threshold marker
-    ax3.axvline(x=1e-18, color='red', linestyle='--', linewidth=2, alpha=0.8)
-    ax3.text(1e-18 * 2, density_ratio.max() * 0.01, 'ℏ × 10⁻¹⁸', color='red', fontsize=9, rotation=90, va='bottom')
+    # Add 10^18 threshold (compensation for G×10³⁶) marker
+    ax3.axvline(x=1e18, color='red', linestyle='--', linewidth=2, alpha=0.8)
+    ax3.text(1e18 * 0.5, density_ratio.max() * 0.01, 'ℏ × 10¹⁸', color='red', fontsize=9, rotation=90, va='bottom')
 
     ax3.legend(fontsize=11, loc='upper right', bbox_to_anchor=(1.0, -0.15), framealpha=0.7)
     ax3.grid(True, alpha=0.3, which='both')
@@ -623,9 +623,9 @@ def plot_quantum_gravity_connection(
         ax4.set_ylabel('Gravity importance (relative)', fontsize=12)
         ax4.set_title('4. Gravity Relevance: ∝ α_G × ρ ∝ 1/ℏ⁷', fontsize=14, fontweight='bold', pad=15)
 
-    # Add 10^-18 threshold marker
-    ax4.axvline(x=1e-18, color='red', linestyle='--', linewidth=2, alpha=0.8)
-    ax4.text(1e-18 * 2, gravity_importance.max() * 0.01, 'ℏ × 10⁻¹⁸', color='red', fontsize=9, rotation=90, va='bottom')
+    # Add 10^18 threshold (compensation for G×10³⁶) marker
+    ax4.axvline(x=1e18, color='red', linestyle='--', linewidth=2, alpha=0.8)
+    ax4.text(1e18 * 0.5, gravity_importance.max() * 0.01, 'ℏ × 10¹⁸', color='red', fontsize=9, rotation=90, va='bottom')
 
     ax4.legend(fontsize=11, loc='upper right', bbox_to_anchor=(1.0, -0.15), framealpha=0.7)
     ax4.grid(True, alpha=0.3, which='both')
@@ -693,16 +693,16 @@ def plot_atomic_summary(
     ax1.legend(fontsize=11, loc='upper right', bbox_to_anchor=(1.0, -0.15), ncol=4, framealpha=0.7)
 
     # 2. Bohr radius scaling - extended to show full range
-    hbar_scales = np.logspace(-20, 1, 200)
+    hbar_scales = np.logspace(-1, 20, 200)  # 10⁻¹ to 10²⁰ (includes ℏ×10¹⁸ compensation)
     a_0_std = constants.a_0
     a_0_scaled = a_0_std * hbar_scales**2
 
     ax2.loglog(hbar_scales, a_0_scaled * 1e12, '-', color=COLORS['primary_blue'], linewidth=2.5, label='Bohr radius' if language == 'en' else 'Bohr-Radius')
     ax2.axvline(x=1, color=COLORS['standard'], linestyle='--', alpha=0.7)
     ax2.plot(1, a_0_std * 1e12, 'o', color=COLORS['standard'], markersize=8, label='Standard')
-    # Add 10^-18 threshold marker
-    ax2.axvline(x=1e-18, color='red', linestyle='--', linewidth=2, alpha=0.8)
-    ax2.text(1e-18 * 2, a_0_scaled.max() * 0.01, 'ℏ × 10⁻¹⁸', color='red', fontsize=9, rotation=90, va='bottom')
+    # Add 10^18 threshold (compensation for G×10³⁶) marker
+    ax2.axvline(x=1e18, color='red', linestyle='--', linewidth=2, alpha=0.8)
+    ax2.text(1e18 * 0.5, a_0_scaled.max() * 0.01, 'ℏ × 10¹⁸', color='red', fontsize=9, rotation=90, va='bottom')
 
     if language == 'de':
         ax2.set_xlabel('ℏ-Skalierung', fontsize=12)
