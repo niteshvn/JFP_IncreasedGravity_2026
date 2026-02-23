@@ -116,9 +116,9 @@ def plot_cosmic_scales(constants=None, language='en', save=True, show=True):
     suffix = '_de' if language == 'de' else ''
 
     # -- Plot 1: Planck scales vs hbar_scale --
-    # Extended to 10^-20 to show compensation for G×10^36 (need hbar×10^-18)
+    # Extended to 10^20 to show compensation for G×10^36 (need hbar×10^18)
     ax1 = axes[0]
-    hbar_scales = np.logspace(-20, 2, 300)
+    hbar_scales = np.logspace(-1, 20, 300)  # hbar INCREASES to compensate
     m_P_vals, l_P_vals, T_P_vals, t_P_vals = [], [], [], []
     for hs in hbar_scales:
         c_scaled = get_constants(hbar_scale=hs)
@@ -150,8 +150,8 @@ def plot_cosmic_scales(constants=None, language='en', save=True, show=True):
     ax1.loglog(hbar_scales, T_P_vals / T_P_std, color=COLOR_SEQUENCE[2], linewidth=2.5, label=lbl_TP)
     ax1.loglog(hbar_scales, t_P_vals / t_P_std, color=COLOR_SEQUENCE[3], linewidth=2.5, label=lbl_tP)
     ax1.axvline(x=1.0, color='gray', linestyle='--', alpha=0.5)
-    ax1.axvline(x=1e-18, color='red', linestyle='--', linewidth=2, alpha=0.8)
-    ax1.text(1e-18, ax1.get_ylim()[1]*0.5, r'$\hbar \times 10^{-18}$', color='red', fontsize=10, rotation=90, va='center')
+    ax1.axvline(x=1e18, color='red', linestyle='--', linewidth=2, alpha=0.8)
+    ax1.text(1e18 * 0.5, 1e5, r'$\hbar \times 10^{18}$', color='red', fontsize=10, rotation=90, va='center')
     ax1.scatter([1.0], [1.0], color='red', s=80, zorder=5)
     if language == 'de':
         ax1.set_xlabel('hbar-Skalierungsfaktor', fontsize=12)
@@ -191,9 +191,11 @@ def plot_cosmic_scales(constants=None, language='en', save=True, show=True):
     ax2.loglog(G_scales, M_J_vals / M_J_std, color=COLOR_SEQUENCE[0], linewidth=2.5, label=lbl_MJ)
     ax2.loglog(G_scales, L_J_vals / L_J_std, color=COLOR_SEQUENCE[1], linewidth=2.5, label=lbl_LJ)
     ax2.axvline(x=1.0, color='gray', linestyle='--', alpha=0.5)
-    ax2.axvline(x=1e36, color='red', linestyle='--', linewidth=2, alpha=0.8)
-    thresh_lbl = r'$G \times 10^{36}$' + ('\n(Gravitation=EM)' if language == 'de' else '\n(Gravity=EM)')
-    ax2.text(1e36, (M_J_vals / M_J_std).min() * 10, thresh_lbl, color='red', fontsize=10, ha='center')
+    ax2.axvline(x=1e36, color='#FF0000', linestyle='-', linewidth=4, alpha=1.0, zorder=10)
+    ax2.axvspan(1e35, 1e37, alpha=0.15, color='red', zorder=1)
+    thresh_lbl = r'$\mathbf{G \times 10^{36}}$' + ('\n(Veraendert)' if language == 'de' else '\n(Altered)')
+    ax2.text(1e36, (M_J_vals / M_J_std).min() * 100, thresh_lbl, color='white', fontsize=11, fontweight='bold',
+             rotation=90, va='center', ha='center', bbox=dict(boxstyle='round,pad=0.2', facecolor='#FF0000', edgecolor='darkred', linewidth=2))
     ax2.scatter([1.0], [1.0], color='red', s=80, zorder=5)
     if language == 'de':
         ax2.set_xlabel('G-Skalierungsfaktor', fontsize=12)
@@ -321,21 +323,21 @@ def plot_cosmic_summary(constants=None, language='en', save=True, show=True):
     ax1.tick_params(labelsize=11)
 
     # -- Plot 2: Planck trajectory in G-hbar space --
-    # Extended to show full range including G×10^36 and hbar×10^-18
+    # Extended to show full range including G×10^36 and hbar×10^18
     ax2 = axes[1]
-    hbar_grid = np.logspace(-20, 2, 80)
+    hbar_grid = np.logspace(-1, 20, 80)  # hbar INCREASES
     G_grid = np.logspace(0, 40, 80)
     HH, GG = np.meshgrid(hbar_grid, G_grid)
     # Planck mass ratio
     m_P_ratio = np.sqrt(HH / GG)  # proportional to sqrt(hbar/G)
     contour = ax2.contourf(np.log10(HH), np.log10(GG), np.log10(m_P_ratio), levels=20, cmap='viridis')
     cbar = fig.colorbar(contour, ax=ax2)
-    # Mark gravity=EM threshold
+    # Mark gravity=EM threshold and compensation
     ax2.axhline(y=36, color='red', linestyle='--', linewidth=2, alpha=0.8)
-    ax2.axvline(x=-18, color='orange', linestyle='--', linewidth=2, alpha=0.8)
+    ax2.axvline(x=18, color='orange', linestyle='--', linewidth=2, alpha=0.8)
     ax2.plot([0], [0], 'r*', markersize=15, label='Standard')
-    ax2.plot([-18], [36], 'o', color='yellow', markersize=12, markeredgecolor='red', markeredgewidth=2,
-             label=r'G×10$^{36}$, $\hbar$×10$^{-18}$')
+    ax2.plot([18], [36], 'o', color='yellow', markersize=12, markeredgecolor='red', markeredgewidth=2,
+             label=r'G×10$^{36}$, $\hbar$×10$^{18}$')
     if language == 'de':
         cbar.set_label('log10(Planck-Masse Verhaeltnis)', fontsize=11)
         ax2.set_xlabel('log10(hbar-Skalierung)', fontsize=12)
@@ -368,8 +370,11 @@ def plot_cosmic_summary(constants=None, language='en', save=True, show=True):
         lbl_Tv = f'Virial Temperature (Std: {T_vir_std:.1f} K)'
     ax3.loglog(G_scales_v, T_virial_vals / T_vir_std, color=COLOR_SEQUENCE[2], linewidth=2.5, label=lbl_Tv)
     ax3.axvline(x=1.0, color='gray', linestyle='--', alpha=0.5)
-    ax3.axvline(x=1e36, color='red', linestyle='--', linewidth=2, alpha=0.8)
-    ax3.text(1e36, 1e2, r'$G \times 10^{36}$', color='red', fontsize=10, rotation=90, va='bottom', ha='right')
+    ax3.axvline(x=1e36, color='#FF0000', linestyle='-', linewidth=4, alpha=1.0, zorder=10)
+    ax3.axvspan(1e35, 1e37, alpha=0.15, color='red', zorder=1)
+    lbl_thresh = r'$\mathbf{G \times 10^{36}}$' + ('\n(Veraendert)' if language == 'de' else '\n(Altered)')
+    ax3.text(1e36, 1e10, lbl_thresh, color='white', fontsize=11, fontweight='bold',
+             rotation=90, va='center', ha='center', bbox=dict(boxstyle='round,pad=0.2', facecolor='#FF0000', edgecolor='darkred', linewidth=2))
     ax3.scatter([1.0], [1.0], color='red', s=80, zorder=5)
     if language == 'de':
         ax3.set_xlabel('G-Skalierungsfaktor', fontsize=12)
