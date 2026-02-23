@@ -1450,8 +1450,9 @@ def plot_gravity_pauli_3d_interactive(
         constants = get_constants()
 
     # Create mesh for G scaling vs ℏ scaling
-    G_scale = np.logspace(0, 20, 50)
-    hbar_scale = np.logspace(0, 12, 50)
+    # Use LOG SCALES to show full range including essay scenario (G×10³⁶, ℏ×10¹⁸)
+    G_scale = np.logspace(0, 40, 50)  # G from 10⁰ to 10⁴⁰
+    hbar_scale = np.logspace(0, 20, 50)  # ℏ from 10⁰ to 10²⁰
     G_Scale, Hbar_Scale = np.meshgrid(G_scale, hbar_scale)
 
     # Pressure ratio: P_grav/P_Pauli ∝ G/ℏ²
@@ -1524,8 +1525,9 @@ def plot_gravity_pauli_3d_interactive(
     ))
 
     # Mark essay scenario (G × 10^36, ℏ × 10^18) - HIGHLY VISIBLE
+    # For balance: G/ℏ² = 10³⁶/(10¹⁸)² = 10³⁶/10³⁶ = 1 → log ratio = 0
     fig.add_trace(go.Scatter3d(
-        x=[18], y=[9], z=[0],  # log10(10^36)/2 and log10(10^18) to get ratio of 1
+        x=[36], y=[18], z=[0],  # log₁₀(G) = 36, log₁₀(ℏ) = 18, ratio = 1
         mode='markers+text',
         marker=dict(size=20, color='#FF0000', symbol='diamond',
                    line=dict(width=3, color='darkred')),
