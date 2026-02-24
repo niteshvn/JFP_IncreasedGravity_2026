@@ -1014,13 +1014,735 @@ def plot_earth_collapse_summary(
 
 
 # =============================================================================
+# VISUALIZATION 12: SCENARIO COMPARISON (Compensated vs Uncompensated)
+# =============================================================================
+
+def plot_scenario_comparison(
+    constants=None, language='en', save=True, show=True):
+    """
+    Visualization #12 - Side-by-side comparison of two scenarios:
+
+    1. UNCOMPENSATED: G increases, ℏ stays constant → COLLAPSE
+    2. COMPENSATED (Essay): G increases, ℏ ∝ √G → STABLE
+
+    Shows why proportional ℏ scaling prevents collapse.
+
+    Args:
+        constants: Physical constants (uses standard if None)
+        language: 'en' or 'de'
+        save: Whether to save the figure
+        show: Whether to display the figure
+
+    Returns:
+        matplotlib Figure object
+    """
+    if constants is None:
+        constants = get_constants()
+
+    de = language == 'de'
+    colors = get_sequence()
+
+    # G scaling from 1 to 10^40 (includes essay scenario at 10^36)
+    log_G = np.linspace(0, 40, 500)
+    G_scale = 10**log_G
+
+    # === SCENARIO 1: UNCOMPENSATED (ℏ = constant) ===
+    # P_grav/P_Pauli ∝ G/ℏ² = G (since ℏ is constant)
+    ratio_uncompensated = G_scale  # Normalized to 1 at G=G₀
+
+    # Chandrasekhar mass: M_Ch ∝ (ℏc/G)^(3/2) ∝ G^(-3/2) when ℏ constant
+    M_Ch_uncompensated = 1.4 * G_scale**(-1.5)  # In solar masses
+
+    # Earth radius stays constant (atoms don't change when only G changes)
+    R_uncompensated = np.ones_like(G_scale)  # Normalized
+
+    # Compactness: C = 2GM/(Rc²) ∝ G (R constant)
+    C_uncompensated = G_scale * 1.4e-9  # Earth's standard compactness ~1.4e-9
+
+    # === SCENARIO 2: COMPENSATED (ℏ = ℏ₀ × √G, the Essay Scenario) ===
+    hbar_scale = np.sqrt(G_scale)  # ℏ increases proportionally
+
+    # P_grav/P_Pauli ∝ G/ℏ² = G/(√G)² = 1 (CONSTANT!)
+    ratio_compensated = np.ones_like(G_scale)
+
+    # Chandrasekhar mass: M_Ch ∝ (ℏc/G)^(3/2) ∝ (√G/G)^(3/2) = G^(-3/4)
+    # At G×10^36, ℏ×10^18: M_Ch ∝ (10^18/10^36)^(3/2) = (10^-18)^(3/2) = 10^-27
+    M_Ch_compensated = 1.4 * (hbar_scale / G_scale)**(1.5)  # In solar masses
+
+    # Bohr radius: a₀ ∝ ℏ² → atoms grow with ℏ
+    # Earth radius scales with atom size: R ∝ ℏ² = G
+    R_compensated = G_scale  # Normalized - atoms and Earth grow!
+
+    # Compactness: C = 2GM/(Rc²) ∝ G/R = G/G = 1 (stays constant!)
+    C_compensated = np.ones_like(G_scale) * 1.4e-9
+
+    # Create figure with 4 subplots
+    fig = plt.figure(figsize=(14, 28))
+    gs = fig.add_gridspec(4, 1, hspace=0.4)
+    ax1 = fig.add_subplot(gs[0])
+    ax2 = fig.add_subplot(gs[1])
+    ax3 = fig.add_subplot(gs[2])
+    ax4 = fig.add_subplot(gs[3])
+
+    # === Subplot 1: Pressure Ratio P_grav/P_Pauli ===
+    ax1.loglog(G_scale, ratio_uncompensated, color=COLORS['collapse'], linewidth=2.5,
+              label='Uncompensated: ℏ = constant → COLLAPSE' if not de else
+                    'Unkompensiert: ℏ = konstant → KOLLAPS')
+    ax1.loglog(G_scale, ratio_compensated, color=COLORS['standard'], linewidth=2.5,
+              label='Compensated: ℏ ∝ √G → STABLE' if not de else
+                    'Kompensiert: ℏ ∝ √G → STABIL')
+
+    # Mark essay scenario
+    ax1.axvline(x=1e36, color='red', linestyle='--', linewidth=3, alpha=0.8)
+    ax1.scatter([1e36], [1e36], s=200, color=COLORS['collapse'], marker='X',
+               edgecolors='black', linewidth=2, zorder=10,
+               label='Essay: G×10³⁶ uncompensated')
+    ax1.scatter([1e36], [1], s=200, color=COLORS['standard'], marker='*',
+               edgecolors='black', linewidth=2, zorder=10,
+               label='Essay: G×10³⁶, ℏ×10¹⁸ compensated')
+
+    ax1.axhline(y=1, color='gray', linestyle=':', alpha=0.5)
+    ax1.fill_between(G_scale, 1, ratio_uncompensated, where=ratio_uncompensated > 1,
+                     alpha=0.2, color=COLORS['collapse'])
+
+    ax1.set_xlabel('G / G₀', fontsize=12)
+    ax1.set_ylabel('P_grav / P_Pauli (normalized)' if not de else
+                   'P_grav / P_Pauli (normiert)', fontsize=12)
+    ax1.set_title('1. ' + ('Gravity vs Pauli Pressure Ratio' if not de else
+                           'Gravitations- vs. Pauli-Druckverhältnis'),
+                  fontsize=14, fontweight='bold')
+    ax1.legend(loc='upper left', fontsize=10)
+    ax1.grid(True, alpha=0.3, which='both')
+    ax1.set_xlim(1, 1e40)
+    ax1.set_ylim(0.1, 1e42)
+
+    # Add annotation
+    ann_text = ('At G×10³⁶:\n'
+                '• Uncompensated: ratio = 10³⁶ → COLLAPSE\n'
+                '• Compensated: ratio = 1 → STABLE' if not de else
+                'Bei G×10³⁶:\n'
+                '• Unkompensiert: Verhältnis = 10³⁶ → KOLLAPS\n'
+                '• Kompensiert: Verhältnis = 1 → STABIL')
+    ax1.text(0.98, 0.5, ann_text, transform=ax1.transAxes, fontsize=10,
+             va='center', ha='right',
+             bbox=dict(boxstyle='round', facecolor='white', alpha=0.9, edgecolor='gray'))
+
+    # === Subplot 2: Chandrasekhar Mass Limit ===
+    M_earth_solar = constants.M_earth / constants.M_sun
+    M_sun_solar = 1.0
+
+    ax2.loglog(G_scale, M_Ch_uncompensated, color=COLORS['collapse'], linewidth=2.5,
+              label='M_Ch (uncompensated)' if not de else 'M_Ch (unkompensiert)')
+    ax2.loglog(G_scale, M_Ch_compensated, color=COLORS['standard'], linewidth=2.5,
+              label='M_Ch (compensated)' if not de else 'M_Ch (kompensiert)')
+
+    ax2.axhline(y=M_earth_solar, color=COLORS['primary_blue'], linestyle='--', linewidth=1.5,
+               label='Earth mass' if not de else 'Erdmasse')
+    ax2.axhline(y=M_sun_solar, color=COLORS['sun'], linestyle='--', linewidth=1.5,
+               label='Sun mass' if not de else 'Sonnenmasse')
+
+    ax2.axvline(x=1e36, color='red', linestyle='--', linewidth=2, alpha=0.8)
+
+    # Shade collapse regions
+    ax2.fill_between(G_scale, M_Ch_uncompensated, M_earth_solar,
+                     where=M_Ch_uncompensated < M_earth_solar,
+                     alpha=0.2, color=COLORS['collapse'],
+                     label='Earth > M_Ch (collapse!)' if not de else 'Erde > M_Ch (Kollaps!)')
+
+    ax2.set_xlabel('G / G₀', fontsize=12)
+    ax2.set_ylabel('Mass [M☉]' if not de else 'Masse [M☉]', fontsize=12)
+    ax2.set_title('2. ' + ('Chandrasekhar Limit vs G Scaling' if not de else
+                           'Chandrasekhar-Grenze vs. G-Skalierung'),
+                  fontsize=14, fontweight='bold')
+    ax2.legend(loc='upper right', fontsize=9)
+    ax2.grid(True, alpha=0.3, which='both')
+    ax2.set_xlim(1, 1e40)
+    ax2.set_ylim(1e-30, 1e5)
+
+    # Add annotation for M_Ch at essay scenario
+    M_Ch_essay_uncomp = 1.4 * (1e36)**(-1.5)
+    M_Ch_essay_comp = 1.4 * (1e18 / 1e36)**(1.5)
+    ann_text = (f'At G×10³⁶:\n'
+                f'• Uncompensated: M_Ch = {M_Ch_essay_uncomp:.0e} M☉\n'
+                f'• Compensated: M_Ch = {M_Ch_essay_comp:.0e} M☉\n'
+                f'  (= 2,800 kg - mass of a car!)' if not de else
+                f'Bei G×10³⁶:\n'
+                f'• Unkompensiert: M_Ch = {M_Ch_essay_uncomp:.0e} M☉\n'
+                f'• Kompensiert: M_Ch = {M_Ch_essay_comp:.0e} M☉\n'
+                f'  (= 2.800 kg - Masse eines Autos!)')
+    ax2.text(0.02, 0.02, ann_text, transform=ax2.transAxes, fontsize=9,
+             va='bottom', ha='left',
+             bbox=dict(boxstyle='round', facecolor='lightyellow', alpha=0.95, edgecolor='orange'))
+
+    # === Subplot 3: Earth/Atom Size ===
+    ax3.loglog(G_scale, R_uncompensated, color=COLORS['collapse'], linewidth=2.5,
+              label='R (uncompensated): atoms unchanged' if not de else
+                    'R (unkompensiert): Atome unverändert')
+    ax3.loglog(G_scale, R_compensated, color=COLORS['standard'], linewidth=2.5,
+              label='R (compensated): R ∝ ℏ² ∝ G' if not de else
+                    'R (kompensiert): R ∝ ℏ² ∝ G')
+
+    ax3.axvline(x=1e36, color='red', linestyle='--', linewidth=2, alpha=0.8)
+    ax3.axhline(y=1, color='gray', linestyle=':', alpha=0.5)
+
+    ax3.set_xlabel('G / G₀', fontsize=12)
+    ax3.set_ylabel('R / R₀ (normalized)' if not de else 'R / R₀ (normiert)', fontsize=12)
+    ax3.set_title('3. ' + ('Earth/Atom Size Scaling' if not de else
+                           'Erde/Atom-Größenskalierung'),
+                  fontsize=14, fontweight='bold')
+    ax3.legend(loc='upper left', fontsize=10)
+    ax3.grid(True, alpha=0.3, which='both')
+    ax3.set_xlim(1, 1e40)
+
+    ann_text = ('Compensated scenario:\n'
+                'Bohr radius a₀ ∝ ℏ²\n'
+                'With ℏ ∝ √G → a₀ ∝ G\n'
+                'Atoms grow with G!\n\n'
+                'At G×10³⁶, ℏ×10¹⁸:\n'
+                'Atoms are 10³⁶× larger' if not de else
+                'Kompensiertes Szenario:\n'
+                'Bohr-Radius a₀ ∝ ℏ²\n'
+                'Mit ℏ ∝ √G → a₀ ∝ G\n'
+                'Atome wachsen mit G!\n\n'
+                'Bei G×10³⁶, ℏ×10¹⁸:\n'
+                'Atome sind 10³⁶× größer')
+    ax3.text(0.02, 0.98, ann_text, transform=ax3.transAxes, fontsize=9,
+             va='top', ha='left',
+             bbox=dict(boxstyle='round', facecolor='lightgreen', alpha=0.9, edgecolor='green'))
+
+    # === Subplot 4: Compactness ===
+    ax4.loglog(G_scale, C_uncompensated, color=COLORS['collapse'], linewidth=2.5,
+              label='C (uncompensated): C ∝ G' if not de else
+                    'C (unkompensiert): C ∝ G')
+    ax4.loglog(G_scale, C_compensated, color=COLORS['standard'], linewidth=2.5,
+              label='C (compensated): C = const' if not de else
+                    'C (kompensiert): C = konst.')
+
+    ax4.axhline(y=1.0, color=COLORS['black_hole'], linestyle='--', linewidth=2,
+               label='Black hole (C=1)' if not de else 'Schwarzes Loch (C=1)')
+    ax4.axhline(y=0.5, color=COLORS['neutron_star'], linestyle=':', linewidth=1.5,
+               label='Neutron star' if not de else 'Neutronenstern')
+
+    ax4.axvline(x=1e36, color='red', linestyle='--', linewidth=2, alpha=0.8)
+
+    # Shade black hole region
+    ax4.fill_between(G_scale, C_uncompensated, 1.0,
+                     where=C_uncompensated >= 1.0,
+                     alpha=0.3, color=COLORS['black_hole'])
+
+    ax4.set_xlabel('G / G₀', fontsize=12)
+    ax4.set_ylabel('Compactness C = 2GM/(Rc²)' if not de else
+                   'Kompaktheit C = 2GM/(Rc²)', fontsize=12)
+    ax4.set_title('4. ' + ('Compactness Evolution' if not de else
+                           'Kompaktheitsentwicklung'),
+                  fontsize=14, fontweight='bold')
+    ax4.legend(loc='upper left', fontsize=9)
+    ax4.grid(True, alpha=0.3, which='both')
+    ax4.set_xlim(1, 1e40)
+    ax4.set_ylim(1e-12, 1e30)
+
+    ann_text = ('KEY INSIGHT:\n'
+                'Uncompensated: C ∝ G → becomes black hole!\n'
+                'Compensated: C ∝ G/R ∝ G/G = const → stays planet!\n\n'
+                'The ℏ ∝ √G compensation keeps Earth stable.' if not de else
+                'SCHLÜSSELERKENNTNIS:\n'
+                'Unkompensiert: C ∝ G → wird Schwarzes Loch!\n'
+                'Kompensiert: C ∝ G/R ∝ G/G = konst. → bleibt Planet!\n\n'
+                'Die ℏ ∝ √G Kompensation hält die Erde stabil.')
+    ax4.text(0.98, 0.02, ann_text, transform=ax4.transAxes, fontsize=9,
+             va='bottom', ha='right',
+             bbox=dict(boxstyle='round', facecolor='white', alpha=0.95, edgecolor='gray'))
+
+    # Main title
+    if de:
+        fig.suptitle('Szenariovergleich: Kompensiert vs. Unkompensiert\n'
+                     'Warum ℏ ∝ √G den Kollaps verhindert',
+                     fontsize=16, fontweight='bold', y=0.995)
+    else:
+        fig.suptitle('Scenario Comparison: Compensated vs. Uncompensated\n'
+                     'Why ℏ ∝ √G Prevents Collapse',
+                     fontsize=16, fontweight='bold', y=0.995)
+
+    if save:
+        os.makedirs(VIS_DIR, exist_ok=True)
+        suffix = '_de' if de else ''
+        fpath = os.path.join(VIS_DIR, f'scenario_comparison{suffix}.png')
+        fig.savefig(fpath, dpi=150, bbox_inches='tight')
+        print(f"Saved: {fpath}")
+    if show:
+        plt.show()
+    return fig
+
+
+# =============================================================================
+# VISUALIZATION 13: SUN HYPERNOVA COLLAPSE
+# =============================================================================
+
+def plot_sun_hypernova(
+    constants=None, language='en', save=True, show=True):
+    """
+    Visualization #13 - Why the Sun becomes a hypernova in the altered universe.
+
+    Shows how the dramatically lowered Chandrasekhar limit means even the Sun
+    would exceed the limit and undergo catastrophic collapse.
+
+    Args:
+        constants: Physical constants (uses standard if None)
+        language: 'en' or 'de'
+        save: Whether to save the figure
+        show: Whether to display the figure
+
+    Returns:
+        matplotlib Figure object
+    """
+    if constants is None:
+        constants = get_constants()
+
+    de = language == 'de'
+    colors = get_sequence()
+
+    # G scaling from 1 to 10^40
+    log_G = np.linspace(0, 40, 500)
+    G_scale = 10**log_G
+
+    # In the essay scenario: G×10^36, ℏ×10^18
+    # Chandrasekhar mass: M_Ch ∝ (ℏc/G)^(3/2)
+    # M_Ch(essay) / M_Ch(standard) = (ℏ_essay/G_essay)^(3/2) / (ℏ₀/G₀)^(3/2)
+    #                               = ((10^18 × ℏ₀) / (10^36 × G₀))^(3/2) / (ℏ₀/G₀)^(3/2)
+    #                               = (10^-18)^(3/2) = 10^-27
+
+    # For compensation scenario: ℏ = ℏ₀ × √(G/G₀)
+    hbar_scale = np.sqrt(G_scale)
+    M_Ch_compensated = 1.4 * (hbar_scale / G_scale)**(1.5)  # Solar masses
+
+    # Key masses in solar masses
+    M_sun = 1.0
+    M_earth = constants.M_earth / constants.M_sun
+    M_jupiter = constants.M_jupiter / constants.M_sun
+
+    # Create figure with 2 rows
+    fig = plt.figure(figsize=(14, 20))
+    gs = fig.add_gridspec(3, 1, hspace=0.35, height_ratios=[1.2, 1, 1])
+    ax1 = fig.add_subplot(gs[0])
+    ax2 = fig.add_subplot(gs[1])
+    ax3 = fig.add_subplot(gs[2])
+
+    # === Subplot 1: Chandrasekhar limit vs celestial body masses ===
+    ax1.loglog(G_scale, M_Ch_compensated, color=COLORS['quantum'], linewidth=3,
+              label='Chandrasekhar limit M_Ch(G, ℏ∝√G)' if not de else
+                    'Chandrasekhar-Grenze M_Ch(G, ℏ∝√G)')
+
+    # Horizontal lines for celestial bodies
+    bodies = [
+        (M_sun, 'Sun (1 M☉)', 'Sonne (1 M☉)', COLORS['sun'], '-'),
+        (M_jupiter, 'Jupiter', 'Jupiter', COLORS['primary_blue'], '--'),
+        (M_earth, 'Earth', 'Erde', COLORS['standard'], ':'),
+    ]
+
+    for mass, label_en, label_de, color, ls in bodies:
+        ax1.axhline(y=mass, color=color, linestyle=ls, linewidth=2,
+                   label=label_de if de else label_en)
+
+    # Mark essay scenario
+    ax1.axvline(x=1e36, color='red', linestyle='--', linewidth=3, alpha=0.8)
+    ax1.fill_betweenx([1e-30, 1e5], 1e35, 1e37, alpha=0.1, color='red')
+
+    # Mark where M_Ch crosses each body
+    G_cross_sun = (1.4 / M_sun)**(2/3) * (G_scale[0])**(2/3)  # Approximate
+    G_cross_earth = (1.4 / M_earth)**(2/3)
+
+    # Find exact crossing points
+    for i, (mass, label_en, label_de, color, _) in enumerate(bodies):
+        # Find where M_Ch = mass
+        crossing_idx = np.where(M_Ch_compensated <= mass)[0]
+        if len(crossing_idx) > 0:
+            G_cross = G_scale[crossing_idx[0]]
+            ax1.scatter([G_cross], [mass], s=150, color=color, marker='X',
+                       edgecolors='black', linewidth=2, zorder=10)
+
+            # Annotate
+            if mass == M_sun:
+                ax1.annotate(f'Sun exceeds M_Ch\nat G ≈ {G_cross:.0e}',
+                           xy=(G_cross, mass), xytext=(G_cross*10, mass*100),
+                           fontsize=10, fontweight='bold', color=color,
+                           arrowprops=dict(arrowstyle='->', color=color))
+
+    # Shade collapse region
+    ax1.fill_between(G_scale, M_Ch_compensated, M_sun,
+                     where=M_Ch_compensated < M_sun,
+                     alpha=0.25, color=COLORS['collapse'],
+                     label='Sun > M_Ch (COLLAPSE!)' if not de else 'Sonne > M_Ch (KOLLAPS!)')
+
+    ax1.set_xlabel('G / G₀', fontsize=12)
+    ax1.set_ylabel('Mass [M☉]' if not de else 'Masse [M☉]', fontsize=12)
+    ax1.set_title('1. ' + ('Chandrasekhar Limit Collapse: When Stars Exceed the Limit' if not de else
+                           'Chandrasekhar-Grenzkollaps: Wenn Sterne die Grenze überschreiten'),
+                  fontsize=14, fontweight='bold')
+    ax1.legend(loc='upper right', fontsize=9)
+    ax1.grid(True, alpha=0.3, which='both')
+    ax1.set_xlim(1, 1e40)
+    ax1.set_ylim(1e-30, 1e5)
+
+    # === Subplot 2: Mass excess ratio (how many times over the limit) ===
+    excess_sun = M_sun / M_Ch_compensated
+    excess_earth = M_earth / M_Ch_compensated
+
+    ax2.loglog(G_scale, excess_sun, color=COLORS['sun'], linewidth=2.5,
+              label='Sun / M_Ch' if not de else 'Sonne / M_Ch')
+    ax2.loglog(G_scale, excess_earth, color=COLORS['standard'], linewidth=2.5,
+              label='Earth / M_Ch' if not de else 'Erde / M_Ch')
+
+    ax2.axhline(y=1, color='black', linestyle='--', linewidth=2,
+               label='Limit (M = M_Ch)' if not de else 'Grenze (M = M_Ch)')
+    ax2.axvline(x=1e36, color='red', linestyle='--', linewidth=3, alpha=0.8)
+
+    # Shade supercritical region
+    ax2.fill_between(G_scale, 1, excess_sun, where=excess_sun > 1,
+                     alpha=0.2, color=COLORS['collapse'])
+
+    ax2.set_xlabel('G / G₀', fontsize=12)
+    ax2.set_ylabel('M / M_Ch (excess ratio)' if not de else 'M / M_Ch (Überschussverhältnis)', fontsize=12)
+    ax2.set_title('2. ' + ('How Many Times Over the Chandrasekhar Limit?' if not de else
+                           'Wie oft über der Chandrasekhar-Grenze?'),
+                  fontsize=14, fontweight='bold')
+    ax2.legend(loc='upper left', fontsize=10)
+    ax2.grid(True, alpha=0.3, which='both')
+    ax2.set_xlim(1, 1e40)
+
+    # Add annotation at essay scenario
+    excess_at_essay_sun = M_sun / (1.4 * (1e18 / 1e36)**(1.5))
+    excess_at_essay_earth = M_earth / (1.4 * (1e18 / 1e36)**(1.5))
+
+    ann_text = (f'At Essay Scenario (G×10³⁶, ℏ×10¹⁸):\n'
+                f'• M_Ch = 1.4 M☉ × 10⁻²⁷ = 2,800 kg\n'
+                f'• Sun excess: {excess_at_essay_sun:.0e}× over limit\n'
+                f'• Earth excess: {excess_at_essay_earth:.0e}× over limit\n\n'
+                f'→ Both undergo GRAVITATIONAL COLLAPSE!' if not de else
+                f'Beim Essay-Szenario (G×10³⁶, ℏ×10¹⁸):\n'
+                f'• M_Ch = 1,4 M☉ × 10⁻²⁷ = 2.800 kg\n'
+                f'• Sonnenüberschuss: {excess_at_essay_sun:.0e}× über Grenze\n'
+                f'• Erdüberschuss: {excess_at_essay_earth:.0e}× über Grenze\n\n'
+                f'→ Beide erleiden GRAVITATIONSKOLLAPS!')
+    ax2.text(0.98, 0.98, ann_text, transform=ax2.transAxes, fontsize=10,
+             va='top', ha='right',
+             bbox=dict(boxstyle='round', facecolor=COLORS['box_error'],
+                      alpha=0.95, edgecolor=COLORS['collapse'], linewidth=2))
+
+    # === Subplot 3: Collapse outcome diagram ===
+    ax3.set_xlim(0, 10)
+    ax3.set_ylim(0, 10)
+    ax3.axis('off')
+
+    # Title
+    title = ('3. Collapse Outcome: Sun → Hypernova → Black Hole' if not de else
+             '3. Kollaps-Ergebnis: Sonne → Hypernova → Schwarzes Loch')
+    ax3.text(5, 9.5, title, fontsize=14, fontweight='bold', ha='center', va='top')
+
+    # Draw the sequence
+    # Step 1: Normal Sun
+    circle1 = plt.Circle((1.5, 6), 0.8, color=COLORS['sun'], ec='black', linewidth=2)
+    ax3.add_patch(circle1)
+    ax3.text(1.5, 4.8, 'Sun\n(M☉)' if not de else 'Sonne\n(M☉)',
+             ha='center', va='top', fontsize=10, fontweight='bold')
+
+    # Arrow 1
+    ax3.annotate('', xy=(3, 6), xytext=(2.5, 6),
+                arrowprops=dict(arrowstyle='->', lw=2, color='black'))
+    ax3.text(2.75, 6.5, 'G×10³⁶\nℏ×10¹⁸', ha='center', fontsize=9, color='red')
+
+    # Step 2: M_Ch drops
+    ax3.text(4.2, 6, 'M_Ch drops\nto 2,800 kg!' if not de else
+             'M_Ch sinkt\nauf 2.800 kg!', ha='center', va='center',
+             fontsize=10, fontweight='bold', color=COLORS['collapse'],
+             bbox=dict(boxstyle='round', facecolor='lightyellow', edgecolor='orange'))
+
+    # Arrow 2
+    ax3.annotate('', xy=(5.8, 6), xytext=(5.3, 6),
+                arrowprops=dict(arrowstyle='->', lw=2, color='black'))
+
+    # Step 3: Sun > M_Ch
+    ax3.text(6.8, 6, 'Sun >> M_Ch\n(10²⁷× over!)' if not de else
+             'Sonne >> M_Ch\n(10²⁷× drüber!)', ha='center', va='center',
+             fontsize=10, fontweight='bold', color=COLORS['collapse'],
+             bbox=dict(boxstyle='round', facecolor=COLORS['box_error'],
+                      edgecolor=COLORS['collapse'], linewidth=2))
+
+    # Arrow 3
+    ax3.annotate('', xy=(8.5, 6), xytext=(8, 6),
+                arrowprops=dict(arrowstyle='->', lw=3, color=COLORS['collapse']))
+
+    # Step 4: Hypernova/Black Hole
+    circle2 = plt.Circle((9.2, 6), 0.5, color='black', ec='red', linewidth=3)
+    ax3.add_patch(circle2)
+    ax3.text(9.2, 4.8, 'Black\nHole' if not de else 'Schwarzes\nLoch',
+             ha='center', va='top', fontsize=10, fontweight='bold', color='black')
+
+    # Explosion effect
+    for angle in np.linspace(0, 2*np.pi, 12, endpoint=False):
+        dx = 0.8 * np.cos(angle)
+        dy = 0.8 * np.sin(angle)
+        ax3.plot([9.2, 9.2+dx], [6, 6+dy], color='orange', linewidth=2, alpha=0.7)
+
+    ax3.text(9.2, 7.2, 'HYPERNOVA!', ha='center', va='bottom',
+             fontsize=12, fontweight='bold', color='red',
+             bbox=dict(boxstyle='round', facecolor='yellow', edgecolor='red', linewidth=2))
+
+    # Explanation box
+    explanation = (
+        'WHY HYPERNOVA?\n\n'
+        '1. In the altered universe: M_Ch = 2,800 kg (mass of a small car)\n'
+        '2. Sun mass = 2×10³⁰ kg → exceeds M_Ch by factor of 10²⁷\n'
+        '3. Electron degeneracy pressure CANNOT support against gravity\n'
+        '4. Catastrophic core collapse → releases enormous energy\n'
+        '5. Result: Hypernova explosion → remnant black hole\n\n'
+        'The Chandrasekhar limit depends on ℏ and G:\n'
+        'M_Ch ∝ (ℏc/G)^(3/2)\n'
+        'When G×10³⁶ and ℏ×10¹⁸: M_Ch drops by 10²⁷!' if not de else
+        'WARUM HYPERNOVA?\n\n'
+        '1. Im veränderten Universum: M_Ch = 2.800 kg (Masse eines Autos)\n'
+        '2. Sonnenmasse = 2×10³⁰ kg → überschreitet M_Ch um Faktor 10²⁷\n'
+        '3. Elektronen-Entartungsdruck KANN nicht gegen Gravitation stützen\n'
+        '4. Katastrophaler Kernkollaps → setzt enorme Energie frei\n'
+        '5. Ergebnis: Hypernova-Explosion → Schwarzes Loch als Überrest\n\n'
+        'Die Chandrasekhar-Grenze hängt von ℏ und G ab:\n'
+        'M_Ch ∝ (ℏc/G)^(3/2)\n'
+        'Bei G×10³⁶ und ℏ×10¹⁸: M_Ch sinkt um 10²⁷!'
+    )
+    ax3.text(5, 2.5, explanation, ha='center', va='center', fontsize=9,
+             bbox=dict(boxstyle='round', facecolor='white', edgecolor='gray', linewidth=1),
+             family='monospace')
+
+    # Main title
+    if de:
+        fig.suptitle('Warum die Sonne zur Hypernova wird\n'
+                     'Chandrasekhar-Grenze im veränderten Universum',
+                     fontsize=16, fontweight='bold', y=0.995)
+    else:
+        fig.suptitle('Why the Sun Becomes a Hypernova\n'
+                     'Chandrasekhar Limit in the Altered Universe',
+                     fontsize=16, fontweight='bold', y=0.995)
+
+    if save:
+        os.makedirs(VIS_DIR, exist_ok=True)
+        suffix = '_de' if de else ''
+        fpath = os.path.join(VIS_DIR, f'sun_hypernova{suffix}.png')
+        fig.savefig(fpath, dpi=150, bbox_inches='tight')
+        print(f"Saved: {fpath}")
+    if show:
+        plt.show()
+    return fig
+
+
+# =============================================================================
+# VISUALIZATION 14: COMPACT EARTH COLLAPSE EXPLANATION
+# =============================================================================
+
+def plot_earth_collapse_compact(
+    constants=None, language='en', save=True, show=True):
+    """
+    Visualization #14 - Compact single-page explanation of why Earth collapses.
+
+    A focused visualization showing the key physics of Earth's collapse
+    in the altered universe scenario.
+
+    Args:
+        constants: Physical constants (uses standard if None)
+        language: 'en' or 'de'
+        save: Whether to save the figure
+        show: Whether to display the figure
+
+    Returns:
+        matplotlib Figure object
+    """
+    if constants is None:
+        constants = get_constants()
+
+    de = language == 'de'
+
+    # Calculate key values for essay scenario
+    G_scale = 1e36
+    hbar_scale = 1e18
+
+    # Standard values
+    M_Ch_std = 1.4 * constants.M_sun  # Standard Chandrasekhar mass
+    M_earth = constants.M_earth
+    M_earth_solar = M_earth / constants.M_sun
+
+    # Essay scenario values
+    # M_Ch ∝ (ℏc/G)^(3/2) → at (G×10^36, ℏ×10^18): ratio = (10^18/10^36)^(3/2) = 10^-27
+    M_Ch_essay = M_Ch_std * (hbar_scale / G_scale)**(1.5)
+    M_Ch_essay_kg = M_Ch_essay
+
+    # How many times Earth exceeds M_Ch
+    excess_ratio = M_earth / M_Ch_essay
+
+    # Create figure
+    fig = plt.figure(figsize=(12, 14))
+    gs = fig.add_gridspec(2, 2, hspace=0.3, wspace=0.25)
+
+    ax1 = fig.add_subplot(gs[0, 0])  # Bar comparison
+    ax2 = fig.add_subplot(gs[0, 1])  # Formula breakdown
+    ax3 = fig.add_subplot(gs[1, :])  # Timeline/process
+
+    # === Panel 1: Bar comparison ===
+    categories = ['Standard\nUniverse', 'Altered\nUniverse\n(G×10³⁶, ℏ×10¹⁸)']
+
+    # Chandrasekhar mass bars (log scale visualization)
+    M_Ch_values = [M_Ch_std / constants.M_sun, M_Ch_essay / constants.M_sun]
+
+    # Use log scale for bar heights
+    bar_heights = [np.log10(M_Ch_std), np.log10(M_Ch_essay)]
+    bar_heights_normalized = [30 + h for h in bar_heights]  # Shift to positive
+
+    bars = ax1.bar([0, 1], bar_heights_normalized, color=[COLORS['standard'], COLORS['collapse']],
+                   edgecolor='black', linewidth=2, width=0.6)
+
+    # Add Earth mass line
+    earth_height = 30 + np.log10(M_earth)
+    ax1.axhline(y=earth_height, color=COLORS['primary_blue'], linestyle='--',
+               linewidth=3, label='Earth mass' if not de else 'Erdmasse')
+
+    # Labels on bars
+    ax1.text(0, bar_heights_normalized[0] + 0.5,
+             f'M_Ch = 1.4 M☉\n= 2.8×10³⁰ kg', ha='center', fontsize=10, fontweight='bold')
+    ax1.text(1, bar_heights_normalized[1] + 0.5,
+             f'M_Ch = 2,800 kg\n(mass of car!)', ha='center', fontsize=10,
+             fontweight='bold', color=COLORS['collapse'])
+
+    ax1.set_xticks([0, 1])
+    ax1.set_xticklabels(categories, fontsize=11)
+    ax1.set_ylabel('log₁₀(Mass / kg)', fontsize=11)
+    ax1.set_title('Chandrasekhar Limit Comparison' if not de else
+                  'Chandrasekhar-Grenzenvergleich', fontsize=13, fontweight='bold')
+    ax1.legend(loc='upper right')
+
+    # Add annotation
+    ax1.annotate('', xy=(1, earth_height), xytext=(1, bar_heights_normalized[1]),
+                arrowprops=dict(arrowstyle='<->', color='red', lw=2))
+    ax1.text(1.3, (earth_height + bar_heights_normalized[1])/2,
+             f'Earth exceeds\nM_Ch by\n10²¹ times!' if not de else
+             f'Erde überschreitet\nM_Ch um\n10²¹ mal!',
+             fontsize=10, fontweight='bold', color='red', va='center')
+
+    # === Panel 2: Formula breakdown ===
+    ax2.axis('off')
+
+    formula_text = (
+        'THE PHYSICS OF EARTH\'S COLLAPSE\n'
+        '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n'
+        'Chandrasekhar Mass Formula:\n'
+        '    M_Ch ∝ (ℏc/G)^(3/2)\n\n'
+        'Standard Universe:\n'
+        '    M_Ch = 1.4 M☉ = 2.8 × 10³⁰ kg\n'
+        '    Earth (6 × 10²⁴ kg) << M_Ch  ✓ STABLE\n\n'
+        'Altered Universe (G×10³⁶, ℏ×10¹⁸):\n'
+        '    M_Ch = 1.4 M☉ × (10¹⁸/10³⁶)^(3/2)\n'
+        '         = 1.4 M☉ × (10⁻¹⁸)^(3/2)\n'
+        '         = 1.4 M☉ × 10⁻²⁷\n'
+        '         = 2,800 kg  ← Mass of a small car!\n\n'
+        'Earth vs New Limit:\n'
+        '    M_Earth / M_Ch = 6×10²⁴ / 2,800\n'
+        '                   = 2 × 10²¹\n\n'
+        '→ Earth is 10²¹ times OVER the limit!\n'
+        '→ Electron degeneracy CANNOT support it\n'
+        '→ GRAVITATIONAL COLLAPSE is inevitable' if not de else
+        'DIE PHYSIK DES ERDKOLLAPSES\n'
+        '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n'
+        'Chandrasekhar-Masse Formel:\n'
+        '    M_Ch ∝ (ℏc/G)^(3/2)\n\n'
+        'Standarduniversum:\n'
+        '    M_Ch = 1,4 M☉ = 2,8 × 10³⁰ kg\n'
+        '    Erde (6 × 10²⁴ kg) << M_Ch  ✓ STABIL\n\n'
+        'Verändertes Universum (G×10³⁶, ℏ×10¹⁸):\n'
+        '    M_Ch = 1,4 M☉ × (10¹⁸/10³⁶)^(3/2)\n'
+        '         = 1,4 M☉ × (10⁻¹⁸)^(3/2)\n'
+        '         = 1,4 M☉ × 10⁻²⁷\n'
+        '         = 2.800 kg  ← Masse eines Autos!\n\n'
+        'Erde vs. Neue Grenze:\n'
+        '    M_Erde / M_Ch = 6×10²⁴ / 2.800\n'
+        '                  = 2 × 10²¹\n\n'
+        '→ Erde ist 10²¹-mal ÜBER der Grenze!\n'
+        '→ Elektronen-Entartung KANN sie nicht stützen\n'
+        '→ GRAVITATIONSKOLLAPS ist unvermeidlich'
+    )
+    ax2.text(0.05, 0.95, formula_text, transform=ax2.transAxes,
+             fontsize=10, va='top', ha='left', family='monospace',
+             bbox=dict(boxstyle='round', facecolor='lightyellow',
+                      edgecolor='orange', linewidth=2))
+
+    # === Panel 3: Collapse process timeline ===
+    ax3.set_xlim(0, 10)
+    ax3.set_ylim(0, 4)
+    ax3.axis('off')
+
+    title = 'Earth Collapse Process' if not de else 'Erdkollaps-Prozess'
+    ax3.text(5, 3.7, title, fontsize=14, fontweight='bold', ha='center')
+
+    # Draw process boxes
+    boxes = [
+        (0.5, 2, 'Normal\nEarth', COLORS['standard'], 'Planet with\nnormal matter'),
+        (2.5, 2, 'G×10³⁶\nℏ×10¹⁸', 'white', 'Physics\nchanges'),
+        (4.5, 2, 'M_Ch\ndrops!', COLORS['primary_amber'], 'Limit becomes\n2,800 kg'),
+        (6.5, 2, 'Earth >>\nM_Ch', COLORS['box_error'], '10²¹× over\nthe limit'),
+        (8.5, 2, 'COLLAPSE', 'black', 'Degeneracy\nfails'),
+    ]
+
+    for x, y, text, color, desc in boxes:
+        fc = color if color != 'white' else 'white'
+        tc = 'white' if color == 'black' else 'black'
+        box = FancyBboxPatch((x-0.6, y-0.4), 1.2, 0.8,
+                             boxstyle='round,pad=0.05',
+                             facecolor=fc, edgecolor='black', linewidth=2)
+        ax3.add_patch(box)
+        ax3.text(x, y, text, ha='center', va='center', fontsize=10,
+                fontweight='bold', color=tc)
+        ax3.text(x, y-0.7, desc, ha='center', va='top', fontsize=8, style='italic')
+
+    # Arrows between boxes
+    for i in range(len(boxes)-1):
+        ax3.annotate('', xy=(boxes[i+1][0]-0.7, 2),
+                    xytext=(boxes[i][0]+0.7, 2),
+                    arrowprops=dict(arrowstyle='->', lw=2, color='gray'))
+
+    # Final outcome
+    ax3.text(5, 0.5,
+             'RESULT: Earth becomes a degenerate object (white dwarf-like or denser)\n'
+             'The changed physics of the altered universe makes normal planets impossible!'
+             if not de else
+             'ERGEBNIS: Erde wird ein entartetes Objekt (Weißer-Zwerg-artig oder dichter)\n'
+             'Die veränderte Physik des modifizierten Universums macht normale Planeten unmöglich!',
+             ha='center', va='center', fontsize=11, fontweight='bold',
+             bbox=dict(boxstyle='round', facecolor=COLORS['collapse'],
+                      edgecolor='darkred', linewidth=2),
+             color='white')
+
+    # Main title
+    if de:
+        fig.suptitle('Warum die Erde kollabiert\nim veränderten Universum (G×10³⁶, ℏ×10¹⁸)',
+                     fontsize=16, fontweight='bold', y=0.98)
+    else:
+        fig.suptitle('Why Earth Collapses\nin the Altered Universe (G×10³⁶, ℏ×10¹⁸)',
+                     fontsize=16, fontweight='bold', y=0.98)
+
+    if save:
+        os.makedirs(VIS_DIR, exist_ok=True)
+        suffix = '_de' if de else ''
+        fpath = os.path.join(VIS_DIR, f'earth_collapse_compact{suffix}.png')
+        fig.savefig(fpath, dpi=150, bbox_inches='tight')
+        print(f"Saved: {fpath}")
+    if show:
+        plt.show()
+    return fig
+
+
+# =============================================================================
 # GENERATION AND VERIFICATION
 # =============================================================================
 
 def generate_all_earth_collapse_plots(
     constants=None, language='en', save=True, show=False):
     """
-    Generate all Earth collapse visualizations (9, 10, 11).
+    Generate all Earth collapse visualizations (9-14).
     Erzeugt alle Erdkollaps-Visualisierungen.
 
     Args:
@@ -1046,6 +1768,15 @@ def generate_all_earth_collapse_plots(
 
     print("  [11] Earth Collapse Summary...")
     figs.append(plot_earth_collapse_summary(constants, language, save, show))
+
+    print("  [12] Scenario Comparison (Compensated vs Uncompensated)...")
+    figs.append(plot_scenario_comparison(constants, language, save, show))
+
+    print("  [13] Sun Hypernova...")
+    figs.append(plot_sun_hypernova(constants, language, save, show))
+
+    print("  [14] Earth Collapse Compact...")
+    figs.append(plot_earth_collapse_compact(constants, language, save, show))
 
     print(f"Done. Generated {len(figs)} figures.")
     return figs
