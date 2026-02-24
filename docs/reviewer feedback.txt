@@ -1,0 +1,15 @@
+CHANDRASEKHAR LIMIT SCALING:
+Formula: M_Ch ∝ (ℏc/G)^(3/2)
+
+In our scenario: G → G×10³⁶, ℏ → ℏ×10¹⁸
+M_Ch(scaled) = 1.4 M☉ × (10¹⁸/10³⁶)^(3/2)
+             = 1.4 M☉ × (10⁻¹⁸)^(3/2)
+             = 1.4 M☉ × 10⁻²⁷
+             = 2,800 kg (mass of a small car!)
+
+IMPLICATION: Earth (6×10²⁴ kg) is 10²¹ times
+ABOVE the new Chandrasekhar limit. This explains
+why Earth becomes a degenerate object in our
+scaled universe – NOT because it reaches the
+original limit, but because the limit itself
+has dropped so dramatically!
