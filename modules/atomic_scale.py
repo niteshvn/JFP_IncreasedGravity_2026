@@ -355,6 +355,30 @@ def plot_atom_size_comparison(
                      linewidth=3, alpha=0.9),
             color='white', fontweight='bold')
 
+    # Fix #3: Add note about NEW EQUILIBRIUM (not just "countering")
+    if language == 'de':
+        equilibrium_note = (
+            'VERBINDUNG ZU UNSEREM SZENARIO (G×10³⁶, ℏ×10¹⁸):\n'
+            'Die Bohr-Radius-Formel a₀ ∝ ℏ² sagt voraus, dass Atome 10³⁶× größer wären.\n'
+            'Jedoch komprimiert die 10³⁶× stärkere Gravitation Elektronen zum Kern.\n\n'
+            'Das Nettoergebnis? Ein NEUES GLEICHGEWICHT, bei dem P_grav/P_Pauli ∝ G/ℏ²\n'
+            'konstant bleibt—stabile Atome sind möglich, aber mit völlig anderer Struktur.'
+        )
+    else:
+        equilibrium_note = (
+            'CONNECTION TO OUR SCENARIO (G×10³⁶, ℏ×10¹⁸):\n'
+            'The Bohr radius formula a₀ ∝ ℏ² predicts atoms would be 10³⁶× larger.\n'
+            'However, the 10³⁶× stronger gravity compresses electrons toward the nucleus.\n\n'
+            'The net effect? A NEW EQUILIBRIUM where P_grav/P_Pauli ∝ G/ℏ²\n'
+            'remains constant—stable atoms exist, but with dramatically different structure.'
+        )
+
+    ax.text(0.5, -0.26, equilibrium_note, fontsize=9, va='top', ha='center',
+            transform=ax.transAxes,
+            bbox=dict(boxstyle='round,pad=0.5', facecolor=COLORS['box_info'],
+                     edgecolor=COLORS['primary_blue'], linewidth=2, alpha=0.95),
+            color=COLORS['text_dark'], fontweight='normal')
+
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)
         filepath = os.path.join(VIS_DIR, 'atom_size_comparison.png')

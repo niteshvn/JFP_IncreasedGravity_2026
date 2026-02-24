@@ -275,6 +275,30 @@ def plot_force_vs_distance(
     ax2.tick_params(axis='both', labelsize=11)
     ax2.set_xlim(1, 1e6)
 
+    # Fix #1: Add key insight connection note
+    avg_ratio = np.mean(ratio)
+    if language == 'de':
+        insight_text = (
+            f'SCHLÜSSELERKENNTNIS:\n'
+            f'In unserem Universum: F_C/F_G ≈ {avg_ratio:.2e}\n\n'
+            f'Unser Szenario (G×10³⁶) macht dieses\n'
+            f'Verhältnis ≈ 1—Gravitation und Elektro-\n'
+            f'magnetismus werden gleich stark!'
+        )
+    else:
+        insight_text = (
+            f'KEY INSIGHT:\n'
+            f'In our universe: F_C/F_G ≈ {avg_ratio:.2e}\n\n'
+            f'Our scenario (G×10³⁶) makes this\n'
+            f'ratio ≈ 1—gravity and electromagnetism\n'
+            f'become equally strong at all distances!'
+        )
+    ax2.text(0.98, 0.98, insight_text, fontsize=9, va='top', ha='right',
+             transform=ax2.transAxes,
+             bbox=dict(boxstyle='round,pad=0.4', facecolor=COLORS['box_info'],
+                      edgecolor=COLORS['primary_blue'], linewidth=2, alpha=0.95),
+             color=COLORS['text_dark'], fontweight='bold')
+
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)
         filename = 'force_vs_distance.png'
@@ -424,6 +448,10 @@ def plot_scaled_universe_comparison(
     - At the NEW atomic scale, forces at Bohr radius change
     - alpha_G increases by factor X (gravity relatively stronger vs quantum effects)
 
+    NOTE (Fix #2): This page shows what happens if ONLY ℏ is changed (without G).
+    This is a CONTRAST scenario to demonstrate why both constants must be scaled
+    together in the main essay scenario (G×10³⁶, ℏ×10¹⁸).
+
     Args:
         hbar_scale: Scaling factor for hbar
         G_scale: Scaling factor for G
@@ -452,8 +480,32 @@ def plot_scaled_universe_comparison(
     F_coul_alt = abs(alt.coulomb_force(alt.e, alt.e, r_alt))
     ratio_alt = F_coul_alt / F_grav_alt
 
-    # Create figure with two subplots stacked vertically
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 12), gridspec_kw={'hspace': 0.4})
+    # Create figure with two subplots stacked vertically (extra height for disclaimer)
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 14), gridspec_kw={'hspace': 0.5})
+
+    # Fix #2: Add IMPORTANT DISCLAIMER at the top of the figure
+    if language == 'de':
+        disclaimer_text = (
+            '⚠️ WICHTIGER KONTEXT ⚠️\n'
+            f'Diese Seite zeigt ein hypothetisches Universum, in dem NUR ℏ verändert wird (auf {hbar_scale}×),\n'
+            'während G unverändert bleibt. Dies ist NICHT unser Haupt-Essay-Szenario (G×10³⁶ UND ℏ×10¹⁸).\n\n'
+            'ZWECK: Diese Seite zeigt, warum die ℏ-Skalierung notwendig ist—ohne sie würde\n'
+            'die Gravitation vollständig dominieren und Atome würden kollabieren.'
+        )
+    else:
+        disclaimer_text = (
+            '⚠️ IMPORTANT CONTEXT ⚠️\n'
+            f'This page shows a hypothetical universe where ONLY ℏ is changed (to {hbar_scale}×),\n'
+            'while G remains unchanged. This is NOT our main essay scenario (G×10³⁶ AND ℏ×10¹⁸).\n\n'
+            'PURPOSE: This page demonstrates why the ℏ scaling is necessary—without it,\n'
+            'gravity would completely dominate and atoms would collapse.'
+        )
+
+    fig.text(0.5, 0.97, disclaimer_text, fontsize=10, va='top', ha='center',
+             bbox=dict(boxstyle='round,pad=0.5', facecolor=COLORS['box_warning'],
+                      edgecolor=COLORS['highlight'], linewidth=2, alpha=0.95),
+             color=COLORS['primary_amber'], fontweight='bold',
+             transform=fig.transFigure)
 
     # Top: Standard Universe
     forces_std = [F_grav_std, F_coul_std]
@@ -500,6 +552,28 @@ def plot_scaled_universe_comparison(
     y_max = max(all_forces) * 100
     ax1.set_ylim(y_min, y_max)
     ax2.set_ylim(y_min, y_max)
+
+    # Fix #2: Add COMPARISON with main essay scenario at the bottom
+    if language == 'de':
+        comparison_text = (
+            'VERGLEICH MIT UNSEREM SZENARIO:\n'
+            f'• Nur ℏ={hbar_scale}: Atome {int(1/hbar_scale**2)}× kleiner, Gravitation dominiert → KOLLAPS\n'
+            '• Unser Szenario (G×10³⁶, ℏ×10¹⁸): Gleichgewicht erhalten → NEUES GLEICHGEWICHT MÖGLICH\n\n'
+            'Schlüsselerkenntnis: P_grav/P_Pauli ∝ G/ℏ² muss konstant bleiben für Stabilität!'
+        )
+    else:
+        comparison_text = (
+            'COMPARISON WITH OUR SCENARIO:\n'
+            f'• ℏ={hbar_scale} only: Atoms {int(1/hbar_scale**2)}× smaller, gravity dominates → COLLAPSE\n'
+            '• Our scenario (G×10³⁶, ℏ×10¹⁸): Balance maintained → NEW EQUILIBRIUM POSSIBLE\n\n'
+            'Key insight: P_grav/P_Pauli ∝ G/ℏ² must remain constant for stability!'
+        )
+
+    fig.text(0.5, 0.02, comparison_text, fontsize=10, va='bottom', ha='center',
+             bbox=dict(boxstyle='round,pad=0.5', facecolor=COLORS['box_success'],
+                      edgecolor=COLORS['standard'], linewidth=2, alpha=0.95),
+             color=COLORS['equilibrium'], fontweight='bold',
+             transform=fig.transFigure)
 
     if save:
         os.makedirs(VIS_DIR, exist_ok=True)

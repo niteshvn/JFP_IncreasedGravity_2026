@@ -116,6 +116,28 @@ def coulomb_thermal_pressure(density: float, temperature: float, constants: Phys
     return n * constants.k_B * temperature
 
 
+def radiation_pressure(temperature: float) -> float:
+    """
+    Calculate radiation pressure from photon gas.
+    Berechnet Strahlungsdruck aus Photonengas.
+
+    Formula: P_rad = (1/3) × a × T⁴
+    where a = 4σ/c is the radiation constant (σ = Stefan-Boltzmann constant)
+
+    At extreme temperatures (T > 10⁹ K), radiation pressure dominates
+    over both degeneracy and thermal pressure.
+
+    Args:
+        temperature: Temperature [K]
+
+    Returns:
+        Radiation pressure [Pa]
+    """
+    # Radiation constant a = 4σ/c = 7.5657e-16 J/(m³·K⁴)
+    a_rad = 7.5657e-16
+    return (1.0 / 3.0) * a_rad * temperature**4
+
+
 def calculate_planetary_equilibrium(
     mass: float,
     standard_radius: float,
@@ -276,18 +298,25 @@ def plot_earth_structural_effects(
     ax1.grid(True, alpha=0.3)
     ax1.tick_params(axis='both', labelsize=11)
 
-    # Plot 2: Pressure components vs G
+    # Plot 2: Pressure components vs G (Fix #5: Added radiation pressure)
     ax2 = axes[1]
 
     P_grav_list = []
     P_thermal_list = []
     P_deg_list = []
+    P_rad_list = []
 
     for G_scale in G_scales:
         eq = calculate_planetary_equilibrium(M_earth, R_earth, T_core, constants, G_scale=G_scale)
         P_grav_list.append(eq.gravitational_pressure)
         P_thermal_list.append(eq.coulomb_pressure)
         P_deg_list.append(eq.degeneracy_pressure)
+        # Fix #5: Estimate temperature increase with compression
+        # At high G, compression heats the core significantly
+        # Simple model: T ∝ (G/G_0)^0.5 due to virial theorem
+        T_scaled = T_core * (G_scale ** 0.5)
+        T_scaled = min(T_scaled, 1e12)  # Cap at 10^12 K
+        P_rad_list.append(radiation_pressure(T_scaled))
 
     ax2.loglog(G_scales, P_grav_list, '-', color=COLORS['scaled'], linewidth=2.5,
                label='P_gravity' if language == 'en' else 'P_Gravitation')
@@ -295,21 +324,43 @@ def plot_earth_structural_effects(
                label='P_thermal (Coulomb)' if language == 'en' else 'P_thermisch (Coulomb)')
     ax2.loglog(G_scales, P_deg_list, ':', color=COLORS['quantum'], linewidth=2,
                label='P_degeneracy (Pauli)' if language == 'en' else 'P_Entartung (Pauli)')
+    # Fix #5: Add radiation pressure line
+    ax2.loglog(G_scales, P_rad_list, '-.', color=COLORS['temp_hot'], linewidth=2.5,
+               label='P_radiation (∝ T⁴)' if language == 'en' else 'P_Strahlung (∝ T⁴)')
 
     ax2.axvline(x=1, color=COLORS['standard'], linestyle=':', linewidth=1, alpha=0.5)
 
     if language == 'de':
         ax2.set_xlabel('G-Skalierungsfaktor', fontsize=12)
         ax2.set_ylabel('Druck (Pa)', fontsize=12)
-        ax2.set_title('2. Druckkomponenten im Erdkern', fontsize=14, fontweight='bold')
+        ax2.set_title('2. Druckkomponenten im Erdkern (inkl. Strahlungsdruck)', fontsize=14, fontweight='bold')
     else:
         ax2.set_xlabel('G scaling factor', fontsize=12)
         ax2.set_ylabel('Pressure (Pa)', fontsize=12)
-        ax2.set_title('2. Pressure Components in Earth\'s Core', fontsize=14, fontweight='bold')
+        ax2.set_title('2. Pressure Components in Earth\'s Core (incl. Radiation)', fontsize=14, fontweight='bold')
 
-    ax2.legend(fontsize=11, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3)
+    ax2.legend(fontsize=11, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=4)
     ax2.grid(True, alpha=0.3, which='both')
     ax2.tick_params(axis='both', labelsize=11)
+
+    # Fix #5: Add explanatory note about radiation pressure dominance
+    if language == 'de':
+        rad_note = (
+            'HINWEIS: Bei G×10³⁶ erreicht T ≈ 10¹¹ K.\n'
+            'Strahlungsdruck (∝ T⁴) DOMINIERT dann\n'
+            'über Entartungsdruck → Kein Neutronenstern!'
+        )
+    else:
+        rad_note = (
+            'NOTE: At G×10³⁶, T reaches ≈ 10¹¹ K.\n'
+            'Radiation pressure (∝ T⁴) then DOMINATES\n'
+            'over degeneracy pressure → No neutron star!'
+        )
+    ax2.text(0.98, 0.02, rad_note, fontsize=8, va='bottom', ha='right',
+             transform=ax2.transAxes,
+             bbox=dict(boxstyle='round,pad=0.3', facecolor=COLORS['box_error'],
+                      edgecolor=COLORS['scaled'], linewidth=1.5, alpha=0.95),
+             color=COLORS['collapse'])
 
     # Plot 3: Effect of ℏ scaling on degeneracy pressure
     ax3 = axes[2]
@@ -439,7 +490,7 @@ def plot_gravity_vs_pauli(
     fig, axes = plt.subplots(4, 1, figsize=(12, 32))
     fig.subplots_adjust(hspace=0.5, top=0.95, bottom=0.04)
 
-    # Plot 1: Pressure vs density comparison
+    # Plot 1: Pressure vs density comparison (Fix #5: Added radiation pressure)
     ax1 = axes[0]
 
     densities = np.logspace(3, 18, 100)  # From rock to nuclear density
@@ -457,6 +508,12 @@ def plot_gravity_vs_pauli(
     n_e = densities / (2.0 * constants.m_p)
     P_deg_r = (constants.hbar * constants.c / 4) * (3 / np.pi)**(1/3) * n_e**(4/3)
 
+    # Fix #5: Add radiation pressure at extreme temperatures
+    # At T ≈ 10¹¹ K (compressed Earth scenario), radiation pressure dominates
+    T_extreme = 1e11  # K - temperature in compressed Earth scenario
+    P_rad_extreme = radiation_pressure(T_extreme)
+    P_rad_line = np.full_like(densities, P_rad_extreme)
+
     ax1.loglog(densities, P_grav, '-', color=COLORS['scaled'], linewidth=2.5,
                label='P_gravity (Earth mass)' if language == 'en' else 'P_Gravitation (Erdmasse)')
     ax1.loglog(densities, P_deg_e, '--', color=COLORS['quantum'], linewidth=2.5,
@@ -465,6 +522,10 @@ def plot_gravity_vs_pauli(
     ax1.loglog(densities, P_deg_r, ':', color=COLORS['primary_blue'], linewidth=2,
                label='P_Pauli (ultra-rel, ∝ ρ^{4/3})' if language == 'en'
                      else 'P_Pauli (ultra-rel, ∝ ρ^{4/3})')
+    # Fix #5: Plot radiation pressure line
+    ax1.loglog(densities, P_rad_line, '-.', color=COLORS['temp_hot'], linewidth=2.5,
+               label=f'P_radiation (T=10¹¹ K, ∝ T⁴)' if language == 'en'
+                     else f'P_Strahlung (T=10¹¹ K, ∝ T⁴)')
 
     # Mark Earth, WD, NS densities
     rho_earth = 5500  # kg/m³
@@ -716,7 +777,11 @@ def plot_hypothesis_summary(
 
     # Mark where gravity exceeds Pauli
     ax2.axvline(x=1, color=COLORS['standard'], linestyle=':', alpha=0.7, label='Standard G')
-    ax2.axvline(x=1e36, color='red', linestyle='--', alpha=0.7, label='G × 10³⁶')
+    ax2.axvline(x=1e36, color='#FF0000', linestyle='-', linewidth=4, alpha=1.0, zorder=10)
+    ax2.axvspan(1e35, 1e37, alpha=0.15, color='red', zorder=1)
+    lbl_alt = r'$\mathbf{G \times 10^{36}}$' + ('\n(Veraendert)' if language == 'de' else '\n(Altered)')
+    ax2.text(1e36, 1e20, lbl_alt, color='white', fontsize=11, fontweight='bold',
+             rotation=90, va='center', ha='center', bbox=dict(boxstyle='round,pad=0.2', facecolor='#FF0000', edgecolor='darkred', linewidth=2))
     ax2.axhline(y=1e36, color=COLORS['primary_amber'], linestyle=':', alpha=0.5)
 
     if language == 'de':
@@ -748,7 +813,11 @@ def plot_hypothesis_summary(
 
     ax3.axhline(y=1, color='red', linestyle='--', linewidth=2, alpha=0.8,
                label='Collapse threshold' if language == 'en' else 'Kollapsgrenze')
-    ax3.axvline(x=1e36, color='gray', linestyle=':', alpha=0.5, label='G × 10³⁶')
+    ax3.axvline(x=1e36, color='#FF0000', linestyle='-', linewidth=4, alpha=1.0, zorder=10)
+    ax3.axvspan(1e35, 1e37, alpha=0.15, color='red', zorder=1)
+    lbl_alt2 = r'$\mathbf{G \times 10^{36}}$' + ('\n(Veraendert)' if language == 'de' else '\n(Altered)')
+    ax3.text(1e36, 1e-15, lbl_alt2, color='white', fontsize=11, fontweight='bold',
+             rotation=90, va='center', ha='center', bbox=dict(boxstyle='round,pad=0.2', facecolor='#FF0000', edgecolor='darkred', linewidth=2))
 
     if language == 'de':
         ax3.set_xlabel('G-Skalierung', fontsize=12)

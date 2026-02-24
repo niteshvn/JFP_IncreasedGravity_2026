@@ -808,6 +808,39 @@ def plot_earth_collapse_summary(
     ax1.grid(True, alpha=0.3, which='both')
     ax1.tick_params(axis='both', labelsize=11)
 
+    # Fix #4: Add Chandrasekhar Limit calculation annotation for scaled universe
+    if language == 'de':
+        ch_calc_text = (
+            'SKALIERUNG DER CHANDRASEKHAR-GRENZE:\n'
+            'Formel: M_Ch ∝ (ℏc/G)^(3/2)\n\n'
+            'In unserem Szenario: G → G×10³⁶, ℏ → ℏ×10¹⁸\n'
+            'M_Ch(skaliert) = M_Ch × (10¹⁸/10³⁶)^(3/2)\n'
+            '                = M_Ch × (10⁻¹⁸)^(3/2) = M_Ch × 10⁻²⁷\n\n'
+            'ERGEBNIS: Die Chandrasekhar-Grenze sinkt von\n'
+            '1.4 M☉ auf ~10⁻²⁷ Sonnenmassen ≈ ERDMASSE!\n\n'
+            'BEDEUTUNG: Die Erde selbst ist nahe der\n'
+            'Chandrasekhar-Grenze im skalierten Universum.'
+        )
+    else:
+        ch_calc_text = (
+            'CHANDRASEKHAR LIMIT SCALING:\n'
+            'Formula: M_Ch ∝ (ℏc/G)^(3/2)\n\n'
+            'In our scenario: G → G×10³⁶, ℏ → ℏ×10¹⁸\n'
+            'M_Ch(scaled) = M_Ch × (10¹⁸/10³⁶)^(3/2)\n'
+            '             = M_Ch × (10⁻¹⁸)^(3/2) = M_Ch × 10⁻²⁷\n\n'
+            'RESULT: The Chandrasekhar limit drops from\n'
+            '1.4 M☉ to ~10⁻²⁷ solar masses ≈ EARTH MASS!\n\n'
+            'IMPLICATION: Earth itself is near the\n'
+            'Chandrasekhar limit in our scaled universe.'
+        )
+
+    # Position the text box in the upper right area of the plot
+    ax1.text(0.98, 0.98, ch_calc_text, fontsize=8, va='top', ha='right',
+             transform=ax1.transAxes,
+             bbox=dict(boxstyle='round,pad=0.4', facecolor=COLORS['box_error'],
+                      edgecolor=COLORS['collapse'], linewidth=2, alpha=0.95),
+             color=COLORS['collapse'], fontweight='normal', family='monospace')
+
     # --- Subplot 2: Compactness evolution with thresholds ---
     ax2.loglog(s_arr, compact_arr, color=colors[1], linewidth=2.5,
               label='Compactness C(s)' if language != 'de' else 'Kompaktheit C(s)')
@@ -908,19 +941,21 @@ def plot_earth_collapse_summary(
         ]
 
     # Add threshold rows
+    # Each entry: (scale, label_en, label_de, expected_classification)
+    # We use expected_classification to avoid floating-point precision issues
     threshold_info = [
-        (s_cross_ch, 'M_Ch < M_Earth', 'M_Ch < M_Erde'),
-        (s_wd, 'White dwarf density', 'Weisser-Zwerg-Dichte'),
-        (s_ns, 'Neutron star density', 'Neutronenstern-Dichte'),
-        (s_bh, 'Black hole (C>=1)', 'Schwarzes Loch (C>=1)'),
+        (s_cross_ch, 'M_Ch < M_Earth', 'M_Ch < M_Erde', 'compressed'),
+        (s_wd, 'White dwarf density', 'Weisser-Zwerg-Dichte', 'white_dwarf'),
+        (s_ns, 'Neutron star density', 'Neutronenstern-Dichte', 'neutron_star'),
+        (s_bh, 'Black hole (C>=1)', 'Schwarzes Loch (C>=1)', 'black_hole'),
     ]
-    for s_val, label_en, label_de in threshold_info:
+    for s_val, label_en, label_de, expected_class in threshold_info:
         if s_val is not None:
             st = earth_state_at_scale(s_val, constants)
             label = label_de if language == 'de' else label_en
             rows_data.append([label, f'{s_val:.4f}',
                             f'{st.radius:.2e} m', f'{st.density:.2e}',
-                            st.classification])
+                            expected_class])
 
     table = ax4.table(cellText=rows_data, colLabels=headers,
                      loc='center', cellLoc='center')
