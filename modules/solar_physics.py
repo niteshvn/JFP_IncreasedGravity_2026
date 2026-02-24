@@ -297,8 +297,8 @@ _SECONDS_PER_GYR = 1.0e9 * 365.25 * 24 * 3600  # seconds in 1 Gyr
 
 
 def _g_range(n: int = 300) -> np.ndarray:
-    """Return a log-spaced array of G_scale values from 0.1 to 100."""
-    return np.logspace(np.log10(0.1), np.log10(100), n)
+    """Return a log-spaced array of G_scale values from 0.1 to 10^40 (includes 10^36 threshold)."""
+    return np.logspace(np.log10(0.1), 40, n)
 
 
 # ---------------------------------------------------------------------------
@@ -384,7 +384,44 @@ def plot_solar_structure(
         ax1.set_ylabel('Luminosity (Solar luminosities)', fontsize=12)
         ax1.set_title('Luminosity vs. Gravity Scaling', fontsize=14, fontweight='bold', pad=15)
     ax1.grid(True, alpha=0.3)
+    # Add G×10^36 threshold marker (HIGHLY VISIBLE - altered universe)
+    ax1.axvline(x=1e36, color='#FF0000', linestyle='-', linewidth=4, alpha=1.0, zorder=10)
+    ax1.axvspan(1e35, 1e37, alpha=0.15, color='red', zorder=1)  # Highlight band
+    lbl = r'$\mathbf{G \times 10^{36}}$' + ('\n(Veraendertes\nUniversum)' if language == 'de' else '\n(Altered\nUniverse)')
+    ax1.text(1e36, (L_arr / constants.L_sun).max()*0.3, lbl, color='white', fontsize=12, fontweight='bold',
+             rotation=90, va='center', ha='center', bbox=dict(boxstyle='round,pad=0.3', facecolor='#FF0000', edgecolor='darkred', linewidth=2))
     ax1.legend(fontsize=11, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3)
+
+    # Add SUN EXPLOSION WARNING box (Peer Review 2 feedback)
+    if language == 'de':
+        explosion_text = (
+            'SONNE EXPLODIERT BEI G×10³⁶!\n\n'
+            'Formeln:\n'
+            '• L ∝ G⁴ → L = 10¹⁴⁴ × L☉\n'
+            '• L_Edd ∝ G → L/L_Edd ∝ G³\n'
+            '• Bei G×10³⁶: L/L_Edd = 10¹⁰⁸\n\n'
+            'Die Sonne überschreitet die\n'
+            'Eddington-Grenze um Faktor 10¹⁰⁸\n'
+            '→ SOFORTIGE EXPLOSION!\n\n'
+            'Planeten-Überleben: UNMÖGLICH'
+        )
+    else:
+        explosion_text = (
+            'SUN EXPLODES AT G×10³⁶!\n\n'
+            'Formulas:\n'
+            '• L ∝ G⁴ → L = 10¹⁴⁴ × L☉\n'
+            '• L_Edd ∝ G → L/L_Edd ∝ G³\n'
+            '• At G×10³⁶: L/L_Edd = 10¹⁰⁸\n\n'
+            'The Sun exceeds the Eddington\n'
+            'limit by factor 10¹⁰⁸\n'
+            '→ IMMEDIATE EXPLOSION!\n\n'
+            'Planetary survival: IMPOSSIBLE'
+        )
+    ax1.text(0.02, 0.98, explosion_text, fontsize=9, va='top', ha='left',
+             transform=ax1.transAxes,
+             bbox=dict(boxstyle='round,pad=0.5', facecolor=COLORS['box_error'],
+                      edgecolor=COLORS['collapse'], linewidth=3, alpha=0.95),
+             color=COLORS['collapse'], fontweight='bold', family='monospace')
 
     # --- Subplot 2: Radius ---
     ax2.loglog(G_arr, R_arr / constants.R_sun, '-', color=COLORS['primary_blue'],
@@ -404,6 +441,12 @@ def plot_solar_structure(
         ax2.set_ylabel('Radius (Solar radii)', fontsize=12)
         ax2.set_title('Stellar Radius vs. Gravity Scaling', fontsize=14, fontweight='bold', pad=15)
     ax2.grid(True, alpha=0.3)
+    # Add G×10^36 threshold marker (HIGHLY VISIBLE - altered universe)
+    ax2.axvline(x=1e36, color='#FF0000', linestyle='-', linewidth=4, alpha=1.0, zorder=10)
+    ax2.axvspan(1e35, 1e37, alpha=0.15, color='red', zorder=1)
+    lbl = r'$\mathbf{G \times 10^{36}}$' + ('\n(Veraendertes\nUniversum)' if language == 'de' else '\n(Altered\nUniverse)')
+    ax2.text(1e36, 1e-30, lbl, color='white', fontsize=12, fontweight='bold',
+             rotation=90, va='center', ha='center', bbox=dict(boxstyle='round,pad=0.3', facecolor='#FF0000', edgecolor='darkred', linewidth=2))
     ax2.legend(fontsize=11, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3)
 
     # --- Subplot 3: Core Temperature ---
@@ -422,6 +465,12 @@ def plot_solar_structure(
         ax3.set_ylabel('Core Temperature (multiples of standard)', fontsize=12)
         ax3.set_title('Core Temperature vs. Gravity Scaling', fontsize=14, fontweight='bold', pad=15)
     ax3.grid(True, alpha=0.3)
+    # Add G×10^36 threshold marker (HIGHLY VISIBLE - altered universe)
+    ax3.axvline(x=1e36, color='#FF0000', linestyle='-', linewidth=4, alpha=1.0, zorder=10)
+    ax3.axvspan(1e35, 1e37, alpha=0.15, color='red', zorder=1)
+    lbl = r'$\mathbf{G \times 10^{36}}$' + ('\n(Veraendertes\nUniversum)' if language == 'de' else '\n(Altered\nUniverse)')
+    ax3.text(1e36, (Tc_arr / constants.T_core_sun).max()*0.3, lbl, color='white', fontsize=12, fontweight='bold',
+             rotation=90, va='center', ha='center', bbox=dict(boxstyle='round,pad=0.3', facecolor='#FF0000', edgecolor='darkred', linewidth=2))
     ax3.legend(fontsize=11, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3)
 
     # --- Subplot 4: Fusion Rate ---
@@ -437,6 +486,12 @@ def plot_solar_structure(
         ax4.set_ylabel('Fusion Rate (relative)', fontsize=12)
         ax4.set_title('Nuclear Fusion Rate vs. Gravity Scaling', fontsize=14, fontweight='bold', pad=15)
     ax4.grid(True, alpha=0.3)
+    # Add G×10^36 threshold marker (HIGHLY VISIBLE - altered universe)
+    ax4.axvline(x=1e36, color='#FF0000', linestyle='-', linewidth=4, alpha=1.0, zorder=10)
+    ax4.axvspan(1e35, 1e37, alpha=0.15, color='red', zorder=1)
+    lbl = r'$\mathbf{G \times 10^{36}}$' + ('\n(Veraendertes\nUniversum)' if language == 'de' else '\n(Altered\nUniverse)')
+    ax4.text(1e36, fusion_arr.max()*0.3, lbl, color='white', fontsize=12, fontweight='bold',
+             rotation=90, va='center', ha='center', bbox=dict(boxstyle='round,pad=0.3', facecolor='#FF0000', edgecolor='darkred', linewidth=2))
     ax4.legend(fontsize=11, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3)
 
     # ----- save / show -----
@@ -527,6 +582,12 @@ def plot_solar_lifetime(
         ax1.set_ylabel('Lifetime (Gyr)', fontsize=12)
         ax1.set_title('Main-Sequence Lifetime vs. Gravity Scaling', fontsize=14, fontweight='bold', pad=15)
     ax1.grid(True, alpha=0.3)
+    # Add G×10^36 threshold marker (HIGHLY VISIBLE - altered universe)
+    ax1.axvline(x=1e36, color='#FF0000', linestyle='-', linewidth=4, alpha=1.0, zorder=10)
+    ax1.axvspan(1e35, 1e37, alpha=0.15, color='red', zorder=1)
+    lbl1 = r'$\mathbf{G \times 10^{36}}$' + ('\n(Veraendertes\nUniversum)' if language == 'de' else '\n(Altered\nUniverse)')
+    ax1.text(1e36, (tau_arr / _SECONDS_PER_GYR).max()*0.01, lbl1, color='white', fontsize=12, fontweight='bold',
+             rotation=90, va='center', ha='center', bbox=dict(boxstyle='round,pad=0.3', facecolor='#FF0000', edgecolor='darkred', linewidth=2))
     ax1.legend(fontsize=11, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3)
 
     # --- Subplot 2: Luminosity vs Eddington ---
@@ -547,7 +608,42 @@ def plot_solar_lifetime(
         ax2.set_ylabel('Luminosity (Solar luminosities)', fontsize=12)
         ax2.set_title('Luminosity vs. Eddington Limit', fontsize=14, fontweight='bold', pad=15)
     ax2.grid(True, alpha=0.3)
+    # Add G×10^36 threshold marker (HIGHLY VISIBLE - altered universe)
+    ax2.axvline(x=1e36, color='#FF0000', linestyle='-', linewidth=4, alpha=1.0, zorder=10)
+    ax2.axvspan(1e35, 1e37, alpha=0.15, color='red', zorder=1)
+    lbl2 = r'$\mathbf{G \times 10^{36}}$' + ('\n(Veraendertes\nUniversum)' if language == 'de' else '\n(Altered\nUniverse)')
+    ax2.text(1e36, (L_arr / constants.L_sun).max()*0.3, lbl2, color='white', fontsize=12, fontweight='bold',
+             rotation=90, va='center', ha='center', bbox=dict(boxstyle='round,pad=0.3', facecolor='#FF0000', edgecolor='darkred', linewidth=2))
     ax2.legend(fontsize=11, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3)
+
+    # Add EDDINGTON INSTABILITY explanation (Peer Review 2 feedback)
+    if language == 'de':
+        eddington_text = (
+            'EDDINGTON-INSTABILITÄT:\n\n'
+            'Wenn L > L_Edd:\n'
+            '• Strahlungsdruck > Gravitation\n'
+            '• Stern wird auseinandergerissen\n'
+            '• Runaway-Kernfusion\n\n'
+            'Bei G×10³⁶:\n'
+            'L/L_Edd = G³ = 10¹⁰⁸\n'
+            '→ HYPERNOVA-EXPLOSION!'
+        )
+    else:
+        eddington_text = (
+            'EDDINGTON INSTABILITY:\n\n'
+            'When L > L_Edd:\n'
+            '• Radiation pressure > Gravity\n'
+            '• Star is torn apart\n'
+            '• Runaway nuclear fusion\n\n'
+            'At G×10³⁶:\n'
+            'L/L_Edd = G³ = 10¹⁰⁸\n'
+            '→ HYPERNOVA EXPLOSION!'
+        )
+    ax2.text(0.02, 0.98, eddington_text, fontsize=9, va='top', ha='left',
+             transform=ax2.transAxes,
+             bbox=dict(boxstyle='round,pad=0.4', facecolor=COLORS['box_error'],
+                      edgecolor=COLORS['collapse'], linewidth=2, alpha=0.95),
+             color=COLORS['collapse'], fontweight='bold', family='monospace')
 
     # --- Subplot 3: Surface Temperature ---
     ax3.semilogx(G_arr, Teff_arr, '-', color=COLORS['primary_amber'],
@@ -561,6 +657,12 @@ def plot_solar_lifetime(
         ax3.set_ylabel('Surface Temperature (K)', fontsize=12)
         ax3.set_title('Effective Surface Temperature vs. Gravity Scaling', fontsize=14, fontweight='bold', pad=15)
     ax3.grid(True, alpha=0.3)
+    # Add G×10^36 threshold marker (HIGHLY VISIBLE - altered universe)
+    ax3.axvline(x=1e36, color='#FF0000', linestyle='-', linewidth=4, alpha=1.0, zorder=10)
+    ax3.axvspan(1e35, 1e37, alpha=0.15, color='red', zorder=1)
+    lbl3 = r'$\mathbf{G \times 10^{36}}$' + ('\n(Veraendertes\nUniversum)' if language == 'de' else '\n(Altered\nUniverse)')
+    ax3.text(1e36, Teff_arr.max()*0.5, lbl3, color='white', fontsize=12, fontweight='bold',
+             rotation=90, va='center', ha='center', bbox=dict(boxstyle='round,pad=0.3', facecolor='#FF0000', edgecolor='darkred', linewidth=2))
     ax3.legend(fontsize=11, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3)
 
     # --- Subplot 4: HR Diagram ---

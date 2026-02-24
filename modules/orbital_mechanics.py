@@ -159,7 +159,8 @@ def plot_moon_tidal_effects(
     """Plot Moon orbital and tidal effects under modified gravity."""
     if constants is None:
         constants = get_constants()
-    G_scales = np.logspace(0, 3, 500)
+    # Extended to 10^40 to show G×10^36 threshold
+    G_scales = np.logspace(0, 40, 500)
     moon_radii = np.array([scaled_orbit_radius(constants.d_earth_moon, g) for g in G_scales])
     G_std = constants.G
     tidal_forces = np.array([
@@ -223,7 +224,44 @@ def plot_moon_tidal_effects(
     ax.set_title(titles[0], fontsize=14, fontweight='bold', pad=15)
     ax.grid(True, alpha=0.3)
     ax.tick_params(axis='both', labelsize=11)
+    # Add G×10^36 threshold marker (HIGHLY VISIBLE - altered universe)
+    ax.axvline(x=1e36, color='#FF0000', linestyle='-', linewidth=4, alpha=1.0, zorder=10)
+    ax.axvspan(1e35, 1e37, alpha=0.15, color='red', zorder=1)
+    lbl = r'$\mathbf{G \times 10^{36}}$' + ('\n(Veraendert)' if language == 'de' else '\n(Altered)')
+    ax.text(1e36, moon_radii_RE.max()*0.3, lbl, color='white', fontsize=11, fontweight='bold',
+            rotation=90, va='center', ha='center', bbox=dict(boxstyle='round,pad=0.2', facecolor='#FF0000', edgecolor='darkred', linewidth=2))
     ax.legend(fontsize=11, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3, framealpha=0.7)
+
+    # Add PLANETARY SURVIVAL WARNING (Peer Review 2 feedback)
+    if language == 'de':
+        survival_text = (
+            'ÜBERLEBEN UNMÖGLICH!\n\n'
+            'Bei G×10³⁶ explodiert die Sonne:\n'
+            '• L ∝ G⁴ → L = 10¹⁴⁴ × L☉\n'
+            '• L/L_Edd ∝ G³ = 10¹⁰⁸\n'
+            '→ HYPERNOVA!\n\n'
+            'Selbst ohne Sonnenexplosion:\n'
+            '• Orbits schrumpfen (a ∝ 1/G)\n'
+            '• Mond innerhalb Roche-Grenze\n'
+            '• Erde fällt in die Sonne'
+        )
+    else:
+        survival_text = (
+            'SURVIVAL IMPOSSIBLE!\n\n'
+            'At G×10³⁶, the Sun explodes:\n'
+            '• L ∝ G⁴ → L = 10¹⁴⁴ × L☉\n'
+            '• L/L_Edd ∝ G³ = 10¹⁰⁸\n'
+            '→ HYPERNOVA!\n\n'
+            'Even without Sun explosion:\n'
+            '• Orbits shrink (a ∝ 1/G)\n'
+            '• Moon inside Roche limit\n'
+            '• Earth falls into the Sun'
+        )
+    axes[0].text(0.02, 0.98, survival_text, fontsize=8, va='top', ha='left',
+             transform=axes[0].transAxes,
+             bbox=dict(boxstyle='round,pad=0.4', facecolor=COLORS['box_error'],
+                      edgecolor=COLORS['collapse'], linewidth=2, alpha=0.95),
+             color=COLORS['collapse'], fontweight='bold', family='monospace')
 
     # Plot 2: Tidal force
     ax = axes[1]
@@ -235,6 +273,12 @@ def plot_moon_tidal_effects(
     ax.set_title(titles[1], fontsize=14, fontweight='bold', pad=15)
     ax.grid(True, alpha=0.3)
     ax.tick_params(axis='both', labelsize=11)
+    # Add G×10^36 threshold marker (HIGHLY VISIBLE - altered universe)
+    ax.axvline(x=1e36, color='#FF0000', linestyle='-', linewidth=4, alpha=1.0, zorder=10)
+    ax.axvspan(1e35, 1e37, alpha=0.15, color='red', zorder=1)
+    lbl = r'$\mathbf{G \times 10^{36}}$' + ('\n(Veraendert)' if language == 'de' else '\n(Altered)')
+    ax.text(1e36, tidal_forces.max()*0.3, lbl, color='white', fontsize=11, fontweight='bold',
+            rotation=90, va='center', ha='center', bbox=dict(boxstyle='round,pad=0.2', facecolor='#FF0000', edgecolor='darkred', linewidth=2))
     ax.legend(fontsize=11, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3, framealpha=0.7)
 
     # Plot 3: Roche limit vs Moon distance
@@ -252,6 +296,12 @@ def plot_moon_tidal_effects(
     ax.set_title(titles[2], fontsize=14, fontweight='bold', pad=15)
     ax.grid(True, alpha=0.3)
     ax.tick_params(axis='both', labelsize=11)
+    # Add G×10^36 threshold marker (HIGHLY VISIBLE - altered universe)
+    ax.axvline(x=1e36, color='#FF0000', linestyle='-', linewidth=4, alpha=1.0, zorder=10)
+    ax.axvspan(1e35, 1e37, alpha=0.15, color='red', zorder=1)
+    lbl = r'$\mathbf{G \times 10^{36}}$' + ('\n(Veraendert)' if language == 'de' else '\n(Altered)')
+    ax.text(1e36, roche_limits_RE.max()*0.3, lbl, color='white', fontsize=11, fontweight='bold',
+            rotation=90, va='center', ha='center', bbox=dict(boxstyle='round,pad=0.2', facecolor='#FF0000', edgecolor='darkred', linewidth=2))
     ax.legend(fontsize=11, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3, framealpha=0.7)
 
     # Plot 4: Moon orbital period
@@ -264,6 +314,12 @@ def plot_moon_tidal_effects(
     ax.set_title(titles[3], fontsize=14, fontweight='bold', pad=15)
     ax.grid(True, alpha=0.3)
     ax.tick_params(axis='both', labelsize=11)
+    # Add G×10^36 threshold marker (HIGHLY VISIBLE - altered universe)
+    ax.axvline(x=1e36, color='#FF0000', linestyle='-', linewidth=4, alpha=1.0, zorder=10)
+    ax.axvspan(1e35, 1e37, alpha=0.15, color='red', zorder=1)
+    lbl = r'$\mathbf{G \times 10^{36}}$' + ('\n(Veraendert)' if language == 'de' else '\n(Altered)')
+    ax.text(1e36, periods_days.max()*0.3, lbl, color='white', fontsize=11, fontweight='bold',
+            rotation=90, va='center', ha='center', bbox=dict(boxstyle='round,pad=0.2', facecolor='#FF0000', edgecolor='darkred', linewidth=2))
     ax.legend(fontsize=11, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3, framealpha=0.7)
 
     if save:
@@ -286,7 +342,8 @@ def plot_earth_orbit(
     """Plot Earth orbital properties under modified gravity."""
     if constants is None:
         constants = get_constants()
-    G_scales = np.logspace(0, 3, 500)
+    # Extended to 10^40 to show G×10^36 threshold
+    G_scales = np.logspace(0, 40, 500)
     G_std = constants.G
     AU = constants.AU
     semi_major_axes = np.array([scaled_orbit_radius(constants.a_earth, g) for g in G_scales])
@@ -343,7 +400,50 @@ def plot_earth_orbit(
     ax.set_title(titles[0], fontsize=14, fontweight='bold', pad=15)
     ax.grid(True, alpha=0.3)
     ax.tick_params(axis='both', labelsize=11)
+    # Add G×10^36 threshold marker (HIGHLY VISIBLE - altered universe)
+    ax.axvline(x=1e36, color='#FF0000', linestyle='-', linewidth=4, alpha=1.0, zorder=10)
+    ax.axvspan(1e35, 1e37, alpha=0.15, color='red', zorder=1)
+    lbl = r'$\mathbf{G \times 10^{36}}$' + ('\n(Veraendert)' if language == 'de' else '\n(Altered)')
+    ax.text(1e36, semi_major_AU.max()*0.3, lbl, color='white', fontsize=11, fontweight='bold',
+            rotation=90, va='center', ha='center', bbox=dict(boxstyle='round,pad=0.2', facecolor='#FF0000', edgecolor='darkred', linewidth=2))
     ax.legend(fontsize=11, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3, framealpha=0.7)
+
+    # Add WHY G INCREASE DESTROYS SOLAR SYSTEM explanation (Peer Review 2 feedback)
+    if language == 'de':
+        why_text = (
+            'WARUM G-ERHÖHUNG DAS\n'
+            'SONNENSYSTEM ZERSTÖRT:\n\n'
+            '1. SONNE EXPLODIERT:\n'
+            '   L ∝ G⁴, L_Edd ∝ G\n'
+            '   → L/L_Edd ∝ G³ = 10¹⁰⁸\n\n'
+            '2. ORBITS SCHRUMPFEN:\n'
+            '   a ∝ 1/G (bei L = const.)\n'
+            '   → Erde: a = 10⁻³⁶ AU\n\n'
+            '3. GEZEITENKRÄFTE:\n'
+            '   F_tidal ∝ G → ×10³⁶\n\n'
+            'ERGEBNIS: Kein Überleben\n'
+            'für Planeten möglich!'
+        )
+    else:
+        why_text = (
+            'WHY G INCREASE DESTROYS\n'
+            'THE SOLAR SYSTEM:\n\n'
+            '1. SUN EXPLODES:\n'
+            '   L ∝ G⁴, L_Edd ∝ G\n'
+            '   → L/L_Edd ∝ G³ = 10¹⁰⁸\n\n'
+            '2. ORBITS SHRINK:\n'
+            '   a ∝ 1/G (at L = const.)\n'
+            '   → Earth: a = 10⁻³⁶ AU\n\n'
+            '3. TIDAL FORCES:\n'
+            '   F_tidal ∝ G → ×10³⁶\n\n'
+            'RESULT: No survival\n'
+            'possible for planets!'
+        )
+    axes[0].text(0.02, 0.98, why_text, fontsize=8, va='top', ha='left',
+             transform=axes[0].transAxes,
+             bbox=dict(boxstyle='round,pad=0.4', facecolor=COLORS['box_error'],
+                      edgecolor=COLORS['collapse'], linewidth=2, alpha=0.95),
+             color=COLORS['collapse'], fontweight='bold', family='monospace')
 
     # Plot 2: Orbital period
     ax = axes[1]
@@ -355,6 +455,12 @@ def plot_earth_orbit(
     ax.set_title(titles[1], fontsize=14, fontweight='bold', pad=15)
     ax.grid(True, alpha=0.3)
     ax.tick_params(axis='both', labelsize=11)
+    # Add G×10^36 threshold marker (HIGHLY VISIBLE - altered universe)
+    ax.axvline(x=1e36, color='#FF0000', linestyle='-', linewidth=4, alpha=1.0, zorder=10)
+    ax.axvspan(1e35, 1e37, alpha=0.15, color='red', zorder=1)
+    lbl = r'$\mathbf{G \times 10^{36}}$' + ('\n(Veraendert)' if language == 'de' else '\n(Altered)')
+    ax.text(1e36, periods_years.min()*100, lbl, color='white', fontsize=11, fontweight='bold',
+            rotation=90, va='center', ha='center', bbox=dict(boxstyle='round,pad=0.2', facecolor='#FF0000', edgecolor='darkred', linewidth=2))
     ax.legend(fontsize=11, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3, framealpha=0.7)
 
     # Plot 3: Orbital velocity
@@ -367,6 +473,12 @@ def plot_earth_orbit(
     ax.set_title(titles[2], fontsize=14, fontweight='bold', pad=15)
     ax.grid(True, alpha=0.3)
     ax.tick_params(axis='both', labelsize=11)
+    # Add G×10^36 threshold marker (HIGHLY VISIBLE - altered universe)
+    ax.axvline(x=1e36, color='#FF0000', linestyle='-', linewidth=4, alpha=1.0, zorder=10)
+    ax.axvspan(1e35, 1e37, alpha=0.15, color='red', zorder=1)
+    lbl = r'$\mathbf{G \times 10^{36}}$' + ('\n(Veraendert)' if language == 'de' else '\n(Altered)')
+    ax.text(1e36, velocities_kms.max()*0.3, lbl, color='white', fontsize=11, fontweight='bold',
+            rotation=90, va='center', ha='center', bbox=dict(boxstyle='round,pad=0.2', facecolor='#FF0000', edgecolor='darkred', linewidth=2))
     ax.legend(fontsize=11, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3, framealpha=0.7)
 
     # Plot 4: GR precession
@@ -381,6 +493,12 @@ def plot_earth_orbit(
     ax.set_title(titles[3], fontsize=14, fontweight='bold', pad=15)
     ax.grid(True, alpha=0.3)
     ax.tick_params(axis='both', labelsize=11)
+    # Add G×10^36 threshold marker (HIGHLY VISIBLE - altered universe)
+    ax.axvline(x=1e36, color='#FF0000', linestyle='-', linewidth=4, alpha=1.0, zorder=10)
+    ax.axvspan(1e35, 1e37, alpha=0.15, color='red', zorder=1)
+    lbl = r'$\mathbf{G \times 10^{36}}$' + ('\n(Veraendert)' if language == 'de' else '\n(Altered)')
+    ax.text(1e36, precessions_arcsec_century.max()*0.3, lbl, color='white', fontsize=11, fontweight='bold',
+            rotation=90, va='center', ha='center', bbox=dict(boxstyle='round,pad=0.2', facecolor='#FF0000', edgecolor='darkred', linewidth=2))
     ax.legend(fontsize=11, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3, framealpha=0.7)
 
     if save:
@@ -420,7 +538,8 @@ def plot_orbital_summary(
     planet_sma = [constants.a_mercury, constants.a_venus, constants.a_earth,
                   constants.a_mars, constants.a_jupiter, constants.a_saturn,
                   constants.a_uranus, constants.a_neptune]
-    G_scales = np.logspace(0, 3, 500)
+    # Extended to 10^40 to show G×10^36 threshold
+    G_scales = np.logspace(0, 40, 500)
     all_radii_AU = {}
     for i, name in enumerate(planet_names):
         radii = np.array([scaled_orbit_radius(planet_sma[i], g) for g in G_scales])
@@ -470,6 +589,12 @@ def plot_orbital_summary(
     ax.set_title(titles[0], fontsize=14, fontweight='bold', pad=15)
     ax.grid(True, alpha=0.3)
     ax.tick_params(axis='both', labelsize=11)
+    # Add G×10^36 threshold marker (HIGHLY VISIBLE - altered universe)
+    ax.axvline(x=1e36, color='#FF0000', linestyle='-', linewidth=4, alpha=1.0, zorder=10)
+    ax.axvspan(1e35, 1e37, alpha=0.15, color='red', zorder=1)
+    lbl = r'$\mathbf{G \times 10^{36}}$' + ('\n(Veraendert)' if language == 'de' else '\n(Altered)')
+    ax.text(1e36, 1e-5, lbl, color='white', fontsize=11, fontweight='bold',
+            rotation=90, va='center', ha='center', bbox=dict(boxstyle='round,pad=0.2', facecolor='#FF0000', edgecolor='darkred', linewidth=2))
     ax.legend(fontsize=11, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3, framealpha=0.7)
 
     # Plot 2: Orbital stability map
@@ -501,6 +626,12 @@ def plot_orbital_summary(
     ax.set_title(titles[2], fontsize=14, fontweight='bold', pad=15)
     ax.grid(True, alpha=0.3)
     ax.tick_params(axis='both', labelsize=11)
+    # Add G×10^36 threshold marker (HIGHLY VISIBLE - altered universe)
+    ax.axvline(x=1e36, color='#FF0000', linestyle='-', linewidth=4, alpha=1.0, zorder=10)
+    ax.axvspan(1e35, 1e37, alpha=0.15, color='red', zorder=1)
+    lbl = r'$\mathbf{G \times 10^{36}}$' + ('\n(Veraendert)' if language == 'de' else '\n(Altered)')
+    ax.text(1e36, 1e-10, lbl, color='white', fontsize=11, fontweight='bold',
+            rotation=90, va='center', ha='center', bbox=dict(boxstyle='round,pad=0.2', facecolor='#FF0000', edgecolor='darkred', linewidth=2))
     ax.legend(fontsize=11, loc='upper center', bbox_to_anchor=(0.5, -0.15), ncol=3, framealpha=0.7)
 
     # Plot 4: Tidal force comparison
