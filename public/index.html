@@ -1386,6 +1386,8 @@
             <div class="subsection-tabs">
                 <button class="subsection-tab active" onclick="showSubsection('earthevolution', 'change', this)" data-en="Change Diagram" data-de="Aenderungsdiagramm">Change Diagram</button>
                 <button class="subsection-tab" onclick="showSubsection('earthevolution', 'combined', this)" data-en="Combined View" data-de="Kombinierte Ansicht">Combined View</button>
+                <button class="subsection-tab" onclick="showSubsection('earthevolution', 'scenarios', this)" data-en="Scenario Comparison" data-de="Szenariovergleich">Scenario Comparison</button>
+                <button class="subsection-tab" onclick="showSubsection('earthevolution', 'collapse', this)" data-en="Collapse Physics" data-de="Kollapsphysik">Collapse Physics</button>
             </div>
 
             <div id="earthevolution-change" class="subsection-content active">
@@ -1419,6 +1421,33 @@
                     <div class="viz-details">
                         <h3 data-en="Combined Earth Visualization" data-de="Kombinierte Erdvisualisierung">Combined Earth Visualization</h3>
                         <p class="description" data-en="Cross-section at 4 hbar scales with pressures and parameter dashboard." data-de="Querschnitt bei 4 hbar-Skalen mit Druckbeitraegen und Dashboard.">Cross-section at 4 hbar scales with pressures and parameter dashboard.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="earthevolution-scenarios" class="subsection-content">
+                <div class="viz-item">
+                    <div class="viz-image"><img src="visualizations/scenario_comparison.png" data-img-base="scenario_comparison" alt="Scenario Comparison"></div>
+                    <div class="viz-details">
+                        <h3 data-en="Compensated vs Uncompensated Scenarios" data-de="Kompensierte vs. Unkompensierte Szenarien">Compensated vs Uncompensated Scenarios</h3>
+                        <p class="description" data-en="Side-by-side comparison: when ℏ scales as √G (compensated), equilibrium is maintained. Without compensation, gravitational collapse dominates." data-de="Vergleich: Wenn ℏ als √G skaliert (kompensiert), bleibt das Gleichgewicht erhalten. Ohne Kompensation dominiert der Gravitationskollaps.">Side-by-side comparison: when ℏ scales as √G (compensated), equilibrium is maintained. Without compensation, gravitational collapse dominates.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="earthevolution-collapse" class="subsection-content">
+                <div class="viz-item">
+                    <div class="viz-image"><img src="visualizations/sun_hypernova.png" data-img-base="sun_hypernova" alt="Sun Hypernova"></div>
+                    <div class="viz-details">
+                        <h3 data-en="Why the Sun Becomes a Hypernova" data-de="Warum die Sonne zur Hypernova wird">Why the Sun Becomes a Hypernova</h3>
+                        <p class="description" data-en="The Chandrasekhar limit drops to ~2,800 kg when G×10³⁶ and ℏ×10¹⁸. The Sun exceeds this limit by 10²⁷×, triggering catastrophic collapse." data-de="Die Chandrasekhar-Grenze sinkt auf ~2.800 kg bei G×10³⁶ und ℏ×10¹⁸. Die Sonne überschreitet diese Grenze um 10²⁷×, was einen katastrophalen Kollaps auslöst.">The Chandrasekhar limit drops to ~2,800 kg when G×10³⁶ and ℏ×10¹⁸. The Sun exceeds this limit by 10²⁷×, triggering catastrophic collapse.</p>
+                    </div>
+                </div>
+                <div class="viz-item">
+                    <div class="viz-image"><img src="visualizations/earth_collapse_compact.png" data-img-base="earth_collapse_compact" alt="Earth Collapse Compact"></div>
+                    <div class="viz-details">
+                        <h3 data-en="Earth Collapse: Compact Overview" data-de="Erdkollaps: Kompakte Übersicht">Earth Collapse: Compact Overview</h3>
+                        <p class="description" data-en="Single-page summary of why Earth collapses: M_Ch drops from 1.4 M☉ to 2,800 kg, far below Earth's mass of 6×10²⁴ kg." data-de="Einseiten-Zusammenfassung warum die Erde kollabiert: M_Ch sinkt von 1,4 M☉ auf 2.800 kg, weit unter der Erdmasse von 6×10²⁴ kg.">Single-page summary of why Earth collapses: M_Ch drops from 1.4 M☉ to 2,800 kg, far below Earth's mass of 6×10²⁴ kg.</p>
                     </div>
                 </div>
             </div>
