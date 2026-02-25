@@ -530,10 +530,12 @@ def plot_celestial_summary(
     for i in range(len(bodies)):
         ax3.axhline(masses[i] / constants.M_sun, color=colors[i], ls=':', alpha=0.6, linewidth=1.2)
         ax3.text(G_sc[-1] * 1.1, masses[i] / constants.M_sun, nd[i], fontsize=9, va='center', color=colors[i])
-    # Add 10^36 threshold marker (where gravity equals electromagnetism)
-    ax3.axvline(x=1e36, color='red', linestyle='--', linewidth=2, alpha=0.8)
-    threshold_label = 'G × 10³⁶ (α_G = α)' if de else 'G × 10³⁶ (α_G = α)'
-    ax3.text(1e36 * 1.5, jm[0] / constants.M_sun * 0.1, threshold_label, color='red', fontsize=10, rotation=90, va='bottom')
+    # Add 10^36 threshold marker (where gravity equals electromagnetism) - HIGHLY VISIBLE
+    ax3.axvline(x=1e36, color='#FF0000', linestyle='-', linewidth=4, alpha=1.0, zorder=10)
+    ax3.axvspan(1e35, 1e37, alpha=0.15, color='red', zorder=1)
+    threshold_label = r'$\mathbf{G \times 10^{36}}$' + ('\n(Veraendert)' if de else '\n(Altered)')
+    ax3.text(1e36, jm[0] / constants.M_sun * 0.01, threshold_label, color='white', fontsize=11, fontweight='bold',
+             rotation=90, va='center', ha='center', bbox=dict(boxstyle='round,pad=0.2', facecolor='#FF0000', edgecolor='darkred', linewidth=2))
     ax3.set_xlabel('G / G₀', fontsize=12)
     ax3.set_ylabel('Masse (Mextglob\\odot$)' if de else 'Mass (Mextglob\\odot$)', fontsize=12)
     ax3.set_title('3. ' + ('Jeans-Masse vs. Gravitationsskala' if de else 'Jeans Mass vs. Gravity Scale'), fontsize=14, fontweight='bold', pad=15)

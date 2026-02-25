@@ -449,7 +449,8 @@ def plot_hydrostatic_comparison(
     G0=constants.G
     n_poly=1.5
 
-    g_scales=np.logspace(0,6,60)
+    # Extended to 10^40 to show G×10^36 threshold (gravity = EM strength)
+    g_scales=np.logspace(0,40,80)
     P_central=np.zeros_like(g_scales)
     R_eq=np.zeros_like(g_scales)
     rho_central=np.zeros_like(g_scales)
@@ -475,6 +476,12 @@ def plot_hydrostatic_comparison(
         ax1.set_ylabel('Central Pressure P_c [Pa]',fontsize=12)
         ax1.set_title('Central Pressure vs. Gravitational Scaling',fontsize=14,fontweight='bold',pad=15)
     ax1.grid(True,alpha=0.3)
+    # Add G×10^36 threshold marker (HIGHLY VISIBLE - altered universe)
+    ax1.axvline(x=1e36, color='#FF0000', linestyle='-', linewidth=4, alpha=1.0, zorder=10)
+    ax1.axvspan(1e35, 1e37, alpha=0.15, color='red', zorder=1)
+    lbl1 = r'$\mathbf{G \times 10^{36}}$' + ('\n(Veraendertes\nUniversum)' if language == 'de' else '\n(Altered\nUniverse)')
+    ax1.text(1e36, P_central.max()*0.3, lbl1, color='white', fontsize=12, fontweight='bold',
+             rotation=90, va='center', ha='center', bbox=dict(boxstyle='round,pad=0.3', facecolor='#FF0000', edgecolor='darkred', linewidth=2))
     ax1.legend(fontsize=11,loc='upper center',bbox_to_anchor=(0.5,-0.15),ncol=3)
 
     ax2=axes[1]
@@ -488,6 +495,12 @@ def plot_hydrostatic_comparison(
         ax2.set_ylabel('Equilibrium Radius [km]',fontsize=12)
         ax2.set_title('Equilibrium Radius vs. Gravitational Scaling',fontsize=14,fontweight='bold',pad=15)
     ax2.grid(True,alpha=0.3)
+    # Add G×10^36 threshold marker (HIGHLY VISIBLE - altered universe)
+    ax2.axvline(x=1e36, color='#FF0000', linestyle='-', linewidth=4, alpha=1.0, zorder=10)
+    ax2.axvspan(1e35, 1e37, alpha=0.15, color='red', zorder=1)
+    lbl2 = r'$\mathbf{G \times 10^{36}}$' + ('\n(Veraendertes\nUniversum)' if language == 'de' else '\n(Altered\nUniverse)')
+    ax2.text(1e36, R_eq.min()/1e3*100, lbl2, color='white', fontsize=12, fontweight='bold',
+             rotation=90, va='center', ha='center', bbox=dict(boxstyle='round,pad=0.3', facecolor='#FF0000', edgecolor='darkred', linewidth=2))
     ax2.legend(fontsize=11,loc='upper center',bbox_to_anchor=(0.5,-0.15),ncol=3)
 
     ax3=axes[2]
@@ -501,6 +514,12 @@ def plot_hydrostatic_comparison(
         ax3.set_ylabel('Central Density [kg/m^3]',fontsize=12)
         ax3.set_title('Central Density vs. Gravitational Scaling',fontsize=14,fontweight='bold',pad=15)
     ax3.grid(True,alpha=0.3)
+    # Add G×10^36 threshold marker (HIGHLY VISIBLE - altered universe)
+    ax3.axvline(x=1e36, color='#FF0000', linestyle='-', linewidth=4, alpha=1.0, zorder=10)
+    ax3.axvspan(1e35, 1e37, alpha=0.15, color='red', zorder=1)
+    lbl3 = r'$\mathbf{G \times 10^{36}}$' + ('\n(Veraendertes\nUniversum)' if language == 'de' else '\n(Altered\nUniverse)')
+    ax3.text(1e36, rho_central.max()*0.3, lbl3, color='white', fontsize=12, fontweight='bold',
+             rotation=90, va='center', ha='center', bbox=dict(boxstyle='round,pad=0.3', facecolor='#FF0000', edgecolor='darkred', linewidth=2))
     ax3.legend(fontsize=11,loc='upper center',bbox_to_anchor=(0.5,-0.15),ncol=3)
 
     ax4=axes[3]
